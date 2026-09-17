@@ -12,7 +12,17 @@ button{font:inherit;cursor:pointer;border:0}
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
 h1{margin:0;font-size:25px}
 .sub{color:#78909c;font-size:14px;margin-top:4px}
- .library-card{background:white;border-radius:20px;padding:15px 16px;margin-bottom:14px;box-shadow:0 5px 20px #0000000b}
+ 
+.checkin-card{background:white;border-radius:20px;padding:16px;margin-bottom:14px;box-shadow:0 5px 20px #0000000b}
+.checkin-top{display:flex;justify-content:space-between;align-items:center;gap:12px}.checkin-top h2{margin:0;font-size:18px}
+.checkin-sub{font-size:13px;color:#78909c;margin-top:4px}.streak{background:#fff3e0;color:#e65100;padding:8px 12px;border-radius:12px;font-weight:800}
+.checkin-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}.stat{background:#f7f9fa;border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-size:22px}.stat span{font-size:11px;color:#78909c}.progress-wrap{height:10px;background:#eceff1;border-radius:10px;overflow:hidden}.progress-bar{height:100%;width:0%;background:#455a64;border-radius:10px;transition:width .3s}
+.calendar-title{font-size:13px;color:#78909c;margin:12px 0 7px}.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.day{padding:7px 2px;border-radius:10px;background:#f7f9fa;text-align:center}.day .dow{font-size:10px;color:#90a4ae}.day .num{font-size:16px;font-weight:700}.day .done{font-size:10px;color:#78909c}
+.day.active{background:#eceff1}.day.complete{background:#e8f5e9}.day.complete .done{color:#2e7d32;font-weight:700}
+@media(max-width:760px){.checkin-stats{grid-template-columns:repeat(2,1fr)}.checkin-top{align-items:flex-start;flex-direction:column}}
+.library-card{background:white;border-radius:20px;padding:15px 16px;margin-bottom:14px;box-shadow:0 5px 20px #0000000b}
 .library-head{display:flex;justify-content:space-between;align-items:center;gap:15px}.library-head h2{margin:0;font-size:18px}
 .library-sub{font-size:13px;color:#78909c;margin-top:4px}.library-actions{display:flex;gap:8px;flex-wrap:wrap}
 .add-online{display:flex;align-items:center;gap:9px;margin:13px 0 5px;padding:11px;background:#f7f9fa;border-radius:13px}
@@ -54,6 +64,26 @@ h1{margin:0;font-size:25px}
   <button class="secondary" id="resetBtn">重新开始</button>
 </header>
 
+
+<section class="checkin-card">
+  <div class="checkin-top">
+    <div>
+      <h2>🔥 每日练字打卡</h2>
+      <div class="checkin-sub">今天完成练习就会自动记录，不需要另外按保存</div>
+    </div>
+    <div class="streak" id="streak">连续 0 天</div>
+  </div>
+  <div class="checkin-stats">
+    <div class="stat"><b id="todayCount">0</b><span>今天完成</span></div>
+    <div class="stat"><b id="todayTarget">10</b><span>今日目标</span></div>
+    <div class="stat"><b id="monthCount">0</b><span>本月完成</span></div>
+    <div class="stat"><b id="totalCount">0</b><span>累计完成</span></div>
+  </div>
+  <div class="progress-wrap"><div class="progress-bar" id="dailyProgress"></div></div>
+  <div class="calendar-title">最近 7 天</div>
+  <div class="week-grid" id="weekGrid"></div>
+</section>
+
 <section class="library-card">
   <div class="library-head">
     <div><h2>📚 生字库</h2><div class="library-sub">学生或家长可以自由选择要练习的字，也可以添加新字</div></div>
@@ -92,7 +122,7 @@ h1{margin:0;font-size:25px}
     <div class="stage gridbg" id="practiceStage"><div id="writer" class="writer"></div><canvas id="practiceCanvas"></canvas></div>
     <div class="hint" id="hint">沿着灰色笔画慢慢写</div>
     <div class="controls">
-      <button class="primary" id="startBtn">开始练习</button>
+      <button class="primary" id="startBtn">开始练习</button><button class="secondary" id="finishBtn">✓ 完成这个字</button>
       <button class="secondary" id="clearBtn">清除</button>
     </div>
     <div class="status" id="status"></div>
@@ -172,6 +202,48 @@ async function addOnlineCharacter(){
   $('status').className='status ok';
 }
 function stripTone(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+
+const DAILY_TARGET=10;
+function dateKey(d=new Date()){
+  const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+day;
+}
+function loadProgress(){
+  try{return JSON.parse(localStorage.getItem('jordanDailyPractice')||'{}');}catch(e){return {};}
+}
+function saveProgress(p){try{localStorage.setItem('jordanDailyPractice',JSON.stringify(p));}catch(e){}}
+function addDailyCompletion(char){
+  const p=loadProgress(), key=dateKey();
+  if(!p[key]) p[key]={chars:[],count:0};
+  if(!p[key].chars.includes(char)){p[key].chars.push(char);p[key].count=p[key].chars.length;}
+  saveProgress(p); renderCheckin();
+}
+function renderCheckin(){
+  const p=loadProgress(),today=dateKey(), todayData=p[today]||{chars:[],count:0};
+  const todayCount=todayData.chars?todayData.chars.length:(todayData.count||0);
+  let total=0;
+  Object.values(p).forEach(x=>{total+=x.chars?x.chars.length:(x.count||0);});
+  const now=new Date(), monthPrefix=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  let month=0;Object.entries(p).forEach(([k,x])=>{if(k.startsWith(monthPrefix))month+=x.chars?x.chars.length:(x.count||0);});
+  let streak=0;
+  const d=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  while(true){
+    const k=dateKey(d), x=p[k], n=x?(x.chars?x.chars.length:(x.count||0)):0;
+    if(n>0){streak++;d.setDate(d.getDate()-1);}else break;
+  }
+  $('todayCount').textContent=todayCount;$('todayTarget').textContent=DAILY_TARGET;
+  $('monthCount').textContent=month;$('totalCount').textContent=total;
+  $('streak').textContent='连续 '+streak+' 天';
+  $('dailyProgress').style.width=Math.min(100,todayCount/DAILY_TARGET*100)+'%';
+  const grid=$('weekGrid');grid.innerHTML='';
+  const names=['日','一','二','三','四','五','六'];
+  for(let i=6;i>=0;i--){
+    const x=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i),k=dateKey(x),v=p[k],n=v?(v.chars?v.chars.length:(v.count||0)):0;
+    const el=document.createElement('div');el.className='day '+(k===today?'active ':'')+(n>0?'complete':'');
+    el.innerHTML='<div class="dow">周'+names[x.getDay()]+'</div><div class="num">'+x.getDate()+'</div><div class="done">'+(n?n+'字':'—')+'</div>';
+    grid.appendChild(el);
+  }
+}
 function renderLibrary(){
   const q=$('searchInput').value.trim().toLowerCase(), q2=stripTone(q), group=$('groupSelect').value, grid=$('libraryGrid');
   grid.innerHTML='';
@@ -268,7 +340,8 @@ function makeQuiz(){
     },
     onComplete:d=>{
       quizActive=false;
-      $('status').textContent='🎉 全部写对了！';
+      addDailyCompletion(CHARS[current].char);
+      $('status').textContent='🎉 全部写对了！今天已完成 '+(loadProgress()[dateKey()]?.chars?.length||1)+' 个字！';
       $('status').className='status ok';
     }
   });
@@ -404,6 +477,9 @@ $('clearBtn').addEventListener('click',()=>{
   else if(mode==='trace'){clearTrace();}
 });
 
+$('finishBtn').addEventListener('click',()=>{
+  if(CHARS.length){addDailyCompletion(CHARS[current].char);$('status').textContent='✓ 已打卡：'+CHARS[current].char+'；今天完成 '+(loadProgress()[dateKey()]?.chars?.length||1)+' 个字';$('status').className='status ok';}
+});
 $('resetBtn').addEventListener('click',()=>{if(CHARS.length)selectChar(0);});
 
 function getStrokeCountHint(){ return '多'; }
@@ -421,9 +497,11 @@ $('selectAllBtn').addEventListener('click',selectAllVisible);
 $('clearAllBtn').addEventListener('click',clearAll);
 $('practiceSelectedBtn').addEventListener('click',startSelectedPractice);
 renderLibrary();
+renderCheckin();
 renderCharBar();
 renderMode();
 window.addEventListener('resize',()=>{if(mode==='trace') setupTraceCanvas();});
+setInterval(renderCheckin,60000);
 })();
 </script>
 </body>
