@@ -12,6 +12,18 @@ button{font:inherit;cursor:pointer;border:0}
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
 h1{margin:0;font-size:25px}
 .sub{color:#78909c;font-size:14px;margin-top:4px}
+ .library-card{background:white;border-radius:20px;padding:15px 16px;margin-bottom:14px;box-shadow:0 5px 20px #0000000b}
+.library-head{display:flex;justify-content:space-between;align-items:center;gap:15px}.library-head h2{margin:0;font-size:18px}
+.library-sub{font-size:13px;color:#78909c;margin-top:4px}.library-actions{display:flex;gap:8px;flex-wrap:wrap}
+.add-online{display:flex;align-items:center;gap:9px;margin:13px 0 5px;padding:11px;background:#f7f9fa;border-radius:13px}
+.addCharInput{width:130px;height:42px;border:1px solid #dfe6ea;border-radius:11px;background:#fff;padding:0 12px;font-size:24px;text-align:center}
+.online-note{font-size:12px;color:#78909c}
+.library-tools{display:flex;gap:9px;margin:12px 0}.search,.groupSelect{height:42px;border:1px solid #dfe6ea;border-radius:11px;background:#fff;padding:0 12px;font:inherit;color:#37474f}
+.search{flex:1;min-width:180px}.groupSelect{min-width:145px}.library-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:8px;max-height:230px;overflow:auto;padding:2px}
+.lib-item{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:72px;border:2px solid #e7edf0;border-radius:13px;background:#fff;user-select:none}
+.lib-item.selected{border-color:#455a64;background:#f0f4f6}.lib-item .hanzi{font-size:29px;line-height:1.05}.lib-item .py{font-size:11px;color:#78909c;margin-top:4px}
+.lib-item input{position:absolute;top:7px;right:7px;width:17px;height:17px;accent-color:#455a64}
+@media(max-width:760px){.library-head{align-items:flex-start;flex-direction:column}.library-tools{flex-direction:column}.library-grid{grid-template-columns:repeat(5,1fr);max-height:250px}}
 .charbar{display:flex;gap:8px;overflow:auto;padding:6px 2px 12px}
 .charbtn{min-width:64px;height:58px;border-radius:14px;background:white;font-size:25px;box-shadow:0 2px 8px #0000000d;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05}.charbtn small{font-size:11px;color:#78909c;margin-top:3px}.charbtn.active small{color:#eceff1}
 .charbtn.active{background:#37474f;color:white}
@@ -42,8 +54,32 @@ h1{margin:0;font-size:25px}
   <button class="secondary" id="resetBtn">重新开始</button>
 </header>
 
+<section class="library-card">
+  <div class="library-head">
+    <div><h2>📚 生字库</h2><div class="library-sub">学生或家长可以自由选择要练习的字，也可以添加新字</div></div>
+    <div class="library-actions">
+      <button class="secondary" id="selectAllBtn">全选</button>
+      <button class="secondary" id="clearAllBtn">清空</button>
+      <button class="primary" id="practiceSelectedBtn">练习已选（0）</button>
+    </div>
+  </div>
+  <div class="add-online">
+  <input id="addCharInput" class="addCharInput" maxlength="2" placeholder="输入新字，例如：龙">
+  <button class="primary" id="addCharBtn">＋ 添加这个字</button>
+  <span class="online-note">输入后会自动尝试取得拼音和笔顺</span>
+</div>
+<div class="library-tools">
+    <input id="searchInput" class="search" type="search" placeholder="🔍 搜索汉字或拼音，例如：昨天 / zuo">
+    <select id="groupSelect" class="groupSelect">
+      <option value="all">全部生字</option>
+      <option value="P1-第一组">P1 · 第一组</option>
+      <option value="P1-第二组">P1 · 第二组</option>
+      <option value="常用">常用字</option><option value="我添加的字">我添加的字</option>
+    </select>
+  </div>
+  <div class="library-grid" id="libraryGrid"></div>
+</section>
 <div class="charbar" id="chars"></div>
-
 <div class="tabs">
   <button class="tab active" data-mode="trace">① 描红</button>
   <button class="tab" data-mode="quiz">② 自己写＋批改</button>
@@ -79,30 +115,101 @@ h1{margin:0;font-size:25px}
 <script>
 (function(){
 'use strict';
-const CHARS=[
-  {char:'昨',pinyin:'zuó'},
-  {char:'明',pinyin:'míng'},
-  {char:'给',pinyin:'gěi'},
-  {char:'快',pinyin:'kuài'},
-  {char:'乐',pinyin:'lè'},
-  {char:'每',pinyin:'měi'},
-  {char:'兔',pinyin:'tù'},
-  {char:'爪',pinyin:'zhǎo'},
-  {char:'尖',pinyin:'jiān'},
-  {char:'园',pinyin:'yuán'}
+const LIBRARY=[
+{char:'昨',pinyin:'zuó',group:'P1-第一组'},{char:'明',pinyin:'míng',group:'P1-第一组'},
+{char:'给',pinyin:'gěi',group:'P1-第一组'},{char:'快',pinyin:'kuài',group:'P1-第一组'},
+{char:'乐',pinyin:'lè',group:'P1-第一组'},{char:'每',pinyin:'měi',group:'P1-第二组'},
+{char:'兔',pinyin:'tù',group:'P1-第二组'},{char:'爪',pinyin:'zhǎo',group:'P1-第二组'},
+{char:'尖',pinyin:'jiān',group:'P1-第二组'},{char:'园',pinyin:'yuán',group:'P1-第二组'},
+{char:'我',pinyin:'wǒ',group:'常用'},{char:'你',pinyin:'nǐ',group:'常用'},
+{char:'他',pinyin:'tā',group:'常用'},{char:'学',pinyin:'xué',group:'常用'},
+{char:'校',pinyin:'xiào',group:'常用'},{char:'家',pinyin:'jiā',group:'常用'},
+{char:'天',pinyin:'tiān',group:'常用'},{char:'大',pinyin:'dà',group:'常用'},
+{char:'小',pinyin:'xiǎo',group:'常用'},{char:'人',pinyin:'rén',group:'常用'},
+{char:'上',pinyin:'shàng',group:'常用'},{char:'下',pinyin:'xià',group:'常用'}
 ];
+function loadSelected(){
+  try{
+    const a=JSON.parse(localStorage.getItem('jordanSelectedChars')||'[]'), seen=new Set();
+    return a.filter(x=>x&&x.char&&!seen.has(x.char)&&seen.add(x.char));
+  }catch(e){return [];}
+}
+let selectedChars=loadSelected().map(x=>LIBRARY.find(y=>y.char===x.char)||x).filter(Boolean);
+let CHARS=selectedChars.length?selectedChars:LIBRARY.slice(0,10);
 let current=0, mode='trace', writer=null, strokeWriter=null, quizActive=false, strokeNo=0;
 
 const $=id=>document.getElementById(id);
 const chars=$('chars');
+function saveSelected(){try{localStorage.setItem('jordanSelectedChars',JSON.stringify(selectedChars));}catch(e){}}
+function updateSelectedButton(){$('practiceSelectedBtn').textContent='练习已选（'+selectedChars.length+'）';}
 
-CHARS.forEach((c,i)=>{
-  const b=document.createElement('button');
-  b.className='charbtn'+(i===0?' active':'');
-  b.innerHTML='<span>'+c.char+'</span><small>'+c.pinyin+'</small>';
-  b.addEventListener('click',()=>selectChar(i));
-  chars.appendChild(b);
-});
+async function addOnlineCharacter(){
+  const input=$('addCharInput');
+  const charsIn=Array.from(input.value.trim()).filter(c=>/[\u3400-\u9fff]/.test(c)).slice(0,10);
+  if(!charsIn.length){
+    $('status').textContent='请输入中文汉字，例如：龙';
+    $('status').className='status bad'; return;
+  }
+  for(const char of charsIn){
+    const existing=LIBRARY.find(x=>x.char===char);
+    if(existing){
+      if(!selectedChars.some(x=>x.char===char)) selectedChars.push(existing);
+      continue;
+    }
+    let pinyin='';
+    try{
+      const r=await fetch('https://v2.alapi.cn/api/pinyin?text='+encodeURIComponent(char));
+      if(r.ok){
+        const d=await r.json();
+        pinyin=d?.data?.pinyin||d?.pinyin||'';
+      }
+    }catch(e){}
+    const item={char,pinyin,group:'我添加的字'};
+    LIBRARY.push(item); selectedChars.push(item);
+  }
+  saveSelected(); renderLibrary(); input.value='';
+  $('status').textContent='已加入生字库。重复的字不会再次添加；查不到拼音时不会乱显示。';
+  $('status').className='status ok';
+}
+function stripTone(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+function renderLibrary(){
+  const q=$('searchInput').value.trim().toLowerCase(), q2=stripTone(q), group=$('groupSelect').value, grid=$('libraryGrid');
+  grid.innerHTML='';
+  LIBRARY.filter(x=>(!q||x.char.includes(q)||x.pinyin.toLowerCase().includes(q)||stripTone(x.pinyin).includes(q2))&&(group==='all'||x.group===group)).forEach(item=>{
+    const d=document.createElement('label'); const checked=selectedChars.some(x=>x.char===item.char);
+    d.className='lib-item '+(checked?'selected':'');
+    d.innerHTML='<input type="checkbox" '+(checked?'checked':'')+'><span class="hanzi">'+item.char+'</span><span class="py">'+item.pinyin+'</span>';
+    d.querySelector('input').addEventListener('change',()=>toggleSelected(item));
+    grid.appendChild(d);
+  }); updateSelectedButton();
+}
+function toggleSelected(item){
+  const i=selectedChars.findIndex(x=>x.char===item.char);
+  if(i>=0)selectedChars.splice(i,1); else selectedChars.push(item);
+  saveSelected();renderLibrary();
+}
+function visibleItems(){
+  const q=$('searchInput').value.trim().toLowerCase(), q2=stripTone(q), group=$('groupSelect').value;
+  return LIBRARY.filter(x=>(!q||x.char.includes(q)||x.pinyin.toLowerCase().includes(q)||stripTone(x.pinyin).includes(q2))&&(group==='all'||x.group===group));
+}
+function selectAllVisible(){visibleItems().forEach(x=>{if(!selectedChars.some(y=>y.char===x.char))selectedChars.push(x);});saveSelected();renderLibrary();}
+function clearAll(){selectedChars=[];saveSelected();renderLibrary();}
+function startSelectedPractice(){
+  if(!selectedChars.length){$('status').textContent='请先在生字库选择至少一个字';$('status').className='status bad';return;}
+  CHARS=selectedChars.slice();current=0;destroyWriters();renderCharBar();
+  $('bigChar').textContent=CHARS[0].char;$('pinyin').textContent=CHARS[0].pinyin;strokeNo=0;renderMode();
+}
+function renderCharBar(){
+  chars.innerHTML='';
+  CHARS.forEach((item,i)=>{
+    const b=document.createElement('button');b.className='charbtn'+(i===current?' active':'');
+    b.innerHTML='<span>'+item.char+'</span><small>'+item.pinyin+'</small>';
+    b.addEventListener('click',()=>selectChar(i));chars.appendChild(b);
+  });
+}
+
+
+
 
 function safe(fn){
   try{return fn()}catch(e){console.error(e); return null}
@@ -297,7 +404,7 @@ $('clearBtn').addEventListener('click',()=>{
   else if(mode==='trace'){clearTrace();}
 });
 
-$('resetBtn').addEventListener('click',()=>{selectChar(0);});
+$('resetBtn').addEventListener('click',()=>{if(CHARS.length)selectChar(0);});
 
 function getStrokeCountHint(){ return '多'; }
 
@@ -306,6 +413,15 @@ document.querySelectorAll('.stage').forEach(el=>{
   el.addEventListener('touchstart',e=>{if(mode==='quiz')e.preventDefault()},{passive:false});
 });
 
+$('addCharBtn').addEventListener('click',addOnlineCharacter);
+$('addCharInput').addEventListener('keydown',e=>{if(e.key==='Enter')addOnlineCharacter();});
+$('searchInput').addEventListener('input',renderLibrary);
+$('groupSelect').addEventListener('change',renderLibrary);
+$('selectAllBtn').addEventListener('click',selectAllVisible);
+$('clearAllBtn').addEventListener('click',clearAll);
+$('practiceSelectedBtn').addEventListener('click',startSelectedPractice);
+renderLibrary();
+renderCharBar();
 renderMode();
 window.addEventListener('resize',()=>{if(mode==='trace') setupTraceCanvas();});
 })();
