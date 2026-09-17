@@ -13,7 +13,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;ma
 h1{margin:0;font-size:25px}
 .sub{color:#78909c;font-size:14px;margin-top:4px}
 .charbar{display:flex;gap:8px;overflow:auto;padding:6px 2px 12px}
-.charbtn{min-width:48px;height:48px;border-radius:14px;background:white;font-size:25px;box-shadow:0 2px 8px #0000000d}
+.charbtn{min-width:64px;height:58px;border-radius:14px;background:white;font-size:25px;box-shadow:0 2px 8px #0000000d;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05}.charbtn small{font-size:11px;color:#78909c;margin-top:3px}.charbtn.active small{color:#eceff1}
 .charbtn.active{background:#37474f;color:white}
 .tabs{display:flex;gap:8px;margin-bottom:14px}
 .tab{flex:1;padding:12px 8px;border-radius:14px;background:white;color:#546e7a;font-weight:700}
@@ -29,7 +29,7 @@ h1{margin:0;font-size:25px}
 .controls{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-top:12px}
 .primary,.secondary{padding:11px 17px;border-radius:12px;font-weight:700}
 .primary{background:#455a64;color:#fff}.secondary{background:#eceff1;color:#37474f}
-.bigchar{text-align:center;font-size:110px;line-height:1;margin:12px 0 16px;font-family:"Kaiti SC","STKaiti","KaiTi",serif}
+.word-info{display:flex;align-items:center;justify-content:center;gap:14px;margin:8px 0 16px}.bigchar{text-align:center;font-size:110px;cursor:pointer;line-height:1;margin:0;font-family:"Kaiti SC","STKaiti","KaiTi",serif}.pinyin{font-size:30px;font-weight:700;color:#546e7a;min-width:78px}.soundBtn{width:48px;height:48px;border-radius:50%;background:#eaf1ff;font-size:24px}.soundBtn:active{transform:scale(.95)}
 .status{text-align:center;font-weight:700;min-height:24px}
 .ok{color:#2e7d32}.bad{color:#c62828}
 @media(max-width:760px){.app{padding:12px}.grid{grid-template-columns:1fr}h1{font-size:21px}.bigchar{font-size:88px}}
@@ -64,7 +64,7 @@ h1{margin:0;font-size:25px}
 
   <section class="card">
     <h2>正确笔顺示范</h2>
-    <div class="bigchar" id="bigChar">昨</div>
+    <div class="word-info"><div class="bigchar" id="bigChar">昨</div><div class="pinyin" id="pinyin">zuó</div><button class="soundBtn" id="soundBtn" aria-label="播放读音">🔊</button></div>
     <div class="stage"><div id="strokeWriter" class="writer"></div></div>
     <div class="hint" id="strokeHint">第 1 笔开始</div>
     <div class="controls">
@@ -79,7 +79,18 @@ h1{margin:0;font-size:25px}
 <script>
 (function(){
 'use strict';
-const CHARS=['昨','明','给','快','乐','每','兔','爪','尖','园'];
+const CHARS=[
+  {char:'昨',pinyin:'zuó'},
+  {char:'明',pinyin:'míng'},
+  {char:'给',pinyin:'gěi'},
+  {char:'快',pinyin:'kuài'},
+  {char:'乐',pinyin:'lè'},
+  {char:'每',pinyin:'měi'},
+  {char:'兔',pinyin:'tù'},
+  {char:'爪',pinyin:'zhǎo'},
+  {char:'尖',pinyin:'jiān'},
+  {char:'园',pinyin:'yuán'}
+];
 let current=0, mode='trace', writer=null, strokeWriter=null, quizActive=false, strokeNo=0;
 
 const $=id=>document.getElementById(id);
@@ -88,7 +99,7 @@ const chars=$('chars');
 CHARS.forEach((c,i)=>{
   const b=document.createElement('button');
   b.className='charbtn'+(i===0?' active':'');
-  b.textContent=c;
+  b.innerHTML='<span>'+c.char+'</span><small>'+c.pinyin+'</small>';
   b.addEventListener('click',()=>selectChar(i));
   chars.appendChild(b);
 });
@@ -100,7 +111,7 @@ function safe(fn){
 function selectChar(i){
   current=i;
   document.querySelectorAll('.charbtn').forEach((b,n)=>b.classList.toggle('active',n===i));
-  $('bigChar').textContent=CHARS[current];
+  $('bigChar').textContent=CHARS[current].char;
   strokeNo=0;
   $('strokeHint').textContent='第 1 笔开始';
   destroyWriters();
@@ -119,8 +130,8 @@ function destroyWriters(){
 
 function makeStrokeWriter(){
   if(!window.HanziWriter) return false;
-  strokeWriter=HanziWriter.create('strokeWriter',CHARS[current],{
-    width:330,height:330,padding:20,showCharacter:false,showOutline:false,
+  strokeWriter=HanziWriter.create('strokeWriter',CHARS[current].char,{
+    width:480,height:480,padding:8,showCharacter:false,showOutline:false,
     strokeAnimationSpeed:1.1,
     onLoadCharDataError:()=>{$('strokeHint').textContent='笔顺数据加载失败，请检查网络';}
   });
@@ -133,8 +144,8 @@ function makeQuiz(){
     $('status').className='status bad';
     return;
   }
-  writer=HanziWriter.create('writer',CHARS[current],{
-    width:330,height:330,padding:20,showCharacter:false,showOutline:false,
+  writer=HanziWriter.create('writer',CHARS[current].char,{
+    width:480,height:480,padding:8,showCharacter:false,showOutline:false,
     drawingWidth:18,showHintAfterMisses:2,highlightOnComplete:true,
     onLoadCharDataError:()=>{$('status').textContent='笔顺数据加载失败';$('status').className='status bad';}
   });
@@ -165,8 +176,8 @@ function makeTrace(){
   }
   $('practiceCanvas').style.display='block';
   $('practiceStage').classList.add('trace-mode');
-  writer=HanziWriter.create('writer',CHARS[current],{
-    width:430,height:430,padding:35,showCharacter:true,showOutline:false,
+  writer=HanziWriter.create('writer',CHARS[current].char,{
+    width:480,height:480,padding:8,showCharacter:true,showOutline:false,
     strokeColor:'#b0bec5',outlineColor:'#cfd8dc',
     strokeAnimationSpeed:1
   });
@@ -219,9 +230,27 @@ function clearTrace(){
   ctx.clearRect(0,0,canvas.clientWidth,canvas.clientHeight);
 }
 
+
+function speakCurrent(){
+  const item=CHARS[current];
+  if(!('speechSynthesis' in window)){
+    $('status').textContent='这个浏览器不支持朗读';
+    $('status').className='status bad';
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(item.char);
+  u.lang='zh-CN';
+  u.rate=0.72;
+  u.pitch=1;
+  window.speechSynthesis.speak(u);
+}
+$('soundBtn').addEventListener('click',speakCurrent);
+$('bigChar').addEventListener('click',speakCurrent);
+
 function renderMode(){
   $('leftTitle').textContent=mode==='trace'?'描红':mode==='quiz'?'自己写＋批改':'笔顺示范';
-  $('hint').textContent=mode==='trace'?'沿着灰色笔画慢慢写':mode==='quiz'?'按正确笔顺写，写错会提示':'右边播放正确笔顺';
+  $('hint').textContent=mode==='trace'?'沿着浅灰色笔画写；点击 🔊 可以听读音':mode==='quiz'?'按正确笔顺写，写错会提示':'点击 🔊 听读音，右边播放正确笔顺';
   $('status').textContent='';
   $('status').className='status';
   $('practiceCanvas').style.display=mode==='trace'?'block':'none';
