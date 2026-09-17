@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Jordan 中文练字 V6</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f6f8fb;color:#263238}
+button{font:inherit;cursor:pointer;border:0}
+.app{max-width:1100px;margin:auto;padding:18px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+h1{margin:0;font-size:25px}
+.sub{color:#78909c;font-size:14px;margin-top:4px}
+.charbar{display:flex;gap:8px;overflow:auto;padding:6px 2px 12px}
+.charbtn{min-width:48px;height:48px;border-radius:14px;background:white;font-size:25px;box-shadow:0 2px 8px #0000000d}
+.charbtn.active{background:#37474f;color:white}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tab{flex:1;padding:12px 8px;border-radius:14px;background:white;color:#546e7a;font-weight:700}
+.tab.active{background:#455a64;color:white}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:white;border-radius:22px;padding:16px;box-shadow:0 5px 20px #0000000b}
+.card h2{font-size:18px;margin:0 0 10px}
+.stage{width:100%;max-width:500px;margin:auto;aspect-ratio:1;border-radius:18px;background:#fff;border:2px solid #eceff1;overflow:hidden;position:relative;touch-action:none}
+.stage.gridbg{background-image:linear-gradient(#eceff1 1px,transparent 1px),linear-gradient(90deg,#eceff1 1px,transparent 1px);background-size:25% 25%;background-position:center}
+.writer{width:100%;height:100%}
+#practiceCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+.hint{font-size:14px;color:#78909c;margin:10px 0;text-align:center;min-height:20px}
+.controls{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+.primary,.secondary{padding:11px 17px;border-radius:12px;font-weight:700}
+.primary{background:#455a64;color:#fff}.secondary{background:#eceff1;color:#37474f}
+.bigchar{text-align:center;font-size:110px;line-height:1;margin:12px 0 16px;font-family:"Kaiti SC","STKaiti","KaiTi",serif}
+.status{text-align:center;font-weight:700;min-height:24px}
+.ok{color:#2e7d32}.bad{color:#c62828}
+@media(max-width:760px){.app{padding:12px}.grid{grid-template-columns:1fr}h1{font-size:21px}.bigchar{font-size:88px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div><h1>✏️ Jordan 中文练字</h1><div class="sub">V6 · 鼠标 / Apple Pencil 都可以练</div></div>
+  <button class="secondary" id="resetBtn">重新开始</button>
+</header>
+
+<div class="charbar" id="chars"></div>
+
+<div class="tabs">
+  <button class="tab active" data-mode="trace">① 描红</button>
+  <button class="tab" data-mode="quiz">② 自己写＋批改</button>
+  <button class="tab" data-mode="stroke">③ 看正确笔顺</button>
+</div>
+
+<div class="grid">
+  <section class="card">
+    <h2 id="leftTitle">描红</h2>
+    <div class="stage gridbg"><div id="writer" class="writer"></div><canvas id="practiceCanvas"></canvas></div>
+    <div class="hint" id="hint">沿着灰色笔画慢慢写</div>
+    <div class="controls">
+      <button class="primary" id="startBtn">开始练习</button>
+      <button class="secondary" id="clearBtn">清除</button>
+    </div>
+    <div class="status" id="status"></div>
+  </section>
+
+  <section class="card">
+    <h2>正确笔顺示范</h2>
+    <div class="bigchar" id="bigChar">昨</div>
+    <div class="stage"><div id="strokeWriter" class="writer"></div></div>
+    <div class="hint" id="strokeHint">第 1 笔开始</div>
+    <div class="controls">
+      <button class="primary" id="playBtn">▶ 播放笔顺</button>
+      <button class="secondary" id="nextStrokeBtn">下一笔</button>
+    </div>
+  </section>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+<script>
+(function(){
+'use strict';
+const CHARS=['昨','明','给','快','乐','每','兔','爪','尖','园'];
+let current=0, mode='trace', writer=null, strokeWriter=null, quizActive=false, strokeNo=0;
+
+const $=id=>document.getElementById(id);
+const chars=$('chars');
+
+CHARS.forEach((c,i)=>{
+  const b=document.createElement('button');
+  b.className='charbtn'+(i===0?' active':'');
+  b.textContent=c;
+  b.addEventListener('click',()=>selectChar(i));
+  chars.appendChild(b);
+});
+
+function safe(fn){
+  try{return fn()}catch(e){console.error(e); return null}
+}
+
+function selectChar(i){
+  current=i;
+  document.querySelectorAll('.charbtn').forEach((b,n)=>b.classList.toggle('active',n===i));
+  $('bigChar').textContent=CHARS[current];
+  strokeNo=0;
+  $('strokeHint').textContent='第 1 笔开始';
+  destroyWriters();
+  renderMode();
+}
+
+function destroyWriters(){
+  safe(()=>writer && writer.cancelQuiz && writer.cancelQuiz());
+  writer=null; strokeWriter=null; quizActive=false;
+  $('writer').innerHTML='';
+  $('strokeWriter').innerHTML='';
+  const c=$('practiceCanvas'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
+}
+
+function makeStrokeWriter(){
+  if(!window.HanziWriter) return false;
+  strokeWriter=HanziWriter.create('strokeWriter',CHARS[current],{
+    width:330,height:330,padding:20,showCharacter:false,showOutline:false,
+    strokeAnimationSpeed:1.1,
+    onLoadCharDataError:()=>{$('strokeHint').textContent='笔顺数据加载失败，请检查网络';}
+  });
+  return true;
+}
+
+function makeQuiz(){
+  if(!window.HanziWriter){
+    $('status').textContent='笔顺库还没加载，请检查网络后刷新';
+    $('status').className='status bad';
+    return;
+  }
+  writer=HanziWriter.create('writer',CHARS[current],{
+    width:330,height:330,padding:20,showCharacter:false,showOutline:false,
+    drawingWidth:18,showHintAfterMisses:2,highlightOnComplete:true,
+    onLoadCharDataError:()=>{$('status').textContent='笔顺数据加载失败';$('status').className='status bad';}
+  });
+  writer.quiz({
+    showHintAfterMisses:2,
+    onCorrectStroke:d=>{
+      $('status').textContent='✓ 第 '+(d.strokeNum+1)+' 笔正确！';
+      $('status').className='status ok';
+    },
+    onMistake:d=>{
+      $('status').textContent='再试一次这一笔 🙂';
+      $('status').className='status bad';
+    },
+    onComplete:d=>{
+      quizActive=false;
+      $('status').textContent='🎉 全部写对了！';
+      $('status').className='status ok';
+    }
+  });
+  quizActive=true;
+}
+
+function makeTrace(){
+  if(!window.HanziWriter){
+    $('status').textContent='笔顺库还没加载，请检查网络后刷新';
+    $('status').className='status bad';
+    return;
+  }
+  writer=HanziWriter.create('writer',CHARS[current],{
+    width:330,height:330,padding:20,showCharacter:true,showOutline:true,
+    strokeAnimationSpeed:1
+  });
+}
+
+function renderMode(){
+  $('leftTitle').textContent=mode==='trace'?'描红':mode==='quiz'?'自己写＋批改':'笔顺示范';
+  $('hint').textContent=mode==='trace'?'沿着灰色笔画慢慢写':mode==='quiz'?'按正确笔顺写，写错会提示':'右边播放正确笔顺';
+  $('status').textContent='';
+  $('status').className='status';
+  $('practiceCanvas').style.display=mode==='quiz'?'none':'none';
+  if(mode==='trace') makeTrace();
+  if(mode==='quiz') makeQuiz();
+  if(mode==='stroke') makeStrokeWriter();
+}
+
+document.querySelectorAll('.tab').forEach(b=>{
+  b.addEventListener('click',()=>{
+    mode=b.dataset.mode;
+    document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));
+    destroyWriters(); renderMode();
+  });
+});
+
+$('playBtn').addEventListener('click',()=>{
+  if(!strokeWriter) makeStrokeWriter();
+  if(strokeWriter) {
+    strokeNo=0;
+    $('strokeHint').textContent='正在播放正确笔顺…';
+    strokeWriter.animateCharacter({onComplete:()=>{$('strokeHint').textContent='完成！共 '+getStrokeCountHint()+' 笔';}});
+  }
+});
+
+$('nextStrokeBtn').addEventListener('click',()=>{
+  if(!strokeWriter) makeStrokeWriter();
+  if(!strokeWriter) return;
+  strokeWriter.animateStroke(strokeNo,{onComplete:()=>{}});
+  strokeNo++;
+  $('strokeHint').textContent='第 '+strokeNo+' 笔';
+  if(strokeNo>20) strokeNo=0;
+});
+
+$('startBtn').addEventListener('click',()=>{
+  if(mode==='quiz'){destroyWriters();makeQuiz();}
+  else if(mode==='trace'){destroyWriters();makeTrace();}
+  else {makeStrokeWriter();}
+});
+
+$('clearBtn').addEventListener('click',()=>{
+  if(mode==='quiz' && writer){ safe(()=>writer.cancelQuiz()); makeQuiz(); }
+  else if(mode==='trace'){destroyWriters();makeTrace();}
+});
+
+$('resetBtn').addEventListener('click',()=>{selectChar(0);});
+
+function getStrokeCountHint(){ return '多'; }
+
+// Prevent iPad browser gestures inside practice area
+document.querySelectorAll('.stage').forEach(el=>{
+  el.addEventListener('touchstart',e=>{if(mode==='quiz')e.preventDefault()},{passive:false});
+});
+
+renderMode();
+})();
+</script>
+</body>
+</html>
