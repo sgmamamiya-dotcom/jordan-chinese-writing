@@ -23,9 +23,9 @@ h1{margin:0;font-size:25px}
 .card h2{font-size:18px;margin:0 0 10px}
 .stage{width:100%;max-width:500px;margin:auto;aspect-ratio:1;border-radius:18px;background:#fff;border:2px solid #eceff1;overflow:hidden;position:relative;touch-action:none}
 .stage.gridbg{background-image:linear-gradient(#eceff1 1px,transparent 1px),linear-gradient(90deg,#eceff1 1px,transparent 1px);background-size:25% 25%;background-position:center}
-.writer{width:100%;height:100%}
-#practiceCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
-.hint{font-size:14px;color:#78909c;margin:10px 0;text-align:center;min-height:20px}
+.writer{width:100%;height:100%;display:flex;align-items:center;justify-content:center}.writer canvas{display:block!important}
+#practiceCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;z-index:5;display:none;cursor:crosshair}
+.hint{font-size:14px;color:#78909c;margin:10px 0;text-align:center;min-height:20px}.trace-mode .guide{opacity:.22!important}
 .controls{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-top:12px}
 .primary,.secondary{padding:11px 17px;border-radius:12px;font-weight:700}
 .primary{background:#455a64;color:#fff}.secondary{background:#eceff1;color:#37474f}
@@ -53,7 +53,7 @@ h1{margin:0;font-size:25px}
 <div class="grid">
   <section class="card">
     <h2 id="leftTitle">描红</h2>
-    <div class="stage gridbg"><div id="writer" class="writer"></div><canvas id="practiceCanvas"></canvas></div>
+    <div class="stage gridbg" id="practiceStage"><div id="writer" class="writer"></div><canvas id="practiceCanvas"></canvas></div>
     <div class="hint" id="hint">沿着灰色笔画慢慢写</div>
     <div class="controls">
       <button class="primary" id="startBtn">开始练习</button>
@@ -112,6 +112,8 @@ function destroyWriters(){
   writer=null; strokeWriter=null; quizActive=false;
   $('writer').innerHTML='';
   $('strokeWriter').innerHTML='';
+  $('practiceStage').classList.remove('trace-mode');
+  $('practiceCanvas').style.display='none';
   const c=$('practiceCanvas'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
 }
 
@@ -161,10 +163,60 @@ function makeTrace(){
     $('status').className='status bad';
     return;
   }
+  $('practiceCanvas').style.display='block';
+  $('practiceStage').classList.add('trace-mode');
   writer=HanziWriter.create('writer',CHARS[current],{
-    width:330,height:330,padding:20,showCharacter:true,showOutline:true,
+    width:430,height:430,padding:35,showCharacter:true,showOutline:false,
+    strokeColor:'#b0bec5',outlineColor:'#cfd8dc',
     strokeAnimationSpeed:1
   });
+  setupTraceCanvas();
+}
+
+
+function setupTraceCanvas(){
+  const canvas=$('practiceCanvas'), stage=$('practiceStage');
+  const rect=stage.getBoundingClientRect();
+  const dpr=Math.max(1,window.devicePixelRatio||1);
+  canvas.width=Math.round(rect.width*dpr);
+  canvas.height=Math.round(rect.height*dpr);
+  canvas.style.width=rect.width+'px';
+  canvas.style.height=rect.height+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.lineCap='round';
+  ctx.lineJoin='round';
+  ctx.lineWidth=Math.max(6,rect.width*0.018);
+  ctx.strokeStyle='#455a64';
+  let drawing=false,last=null;
+
+  function point(e){
+    const r=canvas.getBoundingClientRect();
+    return {x:e.clientX-r.left,y:e.clientY-r.top};
+  }
+  canvas.onpointerdown=function(e){
+    if(mode!=='trace') return;
+    e.preventDefault();
+    drawing=true; last=point(e);
+    canvas.setPointerCapture?.(e.pointerId);
+    ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(last.x,last.y);ctx.stroke();
+  };
+  canvas.onpointermove=function(e){
+    if(!drawing) return;
+    e.preventDefault();
+    const q=point(e);
+    ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(q.x,q.y);ctx.stroke();
+    last=q;
+  };
+  canvas.onpointerup=canvas.onpointercancel=function(e){
+    drawing=false;last=null;
+  };
+}
+
+function clearTrace(){
+  const canvas=$('practiceCanvas');
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.clientWidth,canvas.clientHeight);
 }
 
 function renderMode(){
@@ -172,7 +224,8 @@ function renderMode(){
   $('hint').textContent=mode==='trace'?'沿着灰色笔画慢慢写':mode==='quiz'?'按正确笔顺写，写错会提示':'右边播放正确笔顺';
   $('status').textContent='';
   $('status').className='status';
-  $('practiceCanvas').style.display=mode==='quiz'?'none':'none';
+  $('practiceCanvas').style.display=mode==='trace'?'block':'none';
+  $('practiceStage').classList.toggle('trace-mode',mode==='trace');
   if(mode==='trace') makeTrace();
   if(mode==='quiz') makeQuiz();
   if(mode==='stroke') makeStrokeWriter();
@@ -206,13 +259,13 @@ $('nextStrokeBtn').addEventListener('click',()=>{
 
 $('startBtn').addEventListener('click',()=>{
   if(mode==='quiz'){destroyWriters();makeQuiz();}
-  else if(mode==='trace'){destroyWriters();makeTrace();}
+  else if(mode==='trace'){clearTrace();}
   else {makeStrokeWriter();}
 });
 
 $('clearBtn').addEventListener('click',()=>{
   if(mode==='quiz' && writer){ safe(()=>writer.cancelQuiz()); makeQuiz(); }
-  else if(mode==='trace'){destroyWriters();makeTrace();}
+  else if(mode==='trace'){clearTrace();}
 });
 
 $('resetBtn').addEventListener('click',()=>{selectChar(0);});
@@ -225,6 +278,7 @@ document.querySelectorAll('.stage').forEach(el=>{
 });
 
 renderMode();
+window.addEventListener('resize',()=>{if(mode==='trace') setupTraceCanvas();});
 })();
 </script>
 </body>
