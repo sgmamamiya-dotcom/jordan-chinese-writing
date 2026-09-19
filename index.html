@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Jordan 中文练字 V6</title>
+<title>Jordan 中文练字 V16</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f6f8fb;color:#263238}
@@ -40,9 +40,9 @@ h1{margin:0;font-size:25px}
 .tabs{display:flex;gap:8px;margin-bottom:14px}
 .tab{flex:1;padding:12px 8px;border-radius:14px;background:white;color:#546e7a;font-weight:700}
 .tab.active{background:#455a64;color:white}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid{display:grid;grid-template-columns:1fr;gap:16px}
 .card{background:white;border-radius:22px;padding:16px;box-shadow:0 5px 20px #0000000b}
-.card h2{font-size:18px;margin:0 0 10px}
+.card h2{font-size:18px;margin:0}.card-head{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px}.sound-row{display:flex;align-items:center;gap:8px}
 .stage{width:100%;max-width:500px;margin:auto;aspect-ratio:1;border-radius:18px;background:#fff;border:2px solid #eceff1;overflow:hidden;position:relative;touch-action:none}
 .stage.gridbg{background-image:linear-gradient(#eceff1 1px,transparent 1px),linear-gradient(90deg,#eceff1 1px,transparent 1px);background-size:25% 25%;background-position:center}
 .writer{width:100%;height:100%;display:flex;align-items:center;justify-content:center}.writer canvas{display:block!important}
@@ -51,16 +51,16 @@ h1{margin:0;font-size:25px}
 .controls{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-top:12px}
 .primary,.secondary{padding:11px 17px;border-radius:12px;font-weight:700}
 .primary{background:#455a64;color:#fff}.secondary{background:#eceff1;color:#37474f}
-.word-info{display:flex;align-items:center;justify-content:center;gap:14px;margin:8px 0 16px}.bigchar{text-align:center;font-size:110px;cursor:pointer;line-height:1;margin:0;font-family:"Kaiti SC","STKaiti","KaiTi",serif}.pinyin{font-size:30px;font-weight:700;color:#546e7a;min-width:78px}.soundBtn{width:48px;height:48px;border-radius:50%;background:#eaf1ff;font-size:24px}.soundBtn:active{transform:scale(.95)}
+.practice-word-info{display:flex;align-items:center;justify-content:center;gap:12px;margin:2px 0 12px}.practice-char{font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:54px;line-height:1}.practice-pinyin{font-size:24px;font-weight:700;color:#546e7a}.soundBtn{width:44px;height:44px;border-radius:50%;background:#eaf1ff;font-size:22px}.soundBtn:active{transform:scale(.95)}
 .status{text-align:center;font-weight:700;min-height:24px}
 .ok{color:#2e7d32}.bad{color:#c62828}
-@media(max-width:760px){.app{padding:12px}.grid{grid-template-columns:1fr}h1{font-size:21px}.bigchar{font-size:88px}}
+@media(max-width:760px){.app{padding:12px}h1{font-size:21px}}
 </style>
 </head>
 <body>
 <div class="app">
 <header>
-  <div><h1>✏️ Jordan 中文练字</h1><div class="sub">V6 · 鼠标 / Apple Pencil 都可以练</div></div>
+  <div><h1>✏️ Jordan 中文练字</h1><div class="sub">鼠标 / Apple Pencil 都可以练</div></div>
   <button class="secondary" id="resetBtn">重新开始</button>
 </header>
 
@@ -94,9 +94,9 @@ h1{margin:0;font-size:25px}
     </div>
   </div>
   <div class="add-online">
-  <input id="addCharInput" class="addCharInput" maxlength="2" placeholder="输入新字，例如：龙">
-  <button class="primary" id="addCharBtn">＋ 添加这个字</button>
-  <span class="online-note">输入后会自动尝试取得拼音和笔顺</span>
+  <input id="addCharInput" class="addCharInput" maxlength="50" placeholder="一次输入多个字，例如：学校老师同学朋友">
+  <button class="primary" id="addCharBtn">＋ 批量添加生字</button>
+  <span class="online-note">一次输入多个字，重复字会自动去重</span>
 </div>
 <div class="library-tools">
     <input id="searchInput" class="search" type="search" placeholder="🔍 搜索汉字或拼音，例如：昨天 / zuo">
@@ -113,12 +113,11 @@ h1{margin:0;font-size:25px}
 <div class="tabs">
   <button class="tab active" data-mode="trace">① 描红</button>
   <button class="tab" data-mode="quiz">② 自己写＋批改</button>
-  <button class="tab" data-mode="stroke">③ 看正确笔顺</button>
-</div>
+  </div>
 
 <div class="grid">
   <section class="card">
-    <h2 id="leftTitle">描红</h2>
+    <div class="card-head"><h2 id="leftTitle">描红</h2><div class="sound-row"><span id="practicePinyin" class="practice-pinyin">zuó</span><button class="soundBtn" id="soundBtn" aria-label="播放读音">🔊</button></div></div>
     <div class="stage gridbg" id="practiceStage"><div id="writer" class="writer"></div><canvas id="practiceCanvas"></canvas></div>
     <div class="hint" id="hint">沿着灰色笔画慢慢写</div>
     <div class="controls">
@@ -128,16 +127,6 @@ h1{margin:0;font-size:25px}
     <div class="status" id="status"></div>
   </section>
 
-  <section class="card">
-    <h2>正确笔顺示范</h2>
-    <div class="word-info"><div class="bigchar" id="bigChar">昨</div><div class="pinyin" id="pinyin">zuó</div><button class="soundBtn" id="soundBtn" aria-label="播放读音">🔊</button></div>
-    <div class="stage"><div id="strokeWriter" class="writer"></div></div>
-    <div class="hint" id="strokeHint">第 1 笔开始</div>
-    <div class="controls">
-      <button class="primary" id="playBtn">▶ 播放笔顺</button>
-      <button class="secondary" id="nextStrokeBtn">下一笔</button>
-    </div>
-  </section>
 </div>
 </div>
 
@@ -166,7 +155,7 @@ function loadSelected(){
 }
 let selectedChars=loadSelected().map(x=>LIBRARY.find(y=>y.char===x.char)||x).filter(Boolean);
 let CHARS=selectedChars.length?selectedChars:LIBRARY.slice(0,10);
-let current=0, mode='trace', writer=null, strokeWriter=null, quizActive=false, strokeNo=0;
+let current=0, mode='trace', writer=null, quizActive=false;
 
 const $=id=>document.getElementById(id);
 const chars=$('chars');
@@ -175,7 +164,7 @@ function updateSelectedButton(){$('practiceSelectedBtn').textContent='练习已�
 
 async function addOnlineCharacter(){
   const input=$('addCharInput');
-  const charsIn=Array.from(input.value.trim()).filter(c=>/[\u3400-\u9fff]/.test(c)).slice(0,10);
+  const charsIn=Array.from(input.value.trim()).filter(c=>/[\u3400-\u9fff]/.test(c));
   if(!charsIn.length){
     $('status').textContent='请输入中文汉字，例如：龙';
     $('status').className='status bad'; return;
@@ -269,10 +258,11 @@ function clearAll(){selectedChars=[];saveSelected();renderLibrary();}
 function startSelectedPractice(){
   if(!selectedChars.length){$('status').textContent='请先在生字库选择至少一个字';$('status').className='status bad';return;}
   CHARS=selectedChars.slice();current=0;destroyWriters();renderCharBar();
-  $('bigChar').textContent=CHARS[0].char;$('pinyin').textContent=CHARS[0].pinyin;strokeNo=0;renderMode();
+  renderMode();
 }
 function renderCharBar(){
   chars.innerHTML='';
+  renderPracticeWordInfo();
   CHARS.forEach((item,i)=>{
     const b=document.createElement('button');b.className='charbtn'+(i===current?' active':'');
     b.innerHTML='<span>'+item.char+'</span><small>'+item.pinyin+'</small>';
@@ -287,35 +277,29 @@ function safe(fn){
   try{return fn()}catch(e){console.error(e); return null}
 }
 
+function renderPracticeWordInfo(){
+  const item=CHARS[current];
+  if(!item) return;
+  $('practicePinyin').textContent=item.pinyin||'';
+}
+
 function selectChar(i){
   current=i;
+  renderPracticeWordInfo();
   document.querySelectorAll('.charbtn').forEach((b,n)=>b.classList.toggle('active',n===i));
-  $('bigChar').textContent=CHARS[current].char;
-  strokeNo=0;
-  $('strokeHint').textContent='第 1 笔开始';
   destroyWriters();
   renderMode();
 }
 
 function destroyWriters(){
   safe(()=>writer && writer.cancelQuiz && writer.cancelQuiz());
-  writer=null; strokeWriter=null; quizActive=false;
+  writer=null;  quizActive=false;
   $('writer').innerHTML='';
-  $('strokeWriter').innerHTML='';
   $('practiceStage').classList.remove('trace-mode');
   $('practiceCanvas').style.display='none';
   const c=$('practiceCanvas'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
 }
 
-function makeStrokeWriter(){
-  if(!window.HanziWriter) return false;
-  strokeWriter=HanziWriter.create('strokeWriter',CHARS[current].char,{
-    width:480,height:480,padding:8,showCharacter:false,showOutline:false,
-    strokeAnimationSpeed:1.1,
-    onLoadCharDataError:()=>{$('strokeHint').textContent='笔顺数据加载失败，请检查网络';}
-  });
-  return true;
-}
 
 function makeQuiz(){
   if(!window.HanziWriter){
@@ -357,11 +341,14 @@ function makeTrace(){
   $('practiceCanvas').style.display='block';
   $('practiceStage').classList.add('trace-mode');
   writer=HanziWriter.create('writer',CHARS[current].char,{
-    width:480,height:480,padding:8,showCharacter:true,showOutline:false,
+    width:480,height:480,padding:8,showCharacter:false,showOutline:false,
     strokeColor:'#b0bec5',outlineColor:'#cfd8dc',
-    strokeAnimationSpeed:1
+    strokeAnimationSpeed:1,
+    drawingFadeDuration:300
   });
   setupTraceCanvas();
+  // 描红模式先自动播放正确笔顺，学生可以跟着一笔一划描。
+  setTimeout(()=>{ if(writer && mode==='trace') writer.animateCharacter(); },180);
 }
 
 
@@ -411,6 +398,8 @@ function clearTrace(){
 }
 
 
+$('soundBtn').addEventListener('click',speakCurrent);
+
 function speakCurrent(){
   const item=CHARS[current];
   if(!('speechSynthesis' in window)){
@@ -425,19 +414,15 @@ function speakCurrent(){
   u.pitch=1;
   window.speechSynthesis.speak(u);
 }
-$('soundBtn').addEventListener('click',speakCurrent);
-$('bigChar').addEventListener('click',speakCurrent);
-
 function renderMode(){
-  $('leftTitle').textContent=mode==='trace'?'描红':mode==='quiz'?'自己写＋批改':'笔顺示范';
-  $('hint').textContent=mode==='trace'?'沿着浅灰色笔画写；点击 🔊 可以听读音':mode==='quiz'?'按正确笔顺写，写错会提示':'点击 🔊 听读音，右边播放正确笔顺';
+  $('leftTitle').textContent=mode==='trace'?'描红':'自己写＋批改';
+  $('hint').textContent=mode==='trace'?'沿着浅灰色笔画写；点击 🔊 可以听读音':'按正确笔顺写，写错会提示';
   $('status').textContent='';
   $('status').className='status';
   $('practiceCanvas').style.display=mode==='trace'?'block':'none';
   $('practiceStage').classList.toggle('trace-mode',mode==='trace');
   if(mode==='trace') makeTrace();
   if(mode==='quiz') makeQuiz();
-  if(mode==='stroke') makeStrokeWriter();
 }
 
 document.querySelectorAll('.tab').forEach(b=>{
@@ -448,36 +433,25 @@ document.querySelectorAll('.tab').forEach(b=>{
   });
 });
 
-$('playBtn').addEventListener('click',()=>{
-  if(!strokeWriter) makeStrokeWriter();
-  if(strokeWriter) {
-    strokeNo=0;
-    $('strokeHint').textContent='正在播放正确笔顺…';
-    strokeWriter.animateCharacter({onComplete:()=>{$('strokeHint').textContent='完成！共 '+getStrokeCountHint()+' 笔';}});
+$('startBtn').addEventListener('click',()=>{
+  if(mode==='trace'){
+    if(writer){ try{ writer.cancelAnimation(); }catch(e){} try{ writer.animateCharacter(); }catch(e){} }
+    $('status').textContent='跟着灰色笔画，一笔一划慢慢描 🙂';
+    $('status').className='status';
+  }else{
+    destroyWriters();
+    makeQuiz();
   }
 });
-
-$('nextStrokeBtn').addEventListener('click',()=>{
-  if(!strokeWriter) makeStrokeWriter();
-  if(!strokeWriter) return;
-  strokeWriter.animateStroke(strokeNo,{onComplete:()=>{}});
-  strokeNo++;
-  $('strokeHint').textContent='第 '+strokeNo+' 笔';
-  if(strokeNo>20) strokeNo=0;
-});
-
-$('startBtn').addEventListener('click',()=>{
-  if(mode==='quiz'){destroyWriters();makeQuiz();}
-  else if(mode==='trace'){clearTrace();}
-  else {makeStrokeWriter();}
-});
-
 $('clearBtn').addEventListener('click',()=>{
-  if(mode==='quiz' && writer){ safe(()=>writer.cancelQuiz()); makeQuiz(); }
-  else if(mode==='trace'){clearTrace();}
+  if(mode==='trace') clearTrace();
+  else { destroyWriters(); makeQuiz(); }
+  $('status').textContent='';
+  $('status').className='status';
 });
 
 $('finishBtn').addEventListener('click',()=>{
+
   if(CHARS.length){addDailyCompletion(CHARS[current].char);$('status').textContent='✓ 已打卡：'+CHARS[current].char+'；今天完成 '+(loadProgress()[dateKey()]?.chars?.length||1)+' 个字';$('status').className='status ok';}
 });
 $('resetBtn').addEventListener('click',()=>{if(CHARS.length)selectChar(0);});
