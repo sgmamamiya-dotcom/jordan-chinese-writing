@@ -141,7 +141,7 @@ h1{margin:0;font-size:25px}
 // ===== Supabase 云端配置 =====
 // 把你刚才复制的 Publishable key 粘贴到下面这一行。
 // 不要填写 Secret key。Publishable key 可以放在网页前端。
-const SUPABASE_URL='https://uscpgtatqeeqjbwnvyoh.supabase.co';
+const SUPABASE_URL = 'https://uscpgatqeeqejbwnvyoh.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_Tc5qBurC5SnTyNjB2jtA2A_jFs9T3og';
 const cloudReady=SUPABASE_PUBLISHABLE_KEY && !SUPABASE_PUBLISHABLE_KEY.includes('PASTE_YOUR');
 const supabase=cloudReady ? window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY) : null;
