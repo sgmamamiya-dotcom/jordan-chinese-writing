@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Jordan 中文练字 V16</title>
+<title>Jordan 中文练字 V17 Cloud</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f6f8fb;color:#263238}
@@ -94,9 +94,11 @@ h1{margin:0;font-size:25px}
     </div>
   </div>
   <div class="add-online">
-  <input id="addCharInput" class="addCharInput" maxlength="50" placeholder="一次输入多个字，例如：学校老师同学朋友">
+  <input id="addCharInput" class="addCharInput" maxlength="80" placeholder="一次输入多个字，例如：学校老师同学朋友">
+  <select id="addGroupSelect" class="groupSelect"><option value="">选择分组</option></select>
+  <button class="secondary" id="addGroupBtn">＋ 新建分组</button>
   <button class="primary" id="addCharBtn">＋ 批量添加生字</button>
-  <span class="online-note">一次输入多个字，重复字会自动去重</span>
+  <span class="online-note" id="cloudStatus">☁️ 云端同步中…</span>
 </div>
 <div class="library-tools">
     <input id="searchInput" class="search" type="search" placeholder="🔍 搜索汉字或拼音，例如：昨天 / zuo">
@@ -130,352 +132,229 @@ h1{margin:0;font-size:25px}
 </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
 <script>
 (function(){
 'use strict';
-const LIBRARY=[
+
+// ===== Supabase 云端配置 =====
+// 把你刚才复制的 Publishable key 粘贴到下面这一行。
+// 不要填写 Secret key。Publishable key 可以放在网页前端。
+const SUPABASE_URL='https://uscpgtatqeeqjbwnvyoh.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_Tc5qBurC5SnTyNjB2jtA2A_jFs9T3og';
+const cloudReady=SUPABASE_PUBLISHABLE_KEY && !SUPABASE_PUBLISHABLE_KEY.includes('PASTE_YOUR');
+const supabase=cloudReady ? window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY) : null;
+
+const DEFAULT_GROUPS=[
+  {name:'P1-第一组'},
+  {name:'P1-第二组'},
+  {name:'常用字'},
+  {name:'我添加的字'}
+];
+const DEFAULT_CHARS=[
 {char:'昨',pinyin:'zuó',group:'P1-第一组'},{char:'明',pinyin:'míng',group:'P1-第一组'},
 {char:'给',pinyin:'gěi',group:'P1-第一组'},{char:'快',pinyin:'kuài',group:'P1-第一组'},
 {char:'乐',pinyin:'lè',group:'P1-第一组'},{char:'每',pinyin:'měi',group:'P1-第二组'},
 {char:'兔',pinyin:'tù',group:'P1-第二组'},{char:'爪',pinyin:'zhǎo',group:'P1-第二组'},
 {char:'尖',pinyin:'jiān',group:'P1-第二组'},{char:'园',pinyin:'yuán',group:'P1-第二组'},
-{char:'我',pinyin:'wǒ',group:'常用'},{char:'你',pinyin:'nǐ',group:'常用'},
-{char:'他',pinyin:'tā',group:'常用'},{char:'学',pinyin:'xué',group:'常用'},
-{char:'校',pinyin:'xiào',group:'常用'},{char:'家',pinyin:'jiā',group:'常用'},
-{char:'天',pinyin:'tiān',group:'常用'},{char:'大',pinyin:'dà',group:'常用'},
-{char:'小',pinyin:'xiǎo',group:'常用'},{char:'人',pinyin:'rén',group:'常用'},
-{char:'上',pinyin:'shàng',group:'常用'},{char:'下',pinyin:'xià',group:'常用'}
+{char:'我',pinyin:'wǒ',group:'常用字'},{char:'你',pinyin:'nǐ',group:'常用字'},
+{char:'他',pinyin:'tā',group:'常用字'},{char:'学',pinyin:'xué',group:'常用字'},
+{char:'校',pinyin:'xiào',group:'常用字'},{char:'家',pinyin:'jiā',group:'常用字'},
+{char:'天',pinyin:'tiān',group:'常用字'},{char:'大',pinyin:'dà',group:'常用字'},
+{char:'小',pinyin:'xiǎo',group:'常用字'},{char:'人',pinyin:'rén',group:'常用字'},
+{char:'上',pinyin:'shàng',group:'常用字'},{char:'下',pinyin:'xià',group:'常用字'}
 ];
-function loadSelected(){
-  try{
-    const a=JSON.parse(localStorage.getItem('jordanSelectedChars')||'[]'), seen=new Set();
-    return a.filter(x=>x&&x.char&&!seen.has(x.char)&&seen.add(x.char));
-  }catch(e){return [];}
-}
-let selectedChars=loadSelected().map(x=>LIBRARY.find(y=>y.char===x.char)||x).filter(Boolean);
-let CHARS=selectedChars.length?selectedChars:LIBRARY.slice(0,10);
-let current=0, mode='trace', writer=null, quizActive=false;
-
+let LIBRARY=[];
+let GROUPS=[];
+let selectedChars=[];
+let CHARS=[];
+let current=0,mode='trace',writer=null,quizActive=false;
+let practiceRows=[];
+const DAILY_TARGET=10;
 const $=id=>document.getElementById(id);
 const chars=$('chars');
-function saveSelected(){try{localStorage.setItem('jordanSelectedChars',JSON.stringify(selectedChars));}catch(e){}}
+
+function setCloudStatus(text,good=true){
+  $('cloudStatus').textContent=(good?'☁️ ':'⚠️ ')+text;
+  $('cloudStatus').style.color=good?'#78909c':'#c62828';
+}
+function localSelected(){
+  try{return JSON.parse(localStorage.getItem('jordanSelectedChars')||'[]');}catch(e){return [];}
+}
+function saveSelected(){try{localStorage.setItem('jordanSelectedChars',JSON.stringify(selectedChars.map(x=>x.char)));}catch(e){}}
+function restoreSelected(){
+  const old=localSelected();
+  const charsOnly=old.map(x=>typeof x==='string'?x:x?.char).filter(Boolean);
+  selectedChars=charsOnly.map(c=>LIBRARY.find(x=>x.char===c)).filter(Boolean);
+  if(!selectedChars.length) selectedChars=LIBRARY.slice(0,10);
+  saveSelected();
+}
 function updateSelectedButton(){$('practiceSelectedBtn').textContent='练习已选（'+selectedChars.length+'）';}
+function stripTone(s=''){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+
+async function seedDefaults(){
+  if(!cloudReady) return;
+  const {error:gErr}=await supabase.from('groups').upsert(DEFAULT_GROUPS,{onConflict:'name',ignoreDuplicates:true});
+  if(gErr) throw gErr;
+  const {data:groups,error:e2}=await supabase.from('groups').select('id,name').order('id');
+  if(e2) throw e2;
+  const map=Object.fromEntries(groups.map(g=>[g.name,g.id]));
+  const rows=DEFAULT_CHARS.map(x=>({char:x.char,pinyin:x.pinyin,group_id:map[x.group]})).filter(x=>x.group_id);
+  const {error:cErr}=await supabase.from('characters').upsert(rows,{onConflict:'char,group_id',ignoreDuplicates:true});
+  if(cErr) throw cErr;
+}
+async function loadCloudData(){
+  if(!cloudReady){
+    setCloudStatus('请把 Publishable key 粘贴到 HTML 里',false);
+    // Preview fallback so the page still works before the key is pasted.
+    GROUPS=DEFAULT_GROUPS.map((x,i)=>({id:i+1,name:x.name}));
+    LIBRARY=DEFAULT_CHARS.map((x,i)=>({...x,id:i+1,group_id:GROUPS.find(g=>g.name===x.group)?.id}));
+    restoreSelected(); renderGroupOptions(); renderLibrary(); renderCharBar(); renderMode(); renderCheckin(); return;
+  }
+  try{
+    await seedDefaults();
+    const {data:groups,error:gErr}=await supabase.from('groups').select('id,name').order('id');
+    if(gErr) throw gErr;
+    GROUPS=groups||[];
+    const {data:rows,error:cErr}=await supabase.from('characters').select('id,char,pinyin,group_id,groups(name)').order('id');
+    if(cErr) throw cErr;
+    LIBRARY=(rows||[]).map(x=>({id:x.id,char:x.char,pinyin:x.pinyin||'',group_id:x.group_id,group:x.groups?.name||'未分组'}));
+    restoreSelected();
+    renderGroupOptions(); renderLibrary(); renderCharBar();
+    await loadPractice();
+    renderMode(); renderCheckin();
+    setCloudStatus('已连接云端');
+  }catch(err){
+    console.error(err);
+    setCloudStatus('连接失败：'+(err.message||'请检查 key / RLS'),false);
+  }
+}
+function renderGroupOptions(){
+  const filter=$('groupSelect'), add=$('addGroupSelect');
+  const currentFilter=filter.value||'all';
+  filter.innerHTML='<option value="all">全部生字</option>'+GROUPS.map(g=>'<option value="'+escapeHtml(g.name)+'">'+escapeHtml(formatGroup(g.name))+'</option>').join('');
+  filter.value=GROUPS.some(g=>g.name===currentFilter)?currentFilter:'all';
+  add.innerHTML='<option value="">选择分组</option>'+GROUPS.map(g=>'<option value="'+escapeHtml(g.name)+'">'+escapeHtml(formatGroup(g.name))+'</option>').join('');
+  if(GROUPS.length) add.value=GROUPS[0].name;
+}
+function formatGroup(name){return name.replace('P1-','P1 · ');}
+function escapeHtml(s=''){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+async function addGroup(){
+  const name=prompt('输入新分组名称，例如：P1-第三组');
+  if(!name||!name.trim()) return;
+  const clean=name.trim();
+  if(GROUPS.some(g=>g.name===clean)){ $('addGroupSelect').value=clean; return; }
+  if(!cloudReady){
+    GROUPS.push({id:Date.now(),name:clean}); renderGroupOptions(); $('addGroupSelect').value=clean; setCloudStatus('预览模式：请先填写 Publishable key',false); return;
+  }
+  const {data,error}=await supabase.from('groups').insert({name:clean}).select('id,name').single();
+  if(error){$('status').textContent='新建分组失败：'+error.message;$('status').className='status bad';return;}
+  GROUPS.push(data); renderGroupOptions(); $('addGroupSelect').value=clean; setCloudStatus('分组已保存到云端');
+}
 
 async function addOnlineCharacter(){
   const input=$('addCharInput');
-  const charsIn=Array.from(input.value.trim()).filter(c=>/[\u3400-\u9fff]/.test(c));
-  if(!charsIn.length){
-    $('status').textContent='请输入中文汉字，例如：龙';
-    $('status').className='status bad'; return;
+  const groupName=$('addGroupSelect').value;
+  const charsIn=[...new Set(Array.from(input.value.trim()).filter(c=>/[\u3400-\u9fff]/.test(c)))];
+  if(!charsIn.length){$('status').textContent='请输入一组中文汉字';$('status').className='status bad';return;}
+  if(!groupName){$('status').textContent='请先选择分组';$('status').className='status bad';return;}
+  const group=GROUPS.find(g=>g.name===groupName);
+  if(!group){return;}
+  const existingChars=LIBRARY.filter(x=>charsIn.includes(x.char)&&x.group_id===group.id);
+  const newChars=charsIn.filter(c=>!existingChars.some(x=>x.char===c));
+  if(!cloudReady){
+    newChars.forEach(c=>{const item={id:Date.now()+Math.random(),char:c,pinyin:'',group:groupName,group_id:group.id};LIBRARY.push(item);selectedChars.push(item);});
+    renderLibrary();renderCharBar();input.value='';setCloudStatus('预览模式：请先填写 Publishable key',false);return;
   }
-  for(const char of charsIn){
-    const existing=LIBRARY.find(x=>x.char===char);
-    if(existing){
-      if(!selectedChars.some(x=>x.char===char)) selectedChars.push(existing);
-      continue;
+  try{
+    const rows=newChars.map(c=>({char:c,pinyin:'',group_id:group.id}));
+    if(rows.length){
+      const {error}=await supabase.from('characters').upsert(rows,{onConflict:'char,group_id',ignoreDuplicates:true});
+      if(error) throw error;
     }
-    let pinyin='';
-    try{
-      const r=await fetch('https://v2.alapi.cn/api/pinyin?text='+encodeURIComponent(char));
-      if(r.ok){
-        const d=await r.json();
-        pinyin=d?.data?.pinyin||d?.pinyin||'';
-      }
-    }catch(e){}
-    const item={char,pinyin,group:'我添加的字'};
-    LIBRARY.push(item); selectedChars.push(item);
-  }
-  saveSelected(); renderLibrary(); input.value='';
-  $('status').textContent='已加入生字库。重复的字不会再次添加；查不到拼音时不会乱显示。';
-  $('status').className='status ok';
+    await refreshLibrary();
+    for(const c of charsIn){const item=LIBRARY.find(x=>x.char===c&&x.group_id===group.id);if(item&&!selectedChars.some(x=>x.char===c))selectedChars.push(item);}
+    saveSelected(); renderLibrary(); renderCharBar(); input.value='';
+    $('status').textContent='✓ 已把 '+charsIn.length+' 个字保存到「'+formatGroup(groupName)+'」';$('status').className='status ok';
+  }catch(err){$('status').textContent='添加失败：'+err.message;$('status').className='status bad';}
 }
-function stripTone(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+async function refreshLibrary(){
+  const {data:rows,error}=await supabase.from('characters').select('id,char,pinyin,group_id,groups(name)').order('id');
+  if(error) throw error;
+  LIBRARY=(rows||[]).map(x=>({id:x.id,char:x.char,pinyin:x.pinyin||'',group_id:x.group_id,group:x.groups?.name||'未分组'}));
+}
 
-const DAILY_TARGET=10;
-function dateKey(d=new Date()){
-  const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
-  return y+'-'+m+'-'+day;
+async function loadPractice(){
+  if(!cloudReady){practiceRows=[];return;}
+  const {data,error}=await supabase.from('practice').select('practice_date,char,completed_at').order('practice_date');
+  if(error) throw error;
+  practiceRows=data||[];
 }
-function loadProgress(){
-  try{return JSON.parse(localStorage.getItem('jordanDailyPractice')||'{}');}catch(e){return {};}
+function practiceMap(){
+  const p={};
+  practiceRows.forEach(r=>{if(!p[r.practice_date])p[r.practice_date]=[];if(!p[r.practice_date].includes(r.char))p[r.practice_date].push(r.char);});
+  return p;
 }
-function saveProgress(p){try{localStorage.setItem('jordanDailyPractice',JSON.stringify(p));}catch(e){}}
-function addDailyCompletion(char){
-  const p=loadProgress(), key=dateKey();
-  if(!p[key]) p[key]={chars:[],count:0};
-  if(!p[key].chars.includes(char)){p[key].chars.push(char);p[key].count=p[key].chars.length;}
-  saveProgress(p); renderCheckin();
+function dateKey(d=new Date()){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day;}
+async function addDailyCompletion(char){
+  if(!char)return;
+  const key=dateKey();
+  if(cloudReady){
+    const {error}=await supabase.from('practice').upsert({practice_date:key,char},{onConflict:'practice_date,char'});
+    if(error){console.error(error);$('status').textContent='打卡保存失败：'+error.message;$('status').className='status bad';return;}
+    await loadPractice();
+  }else{
+    try{const p=JSON.parse(localStorage.getItem('jordanDailyPractice')||'{}');p[key]??={chars:[],count:0};if(!p[key].chars.includes(char))p[key].chars.push(char);p[key].count=p[key].chars.length;localStorage.setItem('jordanDailyPractice',JSON.stringify(p));}catch(e){}
+  }
+  renderCheckin();
 }
 function renderCheckin(){
-  const p=loadProgress(),today=dateKey(), todayData=p[today]||{chars:[],count:0};
-  const todayCount=todayData.chars?todayData.chars.length:(todayData.count||0);
-  let total=0;
-  Object.values(p).forEach(x=>{total+=x.chars?x.chars.length:(x.count||0);});
-  const now=new Date(), monthPrefix=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
-  let month=0;Object.entries(p).forEach(([k,x])=>{if(k.startsWith(monthPrefix))month+=x.chars?x.chars.length:(x.count||0);});
-  let streak=0;
-  const d=new Date(now.getFullYear(),now.getMonth(),now.getDate());
-  while(true){
-    const k=dateKey(d), x=p[k], n=x?(x.chars?x.chars.length:(x.count||0)):0;
-    if(n>0){streak++;d.setDate(d.getDate()-1);}else break;
-  }
-  $('todayCount').textContent=todayCount;$('todayTarget').textContent=DAILY_TARGET;
-  $('monthCount').textContent=month;$('totalCount').textContent=total;
-  $('streak').textContent='连续 '+streak+' 天';
-  $('dailyProgress').style.width=Math.min(100,todayCount/DAILY_TARGET*100)+'%';
-  const grid=$('weekGrid');grid.innerHTML='';
-  const names=['日','一','二','三','四','五','六'];
-  for(let i=6;i>=0;i--){
-    const x=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i),k=dateKey(x),v=p[k],n=v?(v.chars?v.chars.length:(v.count||0)):0;
-    const el=document.createElement('div');el.className='day '+(k===today?'active ':'')+(n>0?'complete':'');
-    el.innerHTML='<div class="dow">周'+names[x.getDay()]+'</div><div class="num">'+x.getDate()+'</div><div class="done">'+(n?n+'字':'—')+'</div>';
-    grid.appendChild(el);
-  }
+  const p=cloudReady?practiceMap():(()=>{try{return JSON.parse(localStorage.getItem('jordanDailyPractice')||'{}');}catch(e){return {};}})();
+  const today=dateKey(),todayCount=(p[today]||[]).length||p[today]?.count||0;
+  let total=0;Object.values(p).forEach(x=>{total+=Array.isArray(x)?x.length:(x.chars?x.chars.length:(x.count||0));});
+  const now=new Date(),monthPrefix=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  let month=0;Object.entries(p).forEach(([k,x])=>{if(k.startsWith(monthPrefix))month+=Array.isArray(x)?x.length:(x.chars?x.chars.length:(x.count||0));});
+  let streak=0;const d=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  while(true){const k=dateKey(d),x=p[k],n=x?(Array.isArray(x)?x.length:(x.chars?x.chars.length:(x.count||0))):0;if(n>0){streak++;d.setDate(d.getDate()-1);}else break;}
+  $('todayCount').textContent=todayCount;$('todayTarget').textContent=DAILY_TARGET;$('monthCount').textContent=month;$('totalCount').textContent=total;$('streak').textContent='连续 '+streak+' 天';$('dailyProgress').style.width=Math.min(100,todayCount/DAILY_TARGET*100)+'%';
+  const grid=$('weekGrid');grid.innerHTML='';const names=['日','一','二','三','四','五','六'];
+  for(let i=6;i>=0;i--){const x=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i),k=dateKey(x),v=p[k],n=v?(Array.isArray(v)?v.length:(v.chars?v.chars.length:(v.count||0))):0;const el=document.createElement('div');el.className='day '+(k===today?'active ':'')+(n>0?'complete':'');el.innerHTML='<div class="dow">周'+names[x.getDay()]+'</div><div class="num">'+x.getDate()+'</div><div class="done">'+(n?n+'字':'—')+'</div>';grid.appendChild(el);}
 }
 function renderLibrary(){
-  const q=$('searchInput').value.trim().toLowerCase(), q2=stripTone(q), group=$('groupSelect').value, grid=$('libraryGrid');
-  grid.innerHTML='';
-  LIBRARY.filter(x=>(!q||x.char.includes(q)||x.pinyin.toLowerCase().includes(q)||stripTone(x.pinyin).includes(q2))&&(group==='all'||x.group===group)).forEach(item=>{
-    const d=document.createElement('label'); const checked=selectedChars.some(x=>x.char===item.char);
-    d.className='lib-item '+(checked?'selected':'');
-    d.innerHTML='<input type="checkbox" '+(checked?'checked':'')+'><span class="hanzi">'+item.char+'</span><span class="py">'+item.pinyin+'</span>';
-    d.querySelector('input').addEventListener('change',()=>toggleSelected(item));
-    grid.appendChild(d);
-  }); updateSelectedButton();
+  const q=$('searchInput').value.trim().toLowerCase(),q2=stripTone(q),group=$('groupSelect').value,grid=$('libraryGrid');grid.innerHTML='';
+  LIBRARY.filter(x=>(!q||x.char.includes(q)||(x.pinyin||'').toLowerCase().includes(q)||stripTone(x.pinyin||'').includes(q2))&&(group==='all'||x.group===group)).forEach(item=>{
+    const d=document.createElement('label');const checked=selectedChars.some(x=>x.char===item.char);d.className='lib-item '+(checked?'selected':'');d.innerHTML='<input type="checkbox" '+(checked?'checked':'')+'><span class="hanzi">'+escapeHtml(item.char)+'</span><span class="py">'+escapeHtml(item.pinyin||'')+'</span>';d.querySelector('input').addEventListener('change',()=>toggleSelected(item));grid.appendChild(d);
+  });updateSelectedButton();
 }
-function toggleSelected(item){
-  const i=selectedChars.findIndex(x=>x.char===item.char);
-  if(i>=0)selectedChars.splice(i,1); else selectedChars.push(item);
-  saveSelected();renderLibrary();
-}
-function visibleItems(){
-  const q=$('searchInput').value.trim().toLowerCase(), q2=stripTone(q), group=$('groupSelect').value;
-  return LIBRARY.filter(x=>(!q||x.char.includes(q)||x.pinyin.toLowerCase().includes(q)||stripTone(x.pinyin).includes(q2))&&(group==='all'||x.group===group));
-}
-function selectAllVisible(){visibleItems().forEach(x=>{if(!selectedChars.some(y=>y.char===x.char))selectedChars.push(x);});saveSelected();renderLibrary();}
-function clearAll(){selectedChars=[];saveSelected();renderLibrary();}
-function startSelectedPractice(){
-  if(!selectedChars.length){$('status').textContent='请先在生字库选择至少一个字';$('status').className='status bad';return;}
-  CHARS=selectedChars.slice();current=0;destroyWriters();renderCharBar();
-  renderMode();
-}
-function renderCharBar(){
-  chars.innerHTML='';
-  renderPracticeWordInfo();
-  CHARS.forEach((item,i)=>{
-    const b=document.createElement('button');b.className='charbtn'+(i===current?' active':'');
-    b.innerHTML='<span>'+item.char+'</span><small>'+item.pinyin+'</small>';
-    b.addEventListener('click',()=>selectChar(i));chars.appendChild(b);
-  });
-}
-
-
-
-
-function safe(fn){
-  try{return fn()}catch(e){console.error(e); return null}
-}
-
-function renderPracticeWordInfo(){
-  const item=CHARS[current];
-  if(!item) return;
-  $('practicePinyin').textContent=item.pinyin||'';
-}
-
-function selectChar(i){
-  current=i;
-  renderPracticeWordInfo();
-  document.querySelectorAll('.charbtn').forEach((b,n)=>b.classList.toggle('active',n===i));
-  destroyWriters();
-  renderMode();
-}
-
-function destroyWriters(){
-  safe(()=>writer && writer.cancelQuiz && writer.cancelQuiz());
-  writer=null;  quizActive=false;
-  $('writer').innerHTML='';
-  $('practiceStage').classList.remove('trace-mode');
-  $('practiceCanvas').style.display='none';
-  const c=$('practiceCanvas'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
-}
-
-
-function makeQuiz(){
-  if(!window.HanziWriter){
-    $('status').textContent='笔顺库还没加载，请检查网络后刷新';
-    $('status').className='status bad';
-    return;
-  }
-  writer=HanziWriter.create('writer',CHARS[current].char,{
-    width:480,height:480,padding:8,showCharacter:false,showOutline:false,
-    drawingWidth:18,showHintAfterMisses:2,highlightOnComplete:true,
-    onLoadCharDataError:()=>{$('status').textContent='笔顺数据加载失败';$('status').className='status bad';}
-  });
-  writer.quiz({
-    showHintAfterMisses:2,
-    onCorrectStroke:d=>{
-      $('status').textContent='✓ 第 '+(d.strokeNum+1)+' 笔正确！';
-      $('status').className='status ok';
-    },
-    onMistake:d=>{
-      $('status').textContent='再试一次这一笔 🙂';
-      $('status').className='status bad';
-    },
-    onComplete:d=>{
-      quizActive=false;
-      addDailyCompletion(CHARS[current].char);
-      $('status').textContent='🎉 全部写对了！今天已完成 '+(loadProgress()[dateKey()]?.chars?.length||1)+' 个字！';
-      $('status').className='status ok';
-    }
-  });
-  quizActive=true;
-}
-
-function makeTrace(){
-  if(!window.HanziWriter){
-    $('status').textContent='笔顺库还没加载，请检查网络后刷新';
-    $('status').className='status bad';
-    return;
-  }
-  $('practiceCanvas').style.display='block';
-  $('practiceStage').classList.add('trace-mode');
-  writer=HanziWriter.create('writer',CHARS[current].char,{
-    width:480,height:480,padding:8,showCharacter:false,showOutline:false,
-    strokeColor:'#b0bec5',outlineColor:'#cfd8dc',
-    strokeAnimationSpeed:1,
-    drawingFadeDuration:300
-  });
-  setupTraceCanvas();
-  // 描红模式先自动播放正确笔顺，学生可以跟着一笔一划描。
-  setTimeout(()=>{ if(writer && mode==='trace') writer.animateCharacter(); },180);
-}
-
-
-function setupTraceCanvas(){
-  const canvas=$('practiceCanvas'), stage=$('practiceStage');
-  const rect=stage.getBoundingClientRect();
-  const dpr=Math.max(1,window.devicePixelRatio||1);
-  canvas.width=Math.round(rect.width*dpr);
-  canvas.height=Math.round(rect.height*dpr);
-  canvas.style.width=rect.width+'px';
-  canvas.style.height=rect.height+'px';
-  const ctx=canvas.getContext('2d');
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-  ctx.lineCap='round';
-  ctx.lineJoin='round';
-  ctx.lineWidth=Math.max(6,rect.width*0.018);
-  ctx.strokeStyle='#455a64';
-  let drawing=false,last=null;
-
-  function point(e){
-    const r=canvas.getBoundingClientRect();
-    return {x:e.clientX-r.left,y:e.clientY-r.top};
-  }
-  canvas.onpointerdown=function(e){
-    if(mode!=='trace') return;
-    e.preventDefault();
-    drawing=true; last=point(e);
-    canvas.setPointerCapture?.(e.pointerId);
-    ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(last.x,last.y);ctx.stroke();
-  };
-  canvas.onpointermove=function(e){
-    if(!drawing) return;
-    e.preventDefault();
-    const q=point(e);
-    ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(q.x,q.y);ctx.stroke();
-    last=q;
-  };
-  canvas.onpointerup=canvas.onpointercancel=function(e){
-    drawing=false;last=null;
-  };
-}
-
-function clearTrace(){
-  const canvas=$('practiceCanvas');
-  const ctx=canvas.getContext('2d');
-  ctx.clearRect(0,0,canvas.clientWidth,canvas.clientHeight);
-}
-
-
+function toggleSelected(item){const i=selectedChars.findIndex(x=>x.char===item.char);if(i>=0)selectedChars.splice(i,1);else selectedChars.push(item);saveSelected();renderLibrary();renderCharBar();}
+function visibleItems(){const q=$('searchInput').value.trim().toLowerCase(),q2=stripTone(q),group=$('groupSelect').value;return LIBRARY.filter(x=>(!q||x.char.includes(q)||(x.pinyin||'').toLowerCase().includes(q)||stripTone(x.pinyin||'').includes(q2))&&(group==='all'||x.group===group));}
+function selectAllVisible(){visibleItems().forEach(x=>{if(!selectedChars.some(y=>y.char===x.char))selectedChars.push(x);});saveSelected();renderLibrary();renderCharBar();}
+function clearAll(){selectedChars=[];saveSelected();renderLibrary();renderCharBar();}
+function startSelectedPractice(){if(!selectedChars.length){$('status').textContent='请先在生字库选择至少一个字';$('status').className='status bad';return;}CHARS=selectedChars.slice();current=0;destroyWriters();renderCharBar();renderMode();}
+function renderCharBar(){chars.innerHTML='';renderPracticeWordInfo();CHARS.forEach((item,i)=>{const b=document.createElement('button');b.className='charbtn'+(i===current?' active':'');b.innerHTML='<span>'+escapeHtml(item.char)+'</span><small>'+escapeHtml(item.pinyin||'')+'</small>';b.addEventListener('click',()=>selectChar(i));chars.appendChild(b);});}
+function renderPracticeWordInfo(){const item=CHARS[current];if(!item)return;$('practicePinyin').textContent=item.pinyin||'';}
+function selectChar(i){current=i;renderPracticeWordInfo();document.querySelectorAll('.charbtn').forEach((b,n)=>b.classList.toggle('active',n===i));destroyWriters();renderMode();}
+function safe(fn){try{return fn()}catch(e){console.error(e);return null}}
+function destroyWriters(){safe(()=>writer&&writer.cancelQuiz&&writer.cancelQuiz());writer=null;quizActive=false;$('writer').innerHTML='';$('practiceStage').classList.remove('trace-mode');$('practiceCanvas').style.display='none';const c=$('practiceCanvas'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);}
+function makeQuiz(){if(!window.HanziWriter){$('status').textContent='笔顺库还没加载，请检查网络后刷新';$('status').className='status bad';return;}writer=HanziWriter.create('writer',CHARS[current].char,{width:480,height:480,padding:8,showCharacter:false,showOutline:false,drawingWidth:18,showHintAfterMisses:2,highlightOnComplete:true,onLoadCharDataError:()=>{$('status').textContent='笔顺数据加载失败';$('status').className='status bad';}});writer.quiz({showHintAfterMisses:2,onCorrectStroke:d=>{$('status').textContent='✓ 第 '+(d.strokeNum+1)+' 笔正确！';$('status').className='status ok';},onMistake:d=>{$('status').textContent='再试一次这一笔 🙂';$('status').className='status bad';},onComplete:async d=>{quizActive=false;await addDailyCompletion(CHARS[current].char);$('status').textContent='🎉 全部写对了！';$('status').className='status ok';}});quizActive=true;}
+function makeTrace(){if(!window.HanziWriter){$('status').textContent='笔顺库还没加载，请检查网络后刷新';$('status').className='status bad';return;}$('practiceCanvas').style.display='block';$('practiceStage').classList.add('trace-mode');writer=HanziWriter.create('writer',CHARS[current].char,{width:480,height:480,padding:8,showCharacter:false,showOutline:false,strokeColor:'#b0bec5',outlineColor:'#cfd8dc',strokeAnimationSpeed:1,drawingFadeDuration:300});setupTraceCanvas();setTimeout(()=>{if(writer&&mode==='trace')writer.animateCharacter();},180);}
+function setupTraceCanvas(){const canvas=$('practiceCanvas'),stage=$('practiceStage'),rect=stage.getBoundingClientRect(),dpr=Math.max(1,window.devicePixelRatio||1);canvas.width=Math.round(rect.width*dpr);canvas.height=Math.round(rect.height*dpr);canvas.style.width=rect.width+'px';canvas.style.height=rect.height+'px';const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=Math.max(6,rect.width*0.018);ctx.strokeStyle='#455a64';let drawing=false,last=null;function point(e){const r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}canvas.onpointerdown=function(e){if(mode!=='trace')return;e.preventDefault();drawing=true;last=point(e);canvas.setPointerCapture?.(e.pointerId);ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(last.x,last.y);ctx.stroke();};canvas.onpointermove=function(e){if(!drawing)return;e.preventDefault();const q=point(e);ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(q.x,q.y);ctx.stroke();last=q;};canvas.onpointerup=canvas.onpointercancel=function(e){drawing=false;last=null;};}
+function clearTrace(){const canvas=$('practiceCanvas'),ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.clientWidth,canvas.clientHeight);}
 $('soundBtn').addEventListener('click',speakCurrent);
-
-function speakCurrent(){
-  const item=CHARS[current];
-  if(!('speechSynthesis' in window)){
-    $('status').textContent='这个浏览器不支持朗读';
-    $('status').className='status bad';
-    return;
-  }
-  window.speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(item.char);
-  u.lang='zh-CN';
-  u.rate=0.72;
-  u.pitch=1;
-  window.speechSynthesis.speak(u);
-}
-function renderMode(){
-  $('leftTitle').textContent=mode==='trace'?'描红':'自己写＋批改';
-  $('hint').textContent=mode==='trace'?'沿着浅灰色笔画写；点击 🔊 可以听读音':'按正确笔顺写，写错会提示';
-  $('status').textContent='';
-  $('status').className='status';
-  $('practiceCanvas').style.display=mode==='trace'?'block':'none';
-  $('practiceStage').classList.toggle('trace-mode',mode==='trace');
-  if(mode==='trace') makeTrace();
-  if(mode==='quiz') makeQuiz();
-}
-
-document.querySelectorAll('.tab').forEach(b=>{
-  b.addEventListener('click',()=>{
-    mode=b.dataset.mode;
-    document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));
-    destroyWriters(); renderMode();
-  });
-});
-
-$('startBtn').addEventListener('click',()=>{
-  if(mode==='trace'){
-    if(writer){ try{ writer.cancelAnimation(); }catch(e){} try{ writer.animateCharacter(); }catch(e){} }
-    $('status').textContent='跟着灰色笔画，一笔一划慢慢描 🙂';
-    $('status').className='status';
-  }else{
-    destroyWriters();
-    makeQuiz();
-  }
-});
-$('clearBtn').addEventListener('click',()=>{
-  if(mode==='trace') clearTrace();
-  else { destroyWriters(); makeQuiz(); }
-  $('status').textContent='';
-  $('status').className='status';
-});
-
-$('finishBtn').addEventListener('click',()=>{
-
-  if(CHARS.length){addDailyCompletion(CHARS[current].char);$('status').textContent='✓ 已打卡：'+CHARS[current].char+'；今天完成 '+(loadProgress()[dateKey()]?.chars?.length||1)+' 个字';$('status').className='status ok';}
-});
+function speakCurrent(){const item=CHARS[current];if(!('speechSynthesis' in window)){ $('status').textContent='这个浏览器不支持朗读';$('status').className='status bad';return;}window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(item.char);u.lang='zh-CN';u.rate=.72;u.pitch=1;window.speechSynthesis.speak(u);}
+function renderMode(){$('leftTitle').textContent=mode==='trace'?'描红':'自己写＋批改';$('hint').textContent=mode==='trace'?'沿着浅灰色笔画写；点击 🔊 可以听读音':'按正确笔顺写，写错会提示';$('status').textContent='';$('status').className='status';$('practiceCanvas').style.display=mode==='trace'?'block':'none';$('practiceStage').classList.toggle('trace-mode',mode==='trace');if(mode==='trace')makeTrace();if(mode==='quiz')makeQuiz();}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));destroyWriters();renderMode();}));
+$('startBtn').addEventListener('click',()=>{if(mode==='trace'){if(writer){try{writer.cancelAnimation();}catch(e){}try{writer.animateCharacter();}catch(e){}}$('status').textContent='跟着灰色笔画，一笔一划慢慢描 🙂';$('status').className='status';}else{destroyWriters();makeQuiz();}});
+$('clearBtn').addEventListener('click',()=>{if(mode==='trace')clearTrace();else{destroyWriters();makeQuiz();}$('status').textContent='';$('status').className='status';});
+$('finishBtn').addEventListener('click',async()=>{if(CHARS.length){await addDailyCompletion(CHARS[current].char);$('status').textContent='✓ 已打卡：'+CHARS[current].char+'；今天完成 '+((cloudReady?practiceMap()[dateKey()]||[]:[]).length||1)+' 个字';$('status').className='status ok';}});
 $('resetBtn').addEventListener('click',()=>{if(CHARS.length)selectChar(0);});
+document.querySelectorAll('.stage').forEach(el=>el.addEventListener('touchstart',e=>{if(mode==='quiz')e.preventDefault()},{passive:false}));
+$('addCharBtn').addEventListener('click',addOnlineCharacter);$('addGroupBtn').addEventListener('click',addGroup);$('addCharInput').addEventListener('keydown',e=>{if(e.key==='Enter')addOnlineCharacter();});$('searchInput').addEventListener('input',renderLibrary);$('groupSelect').addEventListener('change',renderLibrary);$('selectAllBtn').addEventListener('click',selectAllVisible);$('clearAllBtn').addEventListener('click',clearAll);$('practiceSelectedBtn').addEventListener('click',startSelectedPractice);
 
-function getStrokeCountHint(){ return '多'; }
-
-// Prevent iPad browser gestures inside practice area
-document.querySelectorAll('.stage').forEach(el=>{
-  el.addEventListener('touchstart',e=>{if(mode==='quiz')e.preventDefault()},{passive:false});
-});
-
-$('addCharBtn').addEventListener('click',addOnlineCharacter);
-$('addCharInput').addEventListener('keydown',e=>{if(e.key==='Enter')addOnlineCharacter();});
-$('searchInput').addEventListener('input',renderLibrary);
-$('groupSelect').addEventListener('change',renderLibrary);
-$('selectAllBtn').addEventListener('click',selectAllVisible);
-$('clearAllBtn').addEventListener('click',clearAll);
-$('practiceSelectedBtn').addEventListener('click',startSelectedPractice);
-renderLibrary();
-renderCheckin();
-renderCharBar();
-renderMode();
-window.addEventListener('resize',()=>{if(mode==='trace') setupTraceCanvas();});
-setInterval(renderCheckin,60000);
+// Start
+CHARS=[];loadCloudData();
 })();
 </script>
 </body>
