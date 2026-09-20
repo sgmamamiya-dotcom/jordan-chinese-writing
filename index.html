@@ -158,6 +158,7 @@ h1{margin:0;font-size:25px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.29.4/dist/index.js"></script>
 <script>
 (function(){
 'use strict';
@@ -221,6 +222,25 @@ function restoreSelected(){
 function updateSelectedButton(){$('practiceSelectedBtn').textContent='练习已选（'+selectedChars.length+'）';}
 function stripTone(s=''){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
 function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function getPinyin(char){
+  try{
+    if(window.pinyinPro && typeof window.pinyinPro.pinyin==='function'){
+      return window.pinyinPro.pinyin(char,{toneType:'symbol'})||'';
+    }
+  }catch(e){}
+  return '';
+}
+async function backfillMissingPinyin(){
+  const missing=LIBRARY.filter(x=>!x.pinyin);
+  if(!missing.length) return;
+  missing.forEach(item=>{item.pinyin=getPinyin(item.char);});
+  if(!cloudReady) return;
+  const toSave=missing.filter(x=>x.pinyin);
+  if(!toSave.length) return;
+  try{
+    await Promise.all(toSave.map(item=>supabase.from('characters').update({pinyin:item.pinyin}).eq('id',item.id)));
+  }catch(err){console.error('回填拼音失败',err);}
+}
 function loadLocalWeakSet(){try{return new Set(JSON.parse(localStorage.getItem(WEAK_LOCAL_KEY)||'[]'));}catch(e){return new Set();}}
 function saveLocalWeakSet(set){try{localStorage.setItem(WEAK_LOCAL_KEY,JSON.stringify([...set]));}catch(e){}}
 
@@ -338,6 +358,7 @@ async function loadCloudData(){
     LIBRARY=DEFAULT_CHARS.map((x,i)=>({...x,id:i+1,group_id:GROUPS.find(g=>g.name===x.group)?.id,is_weak:false}));
     const weakSet=loadLocalWeakSet();
     LIBRARY.forEach(x=>{if(weakSet.has(x.char))x.is_weak=true;});
+    await backfillMissingPinyin();
     renderGroupOptions();
     await applyDailyAutoPick();
     renderLibrary(); renderCharBar(); renderMode(); renderCheckin(); return;
@@ -348,6 +369,7 @@ async function loadCloudData(){
     if(gErr) throw gErr;
     GROUPS=groups||[];
     LIBRARY=await fetchLibraryRows();
+    await backfillMissingPinyin();
     renderGroupOptions();
     await applyDailyAutoPick();
     renderLibrary(); renderCharBar();
@@ -426,11 +448,11 @@ async function addOnlineCharacter(){
   const existingChars=LIBRARY.filter(x=>charsIn.includes(x.char)&&x.group_id===group.id);
   const newChars=charsIn.filter(c=>!existingChars.some(x=>x.char===c));
   if(!cloudReady){
-    newChars.forEach(c=>{const item={id:Date.now()+Math.random(),char:c,pinyin:'',group:groupName,group_id:group.id,is_weak:false};LIBRARY.push(item);selectedChars.push(item);});
+    newChars.forEach(c=>{const item={id:Date.now()+Math.random(),char:c,pinyin:getPinyin(c),group:groupName,group_id:group.id,is_weak:false};LIBRARY.push(item);selectedChars.push(item);});
     renderLibrary();renderCharBar();input.value='';setCloudStatus('预览模式：请先填写 Publishable key',false);return;
   }
   try{
-    const rows=newChars.map(c=>({char:c,pinyin:'',group_id:group.id}));
+    const rows=newChars.map(c=>({char:c,pinyin:getPinyin(c),group_id:group.id}));
     if(rows.length){
       const {error}=await supabase.from('characters').upsert(rows,{onConflict:'char,group_id',ignoreDuplicates:true});
       if(error) throw error;
@@ -499,11 +521,12 @@ function selectChar(i){current=i;renderPracticeWordInfo();document.querySelector
 function safe(fn){try{return fn()}catch(e){console.error(e);return null}}
 function destroyWriters(){safe(()=>writer&&writer.cancelQuiz&&writer.cancelQuiz());writer=null;quizActive=false;$('writer').innerHTML='';$('practiceStage').classList.remove('trace-mode');$('practiceCanvas').style.display='none';const c=$('practiceCanvas'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);}
 function makeQuiz(){if(!CHARS[current])return;if(!window.HanziWriter){$('status').textContent='笔顺库还没加载，请检查网络后刷新';$('status').className='status bad';return;}writer=HanziWriter.create('writer',CHARS[current].char,{width:480,height:480,padding:8,showCharacter:false,showOutline:false,drawingWidth:18,showHintAfterMisses:2,highlightOnComplete:true,onLoadCharDataError:()=>{$('status').textContent='笔顺数据加载失败';$('status').className='status bad';}});writer.quiz({showHintAfterMisses:2,onCorrectStroke:d=>{$('status').textContent='✓ 第 '+(d.strokeNum+1)+' 笔正确！';$('status').className='status ok';},onMistake:d=>{$('status').textContent='再试一次这一笔 🙂';$('status').className='status bad';},onComplete:async d=>{quizActive=false;await addDailyCompletion(CHARS[current].char);$('status').textContent='🎉 全部写对了！';$('status').className='status ok';}});quizActive=true;}
-function makeTrace(){if(!CHARS[current])return;if(!window.HanziWriter){$('status').textContent='笔顺库还没加载，请检查网络后刷新';$('status').className='status bad';return;}$('practiceCanvas').style.display='block';$('practiceStage').classList.add('trace-mode');writer=HanziWriter.create('writer',CHARS[current].char,{width:480,height:480,padding:8,showCharacter:false,showOutline:false,strokeColor:'#b0bec5',outlineColor:'#cfd8dc',strokeAnimationSpeed:1,drawingFadeDuration:300});setupTraceCanvas();setTimeout(()=>{if(writer&&mode==='trace')writer.animateCharacter();},180);}
+function makeTrace(){if(!CHARS[current])return;if(!window.HanziWriter){$('status').textContent='笔顺库还没加载，请检查网络后刷新';$('status').className='status bad';return;}$('practiceCanvas').style.display='block';$('practiceStage').classList.add('trace-mode');writer=HanziWriter.create('writer',CHARS[current].char,{width:480,height:480,padding:8,showCharacter:false,showOutline:false,strokeColor:'#b0bec5',outlineColor:'#cfd8dc',strokeAnimationSpeed:1,drawingFadeDuration:300});setupTraceCanvas();autoSpeakCurrent();setTimeout(()=>{if(writer&&mode==='trace')writer.animateCharacter();},180);}
 function setupTraceCanvas(){const canvas=$('practiceCanvas'),stage=$('practiceStage'),rect=stage.getBoundingClientRect(),dpr=Math.max(1,window.devicePixelRatio||1);canvas.width=Math.round(rect.width*dpr);canvas.height=Math.round(rect.height*dpr);canvas.style.width=rect.width+'px';canvas.style.height=rect.height+'px';const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=Math.max(6,rect.width*0.018);ctx.strokeStyle='#455a64';let drawing=false,last=null;function point(e){const r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}canvas.onpointerdown=function(e){if(mode!=='trace')return;e.preventDefault();drawing=true;last=point(e);canvas.setPointerCapture?.(e.pointerId);ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(last.x,last.y);ctx.stroke();};canvas.onpointermove=function(e){if(!drawing)return;e.preventDefault();const q=point(e);ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(q.x,q.y);ctx.stroke();last=q;};canvas.onpointerup=canvas.onpointercancel=function(e){drawing=false;last=null;};}
 function clearTrace(){const canvas=$('practiceCanvas'),ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.clientWidth,canvas.clientHeight);}
 $('soundBtn').addEventListener('click',speakCurrent);
 function speakCurrent(){const item=CHARS[current];if(!item)return;if(!('speechSynthesis' in window)){ $('status').textContent='这个浏览器不支持朗读';$('status').className='status bad';return;}window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(item.char);u.lang='zh-CN';u.rate=.72;u.pitch=1;window.speechSynthesis.speak(u);}
+function autoSpeakCurrent(){const item=CHARS[current];if(!item||!('speechSynthesis' in window))return;try{window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(item.char);u.lang='zh-CN';u.rate=.72;u.pitch=1;window.speechSynthesis.speak(u);}catch(e){}}
 function renderMode(){
   $('leftTitle').textContent=mode==='trace'?'描红':'自己写＋批改';
   if(!CHARS.length){
