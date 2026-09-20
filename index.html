@@ -43,7 +43,10 @@ h1{margin:0;font-size:25px}
 .daily-note{font-size:13px;color:#546e7a;margin-top:8px;line-height:1.6}
 .weakBtn{background:#fff3e0;color:#e65100}
 @media(max-width:760px){.library-head{align-items:flex-start;flex-direction:column}.library-tools{flex-direction:column}.library-grid{grid-template-columns:repeat(5,1fr);max-height:250px}}
-.practice-nav{display:flex;align-items:center;gap:10px;padding:8px 2px 14px}
+.queue-chips{display:flex;gap:6px;overflow-x:auto;padding:6px 2px}
+.queue-chip{flex:0 0 auto;min-width:40px;height:40px;padding:0 10px;border-radius:10px;background:white;box-shadow:0 2px 6px #0000000d;font-size:17px;color:#455a64;display:flex;align-items:center;justify-content:center;gap:2px}
+.queue-chip.active{background:#455a64;color:#fff}
+.practice-nav{display:flex;align-items:center;gap:10px;padding:2px 2px 14px}
 .practice-nav button{min-width:88px;height:44px;border-radius:12px;background:white;color:#455a64;box-shadow:0 2px 8px #0000000d;font-weight:700}
 .practice-nav button:disabled{opacity:.4}
 .practice-nav-info{flex:1;text-align:center;font-size:15px;font-weight:700;color:#37474f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -137,6 +140,7 @@ h1{margin:0;font-size:25px}
   </div>
   <div class="library-grid" id="libraryGrid"></div>
 </section>
+<div class="queue-chips" id="queueChips"></div>
 <div class="practice-nav" id="practiceNav">
   <button class="secondary" id="prevCharBtn">◀ 上一个</button>
   <div class="practice-nav-info" id="practiceNavInfo">请先选字</div>
@@ -519,7 +523,7 @@ function matchesGroup(x,group){return group==='all'||(group==='__weak__'?!!x.is_
 function renderLibrary(){
   const q=$('searchInput').value.trim().toLowerCase(),q2=stripTone(q),group=$('groupSelect').value,grid=$('libraryGrid');grid.innerHTML='';
   LIBRARY.filter(x=>(!q||x.char.includes(q)||(x.pinyin||'').toLowerCase().includes(q)||stripTone(x.pinyin||'').includes(q2))&&matchesGroup(x,group)).forEach(item=>{
-    const d=document.createElement('label');const checked=selectedChars.some(x=>x.char===item.char);const practicing=!!(CHARS[current]&&CHARS[current].char===item.char);d.className='lib-item '+(checked?'selected':'')+(item.is_weak?' weak':'')+(practicing?' practicing':'');d.innerHTML='<button type="button" class="starBtn'+(item.is_weak?' on':'')+'" title="标记/取消：需要加强">⭐</button><input type="checkbox" '+(checked?'checked':'')+'><span class="hanzi">'+escapeHtml(item.char)+'</span><span class="py">'+escapeHtml(item.pinyin||'')+'</span>';d.querySelector('input').addEventListener('change',()=>toggleSelected(item));d.querySelector('.starBtn').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();toggleWeak(item,'parent');});grid.appendChild(d);
+    const d=document.createElement('div');const checked=selectedChars.some(x=>x.char===item.char);const practicing=!!(CHARS[current]&&CHARS[current].char===item.char);d.className='lib-item '+(checked?'selected':'')+(item.is_weak?' weak':'')+(practicing?' practicing':'');d.title='点这个字直接开始练它；打勾＝加入"练习勾选的字"';d.innerHTML='<button type="button" class="starBtn'+(item.is_weak?' on':'')+'" title="标记/取消：需要加强">⭐</button><input type="checkbox" '+(checked?'checked':'')+'><span class="hanzi">'+escapeHtml(item.char)+'</span><span class="py">'+escapeHtml(item.pinyin||'')+'</span>';d.querySelector('input').addEventListener('click',e=>e.stopPropagation());d.querySelector('input').addEventListener('change',()=>toggleSelected(item));d.querySelector('.starBtn').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();toggleWeak(item,'parent');});d.addEventListener('click',e=>{if(e.target.closest('.starBtn')||e.target.tagName==='INPUT')return;practiceFromLibrary(item);});grid.appendChild(d);
   });updateSelectedButton();
 }
 function toggleSelected(item){const i=selectedChars.findIndex(x=>x.char===item.char);if(i>=0)selectedChars.splice(i,1);else selectedChars.push(item);saveSelected();renderLibrary();renderPracticeNav();}
@@ -533,8 +537,30 @@ function practiceThisGroup(){
   CHARS=items.slice();current=0;destroyWriters();renderLibrary();renderMode();renderPracticeNav();
   $('status').textContent='▶ 正在练习「'+currentFilterLabel()+'」，共 '+CHARS.length+' 个字';$('status').className='status ok';
 }
+function practiceFromLibrary(item){
+  const existingIdx=CHARS.findIndex(x=>x.char===item.char);
+  if(existingIdx>=0){selectChar(existingIdx);return;}
+  const items=visibleItems();
+  const idx=items.findIndex(x=>x.char===item.char);
+  if(idx<0)return;
+  CHARS=items.slice();current=idx;destroyWriters();renderLibrary();renderMode();renderPracticeNav();
+  $('status').textContent='▶ 正在练习「'+currentFilterLabel()+'」，从「'+item.char+'」开始';$('status').className='status ok';
+}
+function renderQueueChips(){
+  const box=$('queueChips'); if(!box) return;
+  box.innerHTML='';
+  CHARS.forEach((item,i)=>{
+    const b=document.createElement('button');
+    b.type='button';
+    b.className='queue-chip'+(i===current?' active':'');
+    b.textContent=item.char+(item.is_weak?'⭐':'');
+    b.addEventListener('click',()=>selectChar(i));
+    box.appendChild(b);
+  });
+}
 function renderPracticeNav(){
   renderPracticeWordInfo();
+  renderQueueChips();
   const info=$('practiceNavInfo'),prev=$('prevCharBtn'),next=$('nextCharBtn');
   if(!CHARS.length){info.textContent='请先选字';prev.disabled=true;next.disabled=true;return;}
   const item=CHARS[current];
