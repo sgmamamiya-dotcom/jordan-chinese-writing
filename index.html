@@ -33,6 +33,14 @@ h1{margin:0;font-size:25px}
 .lib-item{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:72px;border:2px solid #e7edf0;border-radius:13px;background:#fff;user-select:none}
 .lib-item.selected{border-color:#455a64;background:#f0f4f6}.lib-item .hanzi{font-size:29px;line-height:1.05}.lib-item .py{font-size:11px;color:#78909c;margin-top:4px}
 .lib-item input{position:absolute;top:7px;right:7px;width:17px;height:17px;accent-color:#455a64}
+.lib-item.weak{border-color:#f9a825;background:#fff8e1}
+.lib-item .starBtn{position:absolute;top:6px;left:6px;width:21px;height:21px;border-radius:50%;background:#fff;border:1px solid #eceff1;font-size:12px;display:flex;align-items:center;justify-content:center;padding:0;line-height:1}
+.lib-item .starBtn.on{background:#ffb300;border-color:#ffb300}
+.daily-row{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:12px 0 4px}
+.daily-row select,.daily-row input[type=number]{height:42px;border:1px solid #dfe6ea;border-radius:11px;background:#fff;padding:0 12px;font:inherit;color:#37474f}
+.daily-row input[type=number]{width:78px}
+.daily-note{font-size:13px;color:#546e7a;margin-top:8px;line-height:1.6}
+.weakBtn{background:#fff3e0;color:#e65100}
 @media(max-width:760px){.library-head{align-items:flex-start;flex-direction:column}.library-tools{flex-direction:column}.library-grid{grid-template-columns:repeat(5,1fr);max-height:250px}}
 .charbar{display:flex;gap:8px;overflow:auto;padding:6px 2px 12px}
 .charbtn{min-width:64px;height:58px;border-radius:14px;background:white;font-size:25px;box-shadow:0 2px 8px #0000000d;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05}.charbtn small{font-size:11px;color:#78909c;margin-top:3px}.charbtn.active small{color:#eceff1}
@@ -84,9 +92,24 @@ h1{margin:0;font-size:25px}
   <div class="week-grid" id="weekGrid"></div>
 </section>
 
+<section class="library-card" id="dailyAutoCard">
+  <div class="library-head">
+    <div><h2>🎯 每日自动练习</h2><div class="library-sub">选一个分组后，Jordan 每天打开网页会自动从这个分组里随机挑一批字；练完这批，下次打开就换下一批，一轮抽完再重新开始</div></div>
+  </div>
+  <div class="daily-row">
+    <select id="dailyGroupSelect"><option value="">不自动挑选（手动选字）</option></select>
+    <span>每天</span>
+    <input type="number" id="dailyCountInput" min="1" max="50" value="10">
+    <span>个字</span>
+    <button class="primary" id="saveDailyBtn">保存设置</button>
+    <button class="secondary" id="reshuffleBtn">🔀 换一批</button>
+  </div>
+  <div class="daily-note" id="dailyNote"></div>
+</section>
+
 <section class="library-card">
   <div class="library-head">
-    <div><h2>📚 生字库</h2><div class="library-sub">学生或家长可以自由选择要练习的字，也可以添加新字</div></div>
+    <div><h2>📚 生字库</h2><div class="library-sub">学生或家长可以自由选择要练习的字，也可以添加新字；点字卡左上角 ⭐ 可以标记"需要加强"，方便以后集中练习</div></div>
     <div class="library-actions">
       <button class="secondary" id="selectAllBtn">全选</button>
       <button class="secondary" id="clearAllBtn">清空</button>
@@ -124,6 +147,7 @@ h1{margin:0;font-size:25px}
     <div class="hint" id="hint">沿着灰色笔画慢慢写</div>
     <div class="controls">
       <button class="primary" id="startBtn">开始练习</button><button class="secondary" id="finishBtn">✓ 完成这个字</button>
+      <button class="secondary weakBtn" id="weakBtn">🌱 记不熟，标记</button>
       <button class="secondary" id="clearBtn">清除</button>
     </div>
     <div class="status" id="status"></div>
@@ -172,6 +196,9 @@ let CHARS=[];
 let current=0,mode='trace',writer=null,quizActive=false;
 let practiceRows=[];
 const DAILY_TARGET=10;
+const APP_STATE_LOCAL_KEY='jordanAppState_v1';
+const WEAK_LOCAL_KEY='jordanWeakChars_v1';
+let APP_STATE={daily_group_id:null,daily_count:10,last_pick_date:null,last_pick_chars:[],queue:[],queue_group_id:null};
 const $=id=>document.getElementById(id);
 const chars=$('chars');
 
@@ -193,6 +220,95 @@ function restoreSelected(){
 }
 function updateSelectedButton(){$('practiceSelectedBtn').textContent='练习已选（'+selectedChars.length+'）';}
 function stripTone(s=''){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function loadLocalWeakSet(){try{return new Set(JSON.parse(localStorage.getItem(WEAK_LOCAL_KEY)||'[]'));}catch(e){return new Set();}}
+function saveLocalWeakSet(set){try{localStorage.setItem(WEAK_LOCAL_KEY,JSON.stringify([...set]));}catch(e){}}
+
+async function toggleWeak(item,source){
+  if(!item)return;
+  const newVal=!item.is_weak;
+  if(cloudReady){
+    try{
+      const {error}=await supabase.from('characters').update({is_weak:newVal,weak_marked_at:newVal?new Date().toISOString():null,weak_marked_by:newVal?source:null}).eq('id',item.id);
+      if(error) throw error;
+    }catch(err){
+      alert('\u6807\u8bb0\u5931\u8d25\uff0c\u8bf7\u786e\u8ba4\u5df2\u5728 Supabase \u8fd0\u884c\u4e86\u5347\u7ea7\u811a\u672c\uff08characters \u8868\u9700\u8981 is_weak \u5b57\u6bb5\uff09\uff1a\n'+err.message);
+      return;
+    }
+  }else{
+    const set=loadLocalWeakSet();
+    if(newVal)set.add(item.char);else set.delete(item.char);
+    saveLocalWeakSet(set);
+  }
+  item.is_weak=newVal;
+  renderLibrary();renderCharBar();
+}
+
+async function loadAppState(){
+  if(!cloudReady){
+    try{APP_STATE=Object.assign({},APP_STATE,JSON.parse(localStorage.getItem(APP_STATE_LOCAL_KEY)||'{}'));}catch(e){}
+    return;
+  }
+  try{
+    const {data,error}=await supabase.from('app_state').select('*').eq('id',1).maybeSingle();
+    if(error) throw error;
+    if(data) APP_STATE=Object.assign({},APP_STATE,data);
+  }catch(err){console.error('\u8bfb\u53d6\u6bcf\u65e5\u7ec3\u4e60\u8bbe\u7f6e\u5931\u8d25',err);}
+}
+async function saveAppState(patch){
+  APP_STATE=Object.assign({},APP_STATE,patch);
+  if(!cloudReady){
+    try{localStorage.setItem(APP_STATE_LOCAL_KEY,JSON.stringify(APP_STATE));}catch(e){}
+    return true;
+  }
+  try{
+    const row=Object.assign({id:1},patch);
+    const {error}=await supabase.from('app_state').upsert(row,{onConflict:'id'});
+    if(error) throw error;
+    return true;
+  }catch(err){console.error('\u4fdd\u5b58\u6bcf\u65e5\u7ec3\u4e60\u8bbe\u7f6e\u5931\u8d25',err);return false;}
+}
+function setSelectionFromChars(charList){
+  selectedChars=charList.map(c=>LIBRARY.find(x=>x.char===c)).filter(Boolean);
+  CHARS=selectedChars.slice();current=0;saveSelected();
+}
+function renderDailySettingsInputs(){
+  const gSel=$('dailyGroupSelect'); if(!gSel) return;
+  gSel.value=APP_STATE.daily_group_id!=null?String(APP_STATE.daily_group_id):'';
+  $('dailyCountInput').value=APP_STATE.daily_count||10;
+}
+function renderDailyNote(){
+  const note=$('dailyNote'); if(!note) return;
+  if(!APP_STATE.daily_group_id){note.textContent='\u5f53\u524d\u662f\u624b\u52a8\u9009\u5b57\u6a21\u5f0f\uff1a\u5728\u4e0b\u9762\u751f\u5b57\u5e93\u91cc\u52fe\u9009\u60f3\u7ec3\u7684\u5b57\uff0c\u518d\u70b9\u201c\u7ec3\u4e60\u5df2\u9009\u201d\u3002';return;}
+  const g=GROUPS.find(x=>String(x.id)===String(APP_STATE.daily_group_id));
+  const list=(APP_STATE.last_pick_chars||[]).join(' ');
+  note.textContent='\u4eca\u5929\uff08'+dateKey()+'\uff09\u4ece\u300c'+(g?formatGroup(g.name):'\u8be5\u5206\u7ec4')+'\u300d\u968f\u673a\u62bd\u4e86 '+(APP_STATE.last_pick_chars||[]).length+' \u4e2a\u5b57\uff1a'+(list||'\uff08\u8fd9\u4e2a\u5206\u7ec4\u91cc\u8fd8\u6ca1\u6709\u5b57\uff0c\u8bf7\u5148\u5728\u751f\u5b57\u5e93\u6dfb\u52a0\uff09');
+}
+function renderDailyGroupOptions(){
+  const sel=$('dailyGroupSelect'); if(!sel) return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">\u4e0d\u81ea\u52a8\u6311\u9009\uff08\u624b\u52a8\u9009\u5b57\uff09</option>'+GROUPS.map(g=>'<option value="'+g.id+'">'+escapeHtml(formatGroup(g.name))+'</option>').join('');
+  sel.value=GROUPS.some(g=>String(g.id)===cur)?cur:'';
+}
+async function applyDailyAutoPick(force){
+  await loadAppState();
+  renderDailySettingsInputs();
+  const groupId=APP_STATE.daily_group_id;
+  if(!groupId){restoreSelected();renderDailyNote();return;}
+  const today=dateKey();
+  if(!force && APP_STATE.last_pick_date===today && Array.isArray(APP_STATE.last_pick_chars) && APP_STATE.last_pick_chars.length){
+    setSelectionFromChars(APP_STATE.last_pick_chars);renderDailyNote();return;
+  }
+  const groupChars=LIBRARY.filter(x=>String(x.group_id)===String(groupId)).map(x=>x.char);
+  if(!groupChars.length){setSelectionFromChars([]);renderDailyNote();return;}
+  let queue=(String(APP_STATE.queue_group_id)===String(groupId) && Array.isArray(APP_STATE.queue))?APP_STATE.queue.filter(c=>groupChars.includes(c)):[];
+  if(!queue.length) queue=shuffle(groupChars);
+  const n=Math.max(1,Math.min(50,APP_STATE.daily_count||10));
+  const picked=queue.splice(0,n);
+  await saveAppState({last_pick_date:today,last_pick_chars:picked,queue,queue_group_id:groupId});
+  setSelectionFromChars(picked);
+  renderDailyNote();
+}
 
 async function seedDefaults(){
   if(!cloudReady) return;
@@ -205,24 +321,36 @@ async function seedDefaults(){
   const {error:cErr}=await supabase.from('characters').upsert(rows,{onConflict:'char,group_id',ignoreDuplicates:true});
   if(cErr) throw cErr;
 }
+async function fetchLibraryRows(){
+  let res=await supabase.from('characters').select('id,char,pinyin,group_id,is_weak,groups(name)').order('id');
+  if(res.error){
+    // Falls back to the pre-upgrade schema if the is_weak column hasn't been added yet in Supabase.
+    res=await supabase.from('characters').select('id,char,pinyin,group_id,groups(name)').order('id');
+  }
+  if(res.error) throw res.error;
+  return (res.data||[]).map(x=>({id:x.id,char:x.char,pinyin:x.pinyin||'',group_id:x.group_id,group:x.groups?.name||'未分组',is_weak:!!x.is_weak}));
+}
 async function loadCloudData(){
   if(!cloudReady){
     setCloudStatus('请把 Publishable key 粘贴到 HTML 里',false);
     // Preview fallback so the page still works before the key is pasted.
     GROUPS=DEFAULT_GROUPS.map((x,i)=>({id:i+1,name:x.name}));
-    LIBRARY=DEFAULT_CHARS.map((x,i)=>({...x,id:i+1,group_id:GROUPS.find(g=>g.name===x.group)?.id}));
-    restoreSelected(); renderGroupOptions(); renderLibrary(); renderCharBar(); renderMode(); renderCheckin(); return;
+    LIBRARY=DEFAULT_CHARS.map((x,i)=>({...x,id:i+1,group_id:GROUPS.find(g=>g.name===x.group)?.id,is_weak:false}));
+    const weakSet=loadLocalWeakSet();
+    LIBRARY.forEach(x=>{if(weakSet.has(x.char))x.is_weak=true;});
+    renderGroupOptions();
+    await applyDailyAutoPick();
+    renderLibrary(); renderCharBar(); renderMode(); renderCheckin(); return;
   }
   try{
     await seedDefaults();
     const {data:groups,error:gErr}=await supabase.from('groups').select('id,name').order('id');
     if(gErr) throw gErr;
     GROUPS=groups||[];
-    const {data:rows,error:cErr}=await supabase.from('characters').select('id,char,pinyin,group_id,groups(name)').order('id');
-    if(cErr) throw cErr;
-    LIBRARY=(rows||[]).map(x=>({id:x.id,char:x.char,pinyin:x.pinyin||'',group_id:x.group_id,group:x.groups?.name||'未分组'}));
-    restoreSelected();
-    renderGroupOptions(); renderLibrary(); renderCharBar();
+    LIBRARY=await fetchLibraryRows();
+    renderGroupOptions();
+    await applyDailyAutoPick();
+    renderLibrary(); renderCharBar();
     await loadPractice();
     renderMode(); renderCheckin();
     setCloudStatus('已连接云端');
@@ -234,10 +362,11 @@ async function loadCloudData(){
 function renderGroupOptions(){
   const filter=$('groupSelect'), add=$('addGroupSelect');
   const currentFilter=filter.value||'all';
-  filter.innerHTML='<option value="all">全部生字</option>'+GROUPS.map(g=>'<option value="'+escapeHtml(g.name)+'">'+escapeHtml(formatGroup(g.name))+'</option>').join('');
-  filter.value=GROUPS.some(g=>g.name===currentFilter)?currentFilter:'all';
+  filter.innerHTML='<option value="all">全部生字</option><option value="__weak__">⭐ 需要加强的字</option>'+GROUPS.map(g=>'<option value="'+escapeHtml(g.name)+'">'+escapeHtml(formatGroup(g.name))+'</option>').join('');
+  filter.value=(currentFilter==='__weak__'||GROUPS.some(g=>g.name===currentFilter))?currentFilter:'all';
   add.innerHTML='<option value="">选择分组</option>'+GROUPS.map(g=>'<option value="'+escapeHtml(g.name)+'">'+escapeHtml(formatGroup(g.name))+'</option>').join('');
   if(GROUPS.length) add.value=GROUPS[0].name;
+  renderDailyGroupOptions();
 }
 function formatGroup(name){return name.replace('P1-','P1 · ');}
 function escapeHtml(s=''){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -269,7 +398,9 @@ async function deleteGroup(){
   if(!confirm(msg))return;
   if(!cloudReady){
     LIBRARY=LIBRARY.filter(x=>x.group_id!==group.id); GROUPS=GROUPS.filter(g=>g.id!==group.id);
-    selectedChars=selectedChars.filter(x=>x.group_id!==group.id); saveSelected(); renderGroupOptions(); renderLibrary(); renderCharBar();
+    selectedChars=selectedChars.filter(x=>x.group_id!==group.id); saveSelected(); renderGroupOptions();
+    if(String(APP_STATE.daily_group_id)===String(group.id)) await saveAppState({daily_group_id:null,queue:[],queue_group_id:null,last_pick_date:null,last_pick_chars:[]});
+    renderDailySettingsInputs();renderDailyNote(); renderLibrary(); renderCharBar();
     $('status').textContent='✓ 已删除分组「'+formatGroup(name)+'」';$('status').className='status ok';return;
   }
   try{
@@ -278,7 +409,9 @@ async function deleteGroup(){
     GROUPS=GROUPS.filter(g=>g.id!==group.id);
     LIBRARY=LIBRARY.filter(x=>x.group_id!==group.id);
     selectedChars=selectedChars.filter(x=>x.group_id!==group.id); saveSelected();
-    renderGroupOptions(); renderLibrary(); renderCharBar();
+    renderGroupOptions();
+    if(String(APP_STATE.daily_group_id)===String(group.id)) await saveAppState({daily_group_id:null,queue:[],queue_group_id:null,last_pick_date:null,last_pick_chars:[]});
+    renderDailySettingsInputs();renderDailyNote(); renderLibrary(); renderCharBar();
     $('status').textContent='✓ 已删除分组「'+formatGroup(name)+'」及其中生字';$('status').className='status ok';
   }catch(err){$('status').textContent='删除失败：'+err.message;$('status').className='status bad';}
 }
@@ -293,7 +426,7 @@ async function addOnlineCharacter(){
   const existingChars=LIBRARY.filter(x=>charsIn.includes(x.char)&&x.group_id===group.id);
   const newChars=charsIn.filter(c=>!existingChars.some(x=>x.char===c));
   if(!cloudReady){
-    newChars.forEach(c=>{const item={id:Date.now()+Math.random(),char:c,pinyin:'',group:groupName,group_id:group.id};LIBRARY.push(item);selectedChars.push(item);});
+    newChars.forEach(c=>{const item={id:Date.now()+Math.random(),char:c,pinyin:'',group:groupName,group_id:group.id,is_weak:false};LIBRARY.push(item);selectedChars.push(item);});
     renderLibrary();renderCharBar();input.value='';setCloudStatus('预览模式：请先填写 Publishable key',false);return;
   }
   try{
@@ -309,9 +442,7 @@ async function addOnlineCharacter(){
   }catch(err){$('status').textContent='添加失败：'+err.message;$('status').className='status bad';}
 }
 async function refreshLibrary(){
-  const {data:rows,error}=await supabase.from('characters').select('id,char,pinyin,group_id,groups(name)').order('id');
-  if(error) throw error;
-  LIBRARY=(rows||[]).map(x=>({id:x.id,char:x.char,pinyin:x.pinyin||'',group_id:x.group_id,group:x.groups?.name||'未分组'}));
+  LIBRARY=await fetchLibraryRows();
 }
 
 async function loadPractice(){
@@ -350,18 +481,19 @@ function renderCheckin(){
   const grid=$('weekGrid');grid.innerHTML='';const names=['日','一','二','三','四','五','六'];
   for(let i=6;i>=0;i--){const x=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i),k=dateKey(x),v=p[k],n=v?(Array.isArray(v)?v.length:(v.chars?v.chars.length:(v.count||0))):0;const el=document.createElement('div');el.className='day '+(k===today?'active ':'')+(n>0?'complete':'');el.innerHTML='<div class="dow">周'+names[x.getDay()]+'</div><div class="num">'+x.getDate()+'</div><div class="done">'+(n?n+'字':'—')+'</div>';grid.appendChild(el);}
 }
+function matchesGroup(x,group){return group==='all'||(group==='__weak__'?!!x.is_weak:x.group===group);}
 function renderLibrary(){
   const q=$('searchInput').value.trim().toLowerCase(),q2=stripTone(q),group=$('groupSelect').value,grid=$('libraryGrid');grid.innerHTML='';
-  LIBRARY.filter(x=>(!q||x.char.includes(q)||(x.pinyin||'').toLowerCase().includes(q)||stripTone(x.pinyin||'').includes(q2))&&(group==='all'||x.group===group)).forEach(item=>{
-    const d=document.createElement('label');const checked=selectedChars.some(x=>x.char===item.char);d.className='lib-item '+(checked?'selected':'');d.innerHTML='<input type="checkbox" '+(checked?'checked':'')+'><span class="hanzi">'+escapeHtml(item.char)+'</span><span class="py">'+escapeHtml(item.pinyin||'')+'</span>';d.querySelector('input').addEventListener('change',()=>toggleSelected(item));grid.appendChild(d);
+  LIBRARY.filter(x=>(!q||x.char.includes(q)||(x.pinyin||'').toLowerCase().includes(q)||stripTone(x.pinyin||'').includes(q2))&&matchesGroup(x,group)).forEach(item=>{
+    const d=document.createElement('label');const checked=selectedChars.some(x=>x.char===item.char);d.className='lib-item '+(checked?'selected':'')+(item.is_weak?' weak':'');d.innerHTML='<button type="button" class="starBtn'+(item.is_weak?' on':'')+'" title="标记/取消：需要加强">⭐</button><input type="checkbox" '+(checked?'checked':'')+'><span class="hanzi">'+escapeHtml(item.char)+'</span><span class="py">'+escapeHtml(item.pinyin||'')+'</span>';d.querySelector('input').addEventListener('change',()=>toggleSelected(item));d.querySelector('.starBtn').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();toggleWeak(item,'parent');});grid.appendChild(d);
   });updateSelectedButton();
 }
 function toggleSelected(item){const i=selectedChars.findIndex(x=>x.char===item.char);if(i>=0)selectedChars.splice(i,1);else selectedChars.push(item);saveSelected();renderLibrary();renderCharBar();}
-function visibleItems(){const q=$('searchInput').value.trim().toLowerCase(),q2=stripTone(q),group=$('groupSelect').value;return LIBRARY.filter(x=>(!q||x.char.includes(q)||(x.pinyin||'').toLowerCase().includes(q)||stripTone(x.pinyin||'').includes(q2))&&(group==='all'||x.group===group));}
+function visibleItems(){const q=$('searchInput').value.trim().toLowerCase(),q2=stripTone(q),group=$('groupSelect').value;return LIBRARY.filter(x=>(!q||x.char.includes(q)||(x.pinyin||'').toLowerCase().includes(q)||stripTone(x.pinyin||'').includes(q2))&&matchesGroup(x,group));}
 function selectAllVisible(){visibleItems().forEach(x=>{if(!selectedChars.some(y=>y.char===x.char))selectedChars.push(x);});saveSelected();renderLibrary();renderCharBar();}
 function clearAll(){selectedChars=[];saveSelected();renderLibrary();renderCharBar();}
 function startSelectedPractice(){if(!selectedChars.length){$('status').textContent='请先在生字库选择至少一个字';$('status').className='status bad';return;}CHARS=selectedChars.slice();current=0;destroyWriters();renderCharBar();renderMode();}
-function renderCharBar(){chars.innerHTML='';renderPracticeWordInfo();CHARS.forEach((item,i)=>{const b=document.createElement('button');b.className='charbtn'+(i===current?' active':'');b.innerHTML='<span>'+escapeHtml(item.char)+'</span><small>'+escapeHtml(item.pinyin||'')+'</small>';b.addEventListener('click',()=>selectChar(i));chars.appendChild(b);});}
+function renderCharBar(){chars.innerHTML='';renderPracticeWordInfo();CHARS.forEach((item,i)=>{const b=document.createElement('button');b.className='charbtn'+(i===current?' active':'');b.innerHTML='<span>'+escapeHtml(item.char)+(item.is_weak?' ⭐':'')+'</span><small>'+escapeHtml(item.pinyin||'')+'</small>';b.addEventListener('click',()=>selectChar(i));chars.appendChild(b);});}
 function renderPracticeWordInfo(){const item=CHARS[current];if(!item)return;$('practicePinyin').textContent=item.pinyin||'';}
 function selectChar(i){current=i;renderPracticeWordInfo();document.querySelectorAll('.charbtn').forEach((b,n)=>b.classList.toggle('active',n===i));destroyWriters();renderMode();}
 function safe(fn){try{return fn()}catch(e){console.error(e);return null}}
@@ -396,9 +528,31 @@ document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{mod
 $('startBtn').addEventListener('click',()=>{if(mode==='trace'){if(writer){try{writer.cancelAnimation();}catch(e){}try{writer.animateCharacter();}catch(e){}}$('status').textContent='跟着灰色笔画，一笔一划慢慢描 🙂';$('status').className='status';}else{destroyWriters();makeQuiz();}});
 $('clearBtn').addEventListener('click',()=>{if(mode==='trace')clearTrace();else{destroyWriters();makeQuiz();}$('status').textContent='';$('status').className='status';});
 $('finishBtn').addEventListener('click',async()=>{if(CHARS[current]){await addDailyCompletion(CHARS[current].char);$('status').textContent='✓ 已打卡：'+CHARS[current].char+'；今天完成 '+((cloudReady?practiceMap()[dateKey()]||[]:[]).length||1)+' 个字';$('status').className='status ok';}});
+$('weakBtn').addEventListener('click',async()=>{
+  const item=CHARS[current]; if(!item)return;
+  const willBeWeak=!item.is_weak;
+  await toggleWeak(item,'jordan');
+  $('status').textContent=willBeWeak?('✓ 已标记「'+item.char+'」需要加强，收进了 ⭐ 列表'):('✓ 已取消「'+item.char+'」的标记');
+  $('status').className='status ok';
+});
 $('resetBtn').addEventListener('click',()=>{if(CHARS.length)selectChar(0);});
 document.querySelectorAll('.stage').forEach(el=>el.addEventListener('touchstart',e=>{if(mode==='quiz')e.preventDefault()},{passive:false}));
 $('addCharBtn').addEventListener('click',addOnlineCharacter);$('addGroupBtn').addEventListener('click',addGroup);$('deleteGroupBtn').addEventListener('click',deleteGroup);$('addCharInput').addEventListener('keydown',e=>{if(e.key==='Enter')addOnlineCharacter();});$('searchInput').addEventListener('input',renderLibrary);$('groupSelect').addEventListener('change',renderLibrary);$('selectAllBtn').addEventListener('click',selectAllVisible);$('clearAllBtn').addEventListener('click',clearAll);$('practiceSelectedBtn').addEventListener('click',startSelectedPractice);
+$('saveDailyBtn').addEventListener('click',async()=>{
+  const val=$('dailyGroupSelect').value;
+  const groupId=val?Number(val):null;
+  const count=Math.max(1,Math.min(50,parseInt($('dailyCountInput').value,10)||10));
+  const ok=await saveAppState({daily_group_id:groupId,daily_count:count});
+  if(!ok){$('status').textContent='保存失败，请确认已在 Supabase 运行了升级脚本（app_state 表）';$('status').className='status bad';return;}
+  await applyDailyAutoPick(true);
+  renderLibrary();renderCharBar();destroyWriters();renderMode();
+  $('status').textContent='✓ 每日练习设置已保存';$('status').className='status ok';
+});
+$('reshuffleBtn').addEventListener('click',async()=>{
+  await applyDailyAutoPick(true);
+  renderLibrary();renderCharBar();destroyWriters();renderMode();
+  $('status').textContent='✓ 已换一批新的字';$('status').className='status ok';
+});
 
 // Start
 CHARS=[];loadCloudData();
