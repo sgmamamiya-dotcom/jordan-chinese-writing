@@ -34,6 +34,7 @@ h1{margin:0;font-size:25px}
 .lib-item.selected{border-color:#455a64;background:#f0f4f6}.lib-item .hanzi{font-size:29px;line-height:1.05}.lib-item .py{font-size:11px;color:#78909c;margin-top:4px}
 .lib-item input{position:absolute;top:7px;right:7px;width:17px;height:17px;accent-color:#455a64}
 .lib-item.weak{border-color:#f9a825;background:#fff8e1}
+.lib-item.practicing{box-shadow:0 0 0 3px #455a64 inset}
 .lib-item .starBtn{position:absolute;top:6px;left:6px;width:21px;height:21px;border-radius:50%;background:#fff;border:1px solid #eceff1;font-size:12px;display:flex;align-items:center;justify-content:center;padding:0;line-height:1}
 .lib-item .starBtn.on{background:#ffb300;border-color:#ffb300}
 .daily-row{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:12px 0 4px}
@@ -42,9 +43,10 @@ h1{margin:0;font-size:25px}
 .daily-note{font-size:13px;color:#546e7a;margin-top:8px;line-height:1.6}
 .weakBtn{background:#fff3e0;color:#e65100}
 @media(max-width:760px){.library-head{align-items:flex-start;flex-direction:column}.library-tools{flex-direction:column}.library-grid{grid-template-columns:repeat(5,1fr);max-height:250px}}
-.charbar{display:flex;gap:8px;overflow:auto;padding:6px 2px 12px}
-.charbtn{min-width:64px;height:58px;border-radius:14px;background:white;font-size:25px;box-shadow:0 2px 8px #0000000d;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05}.charbtn small{font-size:11px;color:#78909c;margin-top:3px}.charbtn.active small{color:#eceff1}
-.charbtn.active{background:#37474f;color:white}
+.practice-nav{display:flex;align-items:center;gap:10px;padding:8px 2px 14px}
+.practice-nav button{min-width:88px;height:44px;border-radius:12px;background:white;color:#455a64;box-shadow:0 2px 8px #0000000d;font-weight:700}
+.practice-nav button:disabled{opacity:.4}
+.practice-nav-info{flex:1;text-align:center;font-size:15px;font-weight:700;color:#37474f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tabs{display:flex;gap:8px;margin-bottom:14px}
 .tab{flex:1;padding:12px 8px;border-radius:14px;background:white;color:#546e7a;font-weight:700}
 .tab.active{background:#455a64;color:white}
@@ -109,11 +111,12 @@ h1{margin:0;font-size:25px}
 
 <section class="library-card">
   <div class="library-head">
-    <div><h2>📚 生字库</h2><div class="library-sub">学生或家长可以自由选择要练习的字，也可以添加新字；点字卡左上角 ⭐ 可以标记"需要加强"，方便以后集中练习</div></div>
+    <div><h2>📚 生字库</h2><div class="library-sub">下面筛选框选一个分组，点"▶ 练习这个分组"就直接练这组的字；如果想自己挑几个字组合练习，用勾选框＋"练习勾选的字"。点字卡左上角 ⭐ 可以标记"需要加强"，方便以后集中练习</div></div>
     <div class="library-actions">
+      <button class="primary" id="practiceGroupBtn">▶ 练习这个分组</button>
       <button class="secondary" id="selectAllBtn">全选</button>
       <button class="secondary" id="clearAllBtn">清空</button>
-      <button class="primary" id="practiceSelectedBtn">练习已选（0）</button>
+      <button class="secondary" id="practiceSelectedBtn">练习勾选的字（0）</button>
     </div>
   </div>
   <div class="add-online">
@@ -134,7 +137,11 @@ h1{margin:0;font-size:25px}
   </div>
   <div class="library-grid" id="libraryGrid"></div>
 </section>
-<div class="charbar" id="chars"></div>
+<div class="practice-nav" id="practiceNav">
+  <button class="secondary" id="prevCharBtn">◀ 上一个</button>
+  <div class="practice-nav-info" id="practiceNavInfo">请先选字</div>
+  <button class="secondary" id="nextCharBtn">下一个 ▶</button>
+</div>
 <div class="tabs">
   <button class="tab active" data-mode="trace">① 描红</button>
   <button class="tab" data-mode="quiz">② 自己写＋批改</button>
@@ -201,7 +208,6 @@ const APP_STATE_LOCAL_KEY='jordanAppState_v1';
 const WEAK_LOCAL_KEY='jordanWeakChars_v1';
 let APP_STATE={daily_group_id:null,daily_count:10,last_pick_date:null,last_pick_chars:[],queue:[],queue_group_id:null};
 const $=id=>document.getElementById(id);
-const chars=$('chars');
 
 function setCloudStatus(text,good=true){
   $('cloudStatus').textContent=(good?'☁️ ':'⚠️ ')+text;
@@ -219,7 +225,13 @@ function restoreSelected(){
   current=0;
   saveSelected();
 }
-function updateSelectedButton(){$('practiceSelectedBtn').textContent='练习已选（'+selectedChars.length+'）';}
+function updateSelectedButton(){$('practiceSelectedBtn').textContent='练习勾选的字（'+selectedChars.length+'）';}
+function currentFilterLabel(){
+  const v=$('groupSelect').value;
+  if(v==='all')return '全部生字';
+  if(v==='__weak__')return '⭐ 需要加强的字';
+  return formatGroup(v);
+}
 function stripTone(s=''){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
 function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function getPinyin(char){
@@ -261,7 +273,7 @@ async function toggleWeak(item,source){
     saveLocalWeakSet(set);
   }
   item.is_weak=newVal;
-  renderLibrary();renderCharBar();
+  renderLibrary();renderPracticeNav();
 }
 
 async function loadAppState(){
@@ -361,7 +373,7 @@ async function loadCloudData(){
     await backfillMissingPinyin();
     renderGroupOptions();
     await applyDailyAutoPick();
-    renderLibrary(); renderCharBar(); renderMode(); renderCheckin(); return;
+    renderLibrary(); renderPracticeNav(); renderMode(); renderCheckin(); return;
   }
   try{
     await seedDefaults();
@@ -372,7 +384,7 @@ async function loadCloudData(){
     await backfillMissingPinyin();
     renderGroupOptions();
     await applyDailyAutoPick();
-    renderLibrary(); renderCharBar();
+    renderLibrary(); renderPracticeNav();
     await loadPractice();
     renderMode(); renderCheckin();
     setCloudStatus('已连接云端');
@@ -422,7 +434,7 @@ async function deleteGroup(){
     LIBRARY=LIBRARY.filter(x=>x.group_id!==group.id); GROUPS=GROUPS.filter(g=>g.id!==group.id);
     selectedChars=selectedChars.filter(x=>x.group_id!==group.id); saveSelected(); renderGroupOptions();
     if(String(APP_STATE.daily_group_id)===String(group.id)) await saveAppState({daily_group_id:null,queue:[],queue_group_id:null,last_pick_date:null,last_pick_chars:[]});
-    renderDailySettingsInputs();renderDailyNote(); renderLibrary(); renderCharBar();
+    renderDailySettingsInputs();renderDailyNote(); renderLibrary(); renderPracticeNav();
     $('status').textContent='✓ 已删除分组「'+formatGroup(name)+'」';$('status').className='status ok';return;
   }
   try{
@@ -433,7 +445,7 @@ async function deleteGroup(){
     selectedChars=selectedChars.filter(x=>x.group_id!==group.id); saveSelected();
     renderGroupOptions();
     if(String(APP_STATE.daily_group_id)===String(group.id)) await saveAppState({daily_group_id:null,queue:[],queue_group_id:null,last_pick_date:null,last_pick_chars:[]});
-    renderDailySettingsInputs();renderDailyNote(); renderLibrary(); renderCharBar();
+    renderDailySettingsInputs();renderDailyNote(); renderLibrary(); renderPracticeNav();
     $('status').textContent='✓ 已删除分组「'+formatGroup(name)+'」及其中生字';$('status').className='status ok';
   }catch(err){$('status').textContent='删除失败：'+err.message;$('status').className='status bad';}
 }
@@ -449,7 +461,7 @@ async function addOnlineCharacter(){
   const newChars=charsIn.filter(c=>!existingChars.some(x=>x.char===c));
   if(!cloudReady){
     newChars.forEach(c=>{const item={id:Date.now()+Math.random(),char:c,pinyin:getPinyin(c),group:groupName,group_id:group.id,is_weak:false};LIBRARY.push(item);selectedChars.push(item);});
-    renderLibrary();renderCharBar();input.value='';setCloudStatus('预览模式：请先填写 Publishable key',false);return;
+    renderLibrary();renderPracticeNav();input.value='';setCloudStatus('预览模式：请先填写 Publishable key',false);return;
   }
   try{
     const rows=newChars.map(c=>({char:c,pinyin:getPinyin(c),group_id:group.id}));
@@ -459,7 +471,7 @@ async function addOnlineCharacter(){
     }
     await refreshLibrary();
     for(const c of charsIn){const item=LIBRARY.find(x=>x.char===c&&x.group_id===group.id);if(item&&!selectedChars.some(x=>x.char===c))selectedChars.push(item);}
-    saveSelected(); renderLibrary(); renderCharBar(); input.value='';
+    saveSelected(); renderLibrary(); renderPracticeNav(); input.value='';
     $('status').textContent='✓ 已把 '+charsIn.length+' 个字保存到「'+formatGroup(groupName)+'」';$('status').className='status ok';
   }catch(err){$('status').textContent='添加失败：'+err.message;$('status').className='status bad';}
 }
@@ -507,17 +519,31 @@ function matchesGroup(x,group){return group==='all'||(group==='__weak__'?!!x.is_
 function renderLibrary(){
   const q=$('searchInput').value.trim().toLowerCase(),q2=stripTone(q),group=$('groupSelect').value,grid=$('libraryGrid');grid.innerHTML='';
   LIBRARY.filter(x=>(!q||x.char.includes(q)||(x.pinyin||'').toLowerCase().includes(q)||stripTone(x.pinyin||'').includes(q2))&&matchesGroup(x,group)).forEach(item=>{
-    const d=document.createElement('label');const checked=selectedChars.some(x=>x.char===item.char);d.className='lib-item '+(checked?'selected':'')+(item.is_weak?' weak':'');d.innerHTML='<button type="button" class="starBtn'+(item.is_weak?' on':'')+'" title="标记/取消：需要加强">⭐</button><input type="checkbox" '+(checked?'checked':'')+'><span class="hanzi">'+escapeHtml(item.char)+'</span><span class="py">'+escapeHtml(item.pinyin||'')+'</span>';d.querySelector('input').addEventListener('change',()=>toggleSelected(item));d.querySelector('.starBtn').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();toggleWeak(item,'parent');});grid.appendChild(d);
+    const d=document.createElement('label');const checked=selectedChars.some(x=>x.char===item.char);const practicing=!!(CHARS[current]&&CHARS[current].char===item.char);d.className='lib-item '+(checked?'selected':'')+(item.is_weak?' weak':'')+(practicing?' practicing':'');d.innerHTML='<button type="button" class="starBtn'+(item.is_weak?' on':'')+'" title="标记/取消：需要加强">⭐</button><input type="checkbox" '+(checked?'checked':'')+'><span class="hanzi">'+escapeHtml(item.char)+'</span><span class="py">'+escapeHtml(item.pinyin||'')+'</span>';d.querySelector('input').addEventListener('change',()=>toggleSelected(item));d.querySelector('.starBtn').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();toggleWeak(item,'parent');});grid.appendChild(d);
   });updateSelectedButton();
 }
-function toggleSelected(item){const i=selectedChars.findIndex(x=>x.char===item.char);if(i>=0)selectedChars.splice(i,1);else selectedChars.push(item);saveSelected();renderLibrary();renderCharBar();}
+function toggleSelected(item){const i=selectedChars.findIndex(x=>x.char===item.char);if(i>=0)selectedChars.splice(i,1);else selectedChars.push(item);saveSelected();renderLibrary();renderPracticeNav();}
 function visibleItems(){const q=$('searchInput').value.trim().toLowerCase(),q2=stripTone(q),group=$('groupSelect').value;return LIBRARY.filter(x=>(!q||x.char.includes(q)||(x.pinyin||'').toLowerCase().includes(q)||stripTone(x.pinyin||'').includes(q2))&&matchesGroup(x,group));}
-function selectAllVisible(){visibleItems().forEach(x=>{if(!selectedChars.some(y=>y.char===x.char))selectedChars.push(x);});saveSelected();renderLibrary();renderCharBar();}
-function clearAll(){selectedChars=[];saveSelected();renderLibrary();renderCharBar();}
-function startSelectedPractice(){if(!selectedChars.length){$('status').textContent='请先在生字库选择至少一个字';$('status').className='status bad';return;}CHARS=selectedChars.slice();current=0;destroyWriters();renderCharBar();renderMode();}
-function renderCharBar(){chars.innerHTML='';renderPracticeWordInfo();CHARS.forEach((item,i)=>{const b=document.createElement('button');b.className='charbtn'+(i===current?' active':'');b.innerHTML='<span>'+escapeHtml(item.char)+(item.is_weak?' ⭐':'')+'</span><small>'+escapeHtml(item.pinyin||'')+'</small>';b.addEventListener('click',()=>selectChar(i));chars.appendChild(b);});}
+function selectAllVisible(){visibleItems().forEach(x=>{if(!selectedChars.some(y=>y.char===x.char))selectedChars.push(x);});saveSelected();renderLibrary();renderPracticeNav();}
+function clearAll(){selectedChars=[];saveSelected();renderLibrary();renderPracticeNav();}
+function startSelectedPractice(){if(!selectedChars.length){$('status').textContent='请先在生字库勾选至少一个字';$('status').className='status bad';return;}CHARS=selectedChars.slice();current=0;destroyWriters();renderLibrary();renderMode();renderPracticeNav();$('status').textContent='▶ 正在练习勾选的字，共 '+CHARS.length+' 个';$('status').className='status ok';}
+function practiceThisGroup(){
+  const items=visibleItems();
+  if(!items.length){$('status').textContent='这个分组还没有字';$('status').className='status bad';return;}
+  CHARS=items.slice();current=0;destroyWriters();renderLibrary();renderMode();renderPracticeNav();
+  $('status').textContent='▶ 正在练习「'+currentFilterLabel()+'」，共 '+CHARS.length+' 个字';$('status').className='status ok';
+}
+function renderPracticeNav(){
+  renderPracticeWordInfo();
+  const info=$('practiceNavInfo'),prev=$('prevCharBtn'),next=$('nextCharBtn');
+  if(!CHARS.length){info.textContent='请先选字';prev.disabled=true;next.disabled=true;return;}
+  const item=CHARS[current];
+  info.textContent=(current+1)+' / '+CHARS.length+'　'+item.char+(item.is_weak?' ⭐':'')+(item.pinyin?'　'+item.pinyin:'');
+  prev.disabled=current<=0;
+  next.disabled=current>=CHARS.length-1;
+}
 function renderPracticeWordInfo(){const item=CHARS[current];if(!item)return;$('practicePinyin').textContent=item.pinyin||'';}
-function selectChar(i){current=i;renderPracticeWordInfo();document.querySelectorAll('.charbtn').forEach((b,n)=>b.classList.toggle('active',n===i));destroyWriters();renderMode();}
+function selectChar(i){current=i;destroyWriters();renderMode();renderPracticeNav();renderLibrary();}
 function safe(fn){try{return fn()}catch(e){console.error(e);return null}}
 function destroyWriters(){safe(()=>writer&&writer.cancelQuiz&&writer.cancelQuiz());writer=null;quizActive=false;$('writer').innerHTML='';$('practiceStage').classList.remove('trace-mode');$('practiceCanvas').style.display='none';const c=$('practiceCanvas'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);}
 function makeQuiz(){if(!CHARS[current])return;if(!window.HanziWriter){$('status').textContent='笔顺库还没加载，请检查网络后刷新';$('status').className='status bad';return;}writer=HanziWriter.create('writer',CHARS[current].char,{width:480,height:480,padding:8,showCharacter:false,showOutline:false,drawingWidth:18,showHintAfterMisses:2,highlightOnComplete:true,onLoadCharDataError:()=>{$('status').textContent='笔顺数据加载失败';$('status').className='status bad';}});writer.quiz({showHintAfterMisses:2,onCorrectStroke:d=>{$('status').textContent='✓ 第 '+(d.strokeNum+1)+' 笔正确！';$('status').className='status ok';},onMistake:d=>{$('status').textContent='再试一次这一笔 🙂';$('status').className='status bad';},onComplete:async d=>{quizActive=false;await addDailyCompletion(CHARS[current].char);$('status').textContent='🎉 全部写对了！';$('status').className='status ok';}});quizActive=true;}
@@ -560,7 +586,9 @@ $('weakBtn').addEventListener('click',async()=>{
 });
 $('resetBtn').addEventListener('click',()=>{if(CHARS.length)selectChar(0);});
 document.querySelectorAll('.stage').forEach(el=>el.addEventListener('touchstart',e=>{if(mode==='quiz')e.preventDefault()},{passive:false}));
-$('addCharBtn').addEventListener('click',addOnlineCharacter);$('addGroupBtn').addEventListener('click',addGroup);$('deleteGroupBtn').addEventListener('click',deleteGroup);$('addCharInput').addEventListener('keydown',e=>{if(e.key==='Enter')addOnlineCharacter();});$('searchInput').addEventListener('input',renderLibrary);$('groupSelect').addEventListener('change',renderLibrary);$('selectAllBtn').addEventListener('click',selectAllVisible);$('clearAllBtn').addEventListener('click',clearAll);$('practiceSelectedBtn').addEventListener('click',startSelectedPractice);
+$('addCharBtn').addEventListener('click',addOnlineCharacter);$('addGroupBtn').addEventListener('click',addGroup);$('deleteGroupBtn').addEventListener('click',deleteGroup);$('addCharInput').addEventListener('keydown',e=>{if(e.key==='Enter')addOnlineCharacter();});$('searchInput').addEventListener('input',renderLibrary);$('groupSelect').addEventListener('change',renderLibrary);$('selectAllBtn').addEventListener('click',selectAllVisible);$('clearAllBtn').addEventListener('click',clearAll);$('practiceSelectedBtn').addEventListener('click',startSelectedPractice);$('practiceGroupBtn').addEventListener('click',practiceThisGroup);
+$('prevCharBtn').addEventListener('click',()=>{if(current>0)selectChar(current-1);});
+$('nextCharBtn').addEventListener('click',()=>{if(current<CHARS.length-1)selectChar(current+1);});
 $('saveDailyBtn').addEventListener('click',async()=>{
   const val=$('dailyGroupSelect').value;
   const groupId=val?Number(val):null;
@@ -568,12 +596,12 @@ $('saveDailyBtn').addEventListener('click',async()=>{
   const ok=await saveAppState({daily_group_id:groupId,daily_count:count});
   if(!ok){$('status').textContent='保存失败，请确认已在 Supabase 运行了升级脚本（app_state 表）';$('status').className='status bad';return;}
   await applyDailyAutoPick(true);
-  renderLibrary();renderCharBar();destroyWriters();renderMode();
+  renderLibrary();renderPracticeNav();destroyWriters();renderMode();
   $('status').textContent='✓ 每日练习设置已保存';$('status').className='status ok';
 });
 $('reshuffleBtn').addEventListener('click',async()=>{
   await applyDailyAutoPick(true);
-  renderLibrary();renderCharBar();destroyWriters();renderMode();
+  renderLibrary();renderPracticeNav();destroyWriters();renderMode();
   $('status').textContent='✓ 已换一批新的字';$('status').className='status ok';
 });
 
