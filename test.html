@@ -35,8 +35,6 @@ h1{margin:0;font-size:23px}
 .char-item.weak{border-color:#f9a825;background:#fff8e1}
 .char-item .hanzi{font-size:26px;line-height:1.05}
 .char-item .py{font-size:10px;color:#78909c;margin-top:3px}
-.exBtn{position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:6px;background:#eceff1;color:#607d8b;font-size:11px;line-height:20px;text-align:center;user-select:none}
-.exBtn.has{background:#e1f5e5;color:#2e7d32}
 .empty-note{font-size:13px;color:#90a4ae;text-align:center;padding:18px 6px}
 
 /* ---- test screen ---- */
@@ -64,6 +62,17 @@ canvas.padCanvas{display:block;width:100%;height:100%;touch-action:none}
 .action-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px}
 .good-btn{background:#2e7d32;color:#fff}
 .practice-btn{background:#e65100;color:#fff}
+.hint-btn{background:#e3f2fd;color:#1565c0}
+
+/* ---- stroke-order hint overlay (like 描红) ---- */
+.hint-overlay{
+  position:absolute;inset:0;background:#fff;z-index:5;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px;
+}
+.hint-writer{width:70%;max-width:220px;aspect-ratio:1}
+.hint-py{font-size:16px;font-weight:700;color:#546e7a}
+.hint-note{font-size:12px;color:#90a4ae;text-align:center}
+.hint-close{margin-top:2px}
 
 /* ---- summary ---- */
 .score{font-size:44px;font-weight:800;color:#455a64;text-align:center;margin:6px 0}
@@ -146,6 +155,12 @@ canvas.padCanvas{display:block;width:100%;height:100%;touch-action:none}
       <button type="button" class="pad-tool" id="undoBtn" aria-label="撤销">↩</button>
       <button type="button" class="pad-tool" id="clearBtn" aria-label="清除">🗑</button>
     </div>
+    <div class="hint-overlay" id="hintOverlay" style="display:none">
+      <div class="hint-writer" id="hintWriterBox"></div>
+      <div class="hint-py" id="hintPy"></div>
+      <div class="hint-note">看好笔顺，再自己写一遍</div>
+      <button type="button" class="secondary hint-close" id="hintCloseBtn">✏️ 我来试试</button>
+    </div>
   </div>
 
   <div class="reveal-block" id="revealBlock">
@@ -155,6 +170,7 @@ canvas.padCanvas{display:block;width:100%;height:100%;touch-action:none}
 
   <div class="action-row" id="testActionRow">
     <button type="button" class="secondary" id="checkBtn">✓ 对答案</button>
+    <button type="button" class="secondary hint-btn" id="hintBtn">💡 不会写，教教我</button>
   </div>
 </div>
 
@@ -172,6 +188,7 @@ canvas.padCanvas{display:block;width:100%;height:100%;touch-action:none}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
 <script>
 (function(){
   "use strict";
@@ -188,7 +205,6 @@ canvas.padCanvas{display:block;width:100%;height:100%;touch-action:none}
   var LIBRARY = [];
   var manualSelected = [];
   var pickMode = 'group';
-  var examplesColumnMissing = false;
 
   var session = { items: [], pos: 0, results: {} }; // results[char] = 'good' | 'practice'
 
@@ -206,15 +222,10 @@ canvas.padCanvas{display:block;width:100%;height:100%;touch-action:none}
       var g = await supabase.from('groups').select('id,name').order('id');
       if(g.error) throw g.error;
       GROUPS = g.data || [];
-      var res = await supabase.from('characters').select('id,char,pinyin,group_id,is_weak,examples,groups(name)').order('id');
-      if(res.error){
-        // "examples" column may not exist yet (before the Supabase migration runs) — fall back gracefully.
-        res = await supabase.from('characters').select('id,char,pinyin,group_id,is_weak,groups(name)').order('id');
-        if(res.error) throw res.error;
-        examplesColumnMissing = true;
-      }
+      var res = await supabase.from('characters').select('id,char,pinyin,group_id,is_weak,groups(name)').order('id');
+      if(res.error) throw res.error;
       LIBRARY = (res.data||[]).map(function(x){
-        return { id:x.id, char:x.char, pinyin:x.pinyin||'', group_id:x.group_id, group:(x.groups?x.groups.name:'未分组'), is_weak:!!x.is_weak, examples:x.examples||'' };
+        return { id:x.id, char:x.char, pinyin:x.pinyin||'', group_id:x.group_id, group:(x.groups?x.groups.name:'未分组'), is_weak:!!x.is_weak };
       });
       renderGroupSelects();
       renderManualGrid();
@@ -249,14 +260,11 @@ canvas.padCanvas{display:block;width:100%;height:100%;touch-action:none}
     }else{
       grid.innerHTML = items.map(function(it){
         var sel = manualSelected.some(function(s){ return s.id===it.id; });
-        var hasEx = !!(it.examples && it.examples.trim());
-        var exBtn = examplesColumnMissing ? '' : '<span class="exBtn'+(hasEx?' has':'')+'" data-ex-id="'+it.id+'" title="编辑听写词组例句（帮助区分同音字）">词</span>';
         return '<button type="button" class="char-item'+(sel?' selected':'')+(it.is_weak?' weak':'')+'" data-id="'+it.id+'">' +
-          '<span class="hanzi">'+escapeHtml(it.char)+'</span><span class="py">'+escapeHtml(it.pinyin)+'</span>' + exBtn + '</button>';
+          '<span class="hanzi">'+escapeHtml(it.char)+'</span><span class="py">'+escapeHtml(it.pinyin)+'</span></button>';
       }).join('');
       grid.querySelectorAll('.char-item').forEach(function(btn){
-        btn.addEventListener('click', function(e){
-          if(e.target.closest('.exBtn')) return;
+        btn.addEventListener('click', function(){
           var id = Number(btn.getAttribute('data-id'));
           var idx = manualSelected.findIndex(function(s){ return s.id===id; });
           if(idx>=0) manualSelected.splice(idx,1);
@@ -264,38 +272,8 @@ canvas.padCanvas{display:block;width:100%;height:100%;touch-action:none}
           renderManualGrid();
         });
       });
-      grid.querySelectorAll('.exBtn').forEach(function(btn){
-        btn.addEventListener('click', function(e){
-          e.preventDefault(); e.stopPropagation();
-          var id = Number(btn.getAttribute('data-ex-id'));
-          var item = LIBRARY.find(function(x){ return x.id===id; });
-          if(item) editExamples(item);
-        });
-      });
     }
     $('manualCount').textContent = '已选 ' + manualSelected.length + ' 个字';
-  }
-
-  // Examples are stored as a comma-separated string, e.g. "他们,他人" — used during
-  // dictation to give context after the lone character, so Jordan can tell homophones apart.
-  function parseExamples(raw){
-    if(!raw) return [];
-    return raw.split(/[,，、\s]+/).map(function(s){ return s.trim(); }).filter(Boolean);
-  }
-
-  async function editExamples(item){
-    if(!supabase || item.id==null) return;
-    var current = parseExamples(item.examples).join('、');
-    var input = prompt('给「'+item.char+'」加两个词组例句，帮助听写时分辨同音字（用顿号、逗号或空格分开），例如：他们、他人\n\n留空则不播放例句，只读两遍字本身。', current);
-    if(input===null) return; // cancelled
-    var cleaned = parseExamples(input).slice(0,3).join(',');
-    try{
-      await supabase.from('characters').update({ examples: cleaned }).eq('id', item.id);
-      item.examples = cleaned;
-      renderManualGrid();
-    }catch(e){
-      alert('保存例句失败，请检查网络后重试');
-    }
   }
   $('manualSearch').addEventListener('input', renderManualGrid);
   $('manualGroupFilter').addEventListener('change', renderManualGrid);
@@ -349,24 +327,16 @@ canvas.padCanvas{display:block;width:100%;height:100%;touch-action:none}
     });
   }
   function wait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
-  // Reads the character alone, then reads it again OR — if example words are stored —
-  // reads the example words instead, e.g. 他 → 他 → 他们 → 他人. A single isolated
-  // character is a very short, easy-to-miss sound and Chinese has many homophones,
-  // so the example words give context for which character/tone is meant.
-  function speakDictation(item){
-    if(!item || !item.char || !('speechSynthesis' in window)) return;
+  // Reads the character, pauses, then reads it again — like a real 听写:
+  // a single character is a very short sound, easy to miss on one pass.
+  function speakChar(ch){
+    if(!ch || !('speechSynthesis' in window)) return;
     try{
       window.speechSynthesis.cancel();
-      var examples = parseExamples(item.examples);
-      var seq = examples.length ? [item.char].concat(examples) : [item.char, item.char];
-      var p = Promise.resolve();
-      seq.forEach(function(word, i){
-        p = p.then(function(){ return speakOnce(word); });
-        if(i < seq.length - 1) p = p.then(function(){ return wait(250); });
-      });
+      speakOnce(ch).then(function(){ return wait(250); }).then(function(){ return speakOnce(ch); });
     }catch(e){}
   }
-  $('listenBtn').addEventListener('click', function(){ speakDictation(currentChar()); });
+  $('listenBtn').addEventListener('click', function(){ speakChar(currentChar().char); });
 
   function currentChar(){ return session.items[session.pos]; }
 
@@ -465,18 +435,23 @@ canvas.padCanvas{display:block;width:100%;height:100%;touch-action:none}
 
   function renderTestItem(){
     var item = currentChar();
+    hideHint();
     $('revealBlock').classList.remove('shown');
     $('revealChar').textContent = '';
     $('revealPy').textContent = '';
-    $('testActionRow').innerHTML = '<button type="button" class="secondary" id="checkBtn">✓ 对答案</button>';
+    $('testActionRow').innerHTML =
+      '<button type="button" class="secondary" id="checkBtn">✓ 对答案</button>' +
+      '<button type="button" class="secondary hint-btn" id="hintBtn">💡 不会写，教教我</button>';
     $('checkBtn').addEventListener('click', onReveal);
+    $('hintBtn').addEventListener('click', showHint);
     setupPad();
     renderProgress();
-    if($('autoplayToggle').checked) setTimeout(function(){ speakDictation(item); }, 200);
+    if($('autoplayToggle').checked) setTimeout(function(){ speakChar(item.char); }, 200);
   }
 
   function onReveal(){
     var item = currentChar();
+    hideHint();
     $('revealChar').textContent = item.char;
     $('revealPy').textContent = item.pinyin || '';
     $('revealBlock').classList.add('shown');
@@ -486,6 +461,37 @@ canvas.padCanvas{display:block;width:100%;height:100%;touch-action:none}
     $('markGood').addEventListener('click', function(){ mark('good'); });
     $('markPractice').addEventListener('click', function(){ mark('practice'); });
   }
+
+  /* ---------------- stroke-order hint (like 描红, for when he's stuck) ---------------- */
+  var hintWriter = null;
+  function showHint(){
+    var item = currentChar();
+    if(!item) return;
+    if(!window.HanziWriter){
+      alert('笔顺库还没加载，请检查网络后刷新');
+      return;
+    }
+    $('hintPy').textContent = item.pinyin || '';
+    $('hintWriterBox').innerHTML = '';
+    $('hintOverlay').style.display = 'flex';
+    try{
+      hintWriter = HanziWriter.create('hintWriterBox', item.char, {
+        width: 220, height: 220, padding: 10,
+        showCharacter: false, showOutline: true,
+        strokeColor: '#455a64', outlineColor: '#cfd8dc',
+        strokeAnimationSpeed: 0.85, delayBetweenStrokes: 250,
+        onLoadCharDataError: function(){ $('hintWriterBox').innerHTML = ''; $('hintPy').textContent = '笔顺数据加载失败，请检查网络'; }
+      });
+      setTimeout(function(){ if(hintWriter) hintWriter.animateCharacter(); }, 150);
+    }catch(e){}
+    speakChar(item.char);
+  }
+  function hideHint(){
+    $('hintOverlay').style.display = 'none';
+    $('hintWriterBox').innerHTML = '';
+    hintWriter = null;
+  }
+  $('hintCloseBtn').addEventListener('click', hideHint);
 
   async function mark(result){
     var item = currentChar();
