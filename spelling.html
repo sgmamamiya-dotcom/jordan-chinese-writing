@@ -603,10 +603,10 @@ footer.note{
     var accent = css.getPropertyValue('--accent').trim() || '#FF6A4D';
     var xHeight = base - mid;
     var fontSize = Math.max(20, Math.round(xHeight * 2.0));
-    ctx.font = '700 ' + fontSize + 'px "Andika", "Comic Sans MS", system-ui, sans-serif';
+    ctx.font = '400 ' + fontSize + 'px "Andika", "Comic Sans MS", system-ui, sans-serif';
     ctx.textBaseline = 'alphabetic';
     var letters = word.split('');
-    var spacing = fontSize * 0.2;
+    var spacing = fontSize * 0.24;
     var widths = letters.map(function(ch){ return ctx.measureText(ch).width; });
     var totalWidth = widths.reduce(function(a,b){ return a+b; }, 0) + spacing*(letters.length-1);
     var x = Math.max(12, (w - totalWidth) / 2);
@@ -614,8 +614,8 @@ footer.note{
     ctx.save();
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.setLineDash([0.1, fontSize*0.11]);
-    ctx.lineWidth = Math.max(2.4, fontSize*0.07);
+    ctx.setLineDash([0.1, fontSize*0.14]);
+    ctx.lineWidth = Math.max(1.6, fontSize*0.045);
     ctx.strokeStyle = accent;
     ctx.fillStyle = accent;
     letters.forEach(function(ch, i){
