@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Jordan's Spelling Dictation</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&family=Andika:ital,wght@0,400;0,700;1,400&display=swap">
 <style>
 :root{
   color-scheme: light dark;
@@ -14,6 +14,8 @@
   --ink-soft:#5B6B85;
   --line:#C7D4E6;
   --line-faint:#E4EBF5;
+  --pad-line:#8FA3C2;
+  --pad-base:#5A6E90;
   --accent:#FF6A4D;
   --accent-ink:#FFFFFF;
   --accent-soft:#FFE7E0;
@@ -32,6 +34,8 @@
     --ink-soft:#9FB0C9;
     --line:#37455E;
     --line-faint:#232B39;
+    --pad-line:#5E7196;
+    --pad-base:#A9BBDA;
     --accent:#FF7A5C;
     --accent-ink:#1B0E0A;
     --accent-soft:#3A241D;
@@ -50,6 +54,8 @@
   --ink-soft:#9FB0C9;
   --line:#37455E;
   --line-faint:#232B39;
+  --pad-line:#5E7196;
+  --pad-base:#A9BBDA;
   --accent:#FF7A5C;
   --accent-ink:#1B0E0A;
   --accent-soft:#3A241D;
@@ -83,6 +89,14 @@ a{color:inherit;}
   display:flex;
   flex-direction:column;
   gap:18px;
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+}
+#listEditor{
+  -webkit-user-select:text;
+  user-select:text;
+  -webkit-touch-callout:default;
 }
 
 /* ---------- top bar ---------- */
@@ -552,52 +566,62 @@ footer.note{
   function drawGuides(ctx, w, h, traceWord){
     ctx.clearRect(0,0,w,h);
     var css = getComputedStyle(document.documentElement);
-    var line = css.getPropertyValue('--line').trim() || '#C7D4E6';
+    var line = css.getPropertyValue('--pad-line').trim() || '#8FA3C2';
+    var baseLine = css.getPropertyValue('--pad-base').trim() || '#5A6E90';
     var top = h*0.16, mid = h*0.5, base = h*0.76, desc = h*0.94;
-    ctx.strokeStyle = line;
 
+    ctx.strokeStyle = line;
     ctx.setLineDash([5,5]);
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 1.1;
     ctx.beginPath(); ctx.moveTo(0,top); ctx.lineTo(w,top); ctx.stroke();
 
-    ctx.setLineDash([2,4]);
-    ctx.beginPath(); ctx.moveTo(0,mid); ctx.lineTo(w,mid); ctx.stroke();
-
-    ctx.setLineDash([]);
+    ctx.setLineDash([1,4.5]);
+    ctx.lineCap = 'round';
     ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(0,mid); ctx.lineTo(w,mid); ctx.stroke();
+    ctx.lineCap = 'butt';
+
+    ctx.strokeStyle = baseLine;
+    ctx.setLineDash([]);
+    ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(0,base); ctx.lineTo(w,base); ctx.stroke();
 
+    ctx.strokeStyle = line;
     ctx.setLineDash([5,5]);
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 1.1;
     ctx.beginPath(); ctx.moveTo(0,desc); ctx.lineTo(w,desc); ctx.stroke();
     ctx.setLineDash([]);
 
     if(traceWord) drawTraceWord(ctx, w, h, traceWord, top, mid, base, desc);
   }
 
+  // Draws the target word as a dotted, connect-the-dots guide in a real
+  // handwriting-practice typeface (Andika — single-storey a/g, like the
+  // letter-formation sheets Jordan already uses), sized to the four-line grid.
   function drawTraceWord(ctx, w, h, word, top, mid, base, desc){
     var css = getComputedStyle(document.documentElement);
     var accent = css.getPropertyValue('--accent').trim() || '#FF6A4D';
     var xHeight = base - mid;
-    var fontSize = Math.max(18, Math.round(xHeight * 2.05));
-    ctx.font = '700 ' + fontSize + 'px "Baloo 2", system-ui, sans-serif';
+    var fontSize = Math.max(20, Math.round(xHeight * 2.0));
+    ctx.font = '700 ' + fontSize + 'px "Andika", "Comic Sans MS", system-ui, sans-serif';
     ctx.textBaseline = 'alphabetic';
     var letters = word.split('');
-    var spacing = fontSize * 0.16;
+    var spacing = fontSize * 0.2;
     var widths = letters.map(function(ch){ return ctx.measureText(ch).width; });
     var totalWidth = widths.reduce(function(a,b){ return a+b; }, 0) + spacing*(letters.length-1);
     var x = Math.max(12, (w - totalWidth) / 2);
 
     ctx.save();
-    ctx.setLineDash([4,3]);
-    ctx.lineWidth = 1.4;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.setLineDash([0.1, fontSize*0.11]);
+    ctx.lineWidth = Math.max(2.4, fontSize*0.07);
     ctx.strokeStyle = accent;
-    ctx.globalAlpha = 0.6;
     ctx.fillStyle = accent;
     letters.forEach(function(ch, i){
-      ctx.globalAlpha = 0.12;
+      ctx.globalAlpha = 0.10;
       ctx.fillText(ch, x, base);
-      ctx.globalAlpha = 0.6;
+      ctx.globalAlpha = 0.75;
       ctx.strokeText(ch, x, base);
       x += widths[i] + spacing;
     });
@@ -840,6 +864,21 @@ footer.note{
 
   /* ---------------- boot ---------------- */
   renderWord();
+
+  // The trace-guide letters use the Andika webfont; if the canvas paints
+  // before it finishes loading, the browser silently falls back to a system
+  // font. Redraw every visible pad once the real font is ready.
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(function(){
+      Object.keys(pads).forEach(function(id){
+        var entry = pads[id];
+        if(!entry) return;
+        var c = entry.canvas, w = c.clientWidth, h = c.clientHeight;
+        drawGuides(c.getContext('2d'), w, h, entry.word);
+        redrawStrokes(c);
+      });
+    });
+  }
 })();
 </script>
 </body>
