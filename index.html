@@ -61,6 +61,19 @@ h1{margin:0;font-size:25px}
 .writer{width:100%;height:100%;display:flex;align-items:center;justify-content:center}.writer canvas{display:block!important}
 #practiceCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;z-index:5;display:none;cursor:crosshair}
 .hint{font-size:14px;color:#78909c;margin:10px 0;text-align:center;min-height:20px}.trace-mode .guide{opacity:.22!important}
+/* Trace guide readability: HanziWriter draws the character as a solid filled
+   glyph (real brush-stroke width), which reads as "fat" at this size. Force
+   every path it draws to render as a thin outlined line instead while in
+   trace mode, so Jordan sees a light single-line guide to trace over rather
+   than a bold filled shape. Quiz mode is untouched (no .trace-mode class),
+   so the colored "correct stroke" highlight there still renders filled. */
+.trace-mode #writer svg path{
+  fill:none!important;
+  stroke:#546e7a!important;
+  stroke-width:2px!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+}
 .controls{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-top:12px}
 .primary,.secondary{padding:11px 17px;border-radius:12px;font-weight:700}
 .primary{background:#455a64;color:#fff}.secondary{background:#eceff1;color:#37474f}
@@ -74,8 +87,9 @@ h1{margin:0;font-size:25px}
 <div class="app">
 <header>
   <div><h1>✏️ Jordan 中文练字</h1><div class="sub">鼠标 / Apple Pencil 都可以练</div></div>
- <a class="secondary" href="spelling.html" style="text-decoration:none;display:inline-flex;align-items:center;">📝 英文拼写</a> 
- <button class="secondary" id="resetBtn">重新开始</button>
+  <a class="secondary" href="test.html" style="text-decoration:none;display:inline-flex;align-items:center;">🎧 听写测试</a>
+  <a class="secondary" href="spelling.html" style="text-decoration:none;display:inline-flex;align-items:center;">📝 英文拼写</a>
+  <button class="secondary" id="resetBtn">重新开始</button>
 </header>
 
 
