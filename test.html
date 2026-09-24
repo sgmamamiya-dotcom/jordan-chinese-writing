@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Jordan 听写测试</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f6f8fb;color:#263238}
+button{font:inherit;cursor:pointer;border:0}
+a{color:inherit;text-decoration:none}
+.app{max-width:720px;margin:auto;padding:18px}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+h1{margin:0;font-size:23px}
+.sub{color:#78909c;font-size:13px;margin-top:4px}
+.nav-links{display:flex;gap:8px;flex-wrap:wrap}
+.primary,.secondary{padding:11px 17px;border-radius:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.primary{background:#455a64;color:#fff}
+.secondary{background:#eceff1;color:#37474f}
+.primary:disabled,.secondary:disabled{opacity:.4;cursor:not-allowed}
+.card{background:white;border-radius:22px;padding:18px 16px;box-shadow:0 5px 20px #0000000b;margin-bottom:14px}
+.card h2{font-size:17px;margin:0 0 4px}
+.card-sub{font-size:13px;color:#78909c;margin:0 0 12px;line-height:1.6}
+.row{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:10px 0}
+.row select,.row input[type=number]{height:42px;border:1px solid #dfe6ea;border-radius:11px;background:#fff;padding:0 12px;font:inherit;color:#37474f}
+.row input[type=number]{width:78px}
+.toggle-row{display:flex;align-items:center;gap:8px;font-size:14px;color:#546e7a}
+.toggle-row input{width:17px;height:17px;accent-color:#455a64}
+.pick-tabs{display:flex;gap:8px;margin-bottom:10px}
+.pick-tab{flex:1;padding:10px 8px;border-radius:11px;background:#f7f9fa;color:#546e7a;font-weight:700;text-align:center}
+.pick-tab.active{background:#455a64;color:#fff}
+.char-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px;max-height:220px;overflow:auto;padding:2px;margin:10px 0}
+.char-item{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:66px;border:2px solid #e7edf0;border-radius:12px;background:#fff;user-select:none}
+.char-item.selected{border-color:#455a64;background:#f0f4f6}
+.char-item.weak{border-color:#f9a825;background:#fff8e1}
+.char-item .hanzi{font-size:26px;line-height:1.05}
+.char-item .py{font-size:10px;color:#78909c;margin-top:3px}
+.empty-note{font-size:13px;color:#90a4ae;text-align:center;padding:18px 6px}
+
+/* ---- test screen ---- */
+.progress-line{display:flex;align-items:center;justify-content:space-between;font-size:13px;color:#78909c;margin-bottom:10px}
+.progress-track{flex:1;display:flex;gap:5px;margin:0 12px}
+.dot{flex:1;height:6px;border-radius:4px;background:#eceff1}
+.dot.current{background:#455a64}
+.dot.good{background:#2e7d32}
+.dot.practice{background:#e65100}
+.listen-block{text-align:center;padding:10px 0 4px}
+.listen-block .big-btn{padding:16px 30px;font-size:17px;border-radius:16px}
+.listen-hint{font-size:13px;color:#90a4ae;margin-top:8px}
+.stage{
+  width:100%;max-width:340px;margin:16px auto;aspect-ratio:1;border-radius:16px;
+  background:#fff;border:2px solid #eceff1;overflow:hidden;position:relative;touch-action:none;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+}
+canvas.padCanvas{display:block;width:100%;height:100%;touch-action:none}
+.pad-tools{position:absolute;top:8px;right:8px;display:flex;gap:6px}
+.pad-tool{width:34px;height:34px;border-radius:10px;background:#fff;border:1.5px solid #dfe6ea;color:#78909c;display:flex;align-items:center;justify-content:center}
+.reveal-block{display:none;text-align:center;padding:6px 0 4px}
+.reveal-block.shown{display:block}
+.reveal-char{font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:64px;line-height:1;color:#37474f}
+.reveal-py{font-size:20px;font-weight:700;color:#546e7a;margin-top:2px}
+.action-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+.good-btn{background:#2e7d32;color:#fff}
+.practice-btn{background:#e65100;color:#fff}
+
+/* ---- summary ---- */
+.score{font-size:44px;font-weight:800;color:#455a64;text-align:center;margin:6px 0}
+.chip-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.chip{background:#fff3e0;color:#e65100;font-weight:700;border-radius:999px;padding:6px 13px;font-size:14px}
+
+@media(max-width:520px){.stage{max-width:280px}.reveal-char{font-size:52px}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header>
+  <div>
+    <h1>🎧 Jordan 听写测试</h1>
+    <div class="sub">听读音，直接写，不给提示——测测他到底记不记得住</div>
+  </div>
+  <div class="nav-links">
+    <a class="secondary" href="index.html">✏️ 中文练字</a>
+    <a class="secondary" href="spelling.html">📝 英文拼写</a>
+  </div>
+</header>
+
+<div id="setupCard" class="card">
+  <h2>选测试范围</h2>
+  <p class="card-sub">从生字库里选一个分组随机抽，或者自己勾几个字——写错的字会自动标记⭐需要加强，写对的会自动取消标记；不管对错，测过的字都会算进今天的打卡次数。</p>
+
+  <div class="pick-tabs">
+    <button type="button" class="pick-tab active" data-pick="group">按分组随机抽</button>
+    <button type="button" class="pick-tab" data-pick="manual">自己勾选</button>
+  </div>
+
+  <div id="groupPick">
+    <div class="row">
+      <select id="testGroupSelect"></select>
+      <span>抽</span>
+      <input type="number" id="testCountInput" min="1" max="50" value="10">
+      <span>个字</span>
+    </div>
+  </div>
+
+  <div id="manualPick" style="display:none">
+    <div class="row">
+      <input id="manualSearch" placeholder="🔍 搜索汉字或拼音" style="flex:1;min-width:160px;height:42px;border:1px solid #dfe6ea;border-radius:11px;padding:0 12px;font:inherit">
+      <select id="manualGroupFilter"></select>
+    </div>
+    <div class="char-grid" id="manualGrid"></div>
+    <div class="card-sub" id="manualCount">已选 0 个字</div>
+  </div>
+
+  <div class="row toggle-row">
+    <input type="checkbox" id="shuffleToggle" checked>
+    <label for="shuffleToggle">随机顺序</label>
+    <span style="flex:1"></span>
+    <input type="checkbox" id="autoplayToggle" checked>
+    <label for="autoplayToggle">切到下一个字自动朗读</label>
+  </div>
+
+  <div class="row">
+    <button type="button" class="primary" id="startTestBtn">▶ 开始测试</button>
+    <span id="setupStatus" style="font-size:13px;color:#c62828"></span>
+  </div>
+</div>
+
+<div id="testCard" class="card" style="display:none">
+  <div class="progress-line">
+    <span id="progressLabel">1 / 10</span>
+    <div class="progress-track" id="progressTrack"></div>
+    <span id="streakLabel"></span>
+  </div>
+
+  <div class="listen-block">
+    <button type="button" class="primary big-btn" id="listenBtn">🔊 听读音</button>
+    <div class="listen-hint">听清楚了再动笔；没听清可以再点一次</div>
+  </div>
+
+  <div class="stage" id="padStage">
+    <canvas class="padCanvas" id="padCanvas"></canvas>
+    <div class="pad-tools">
+      <button type="button" class="pad-tool" id="undoBtn" aria-label="撤销">↩</button>
+      <button type="button" class="pad-tool" id="clearBtn" aria-label="清除">🗑</button>
+    </div>
+  </div>
+
+  <div class="reveal-block" id="revealBlock">
+    <div class="reveal-char" id="revealChar"></div>
+    <div class="reveal-py" id="revealPy"></div>
+  </div>
+
+  <div class="action-row" id="testActionRow">
+    <button type="button" class="secondary" id="checkBtn">✓ 对答案</button>
+  </div>
+</div>
+
+<div id="summaryCard" class="card" style="display:none">
+  <h2>测试结果</h2>
+  <div class="score" id="scoreLine">0 / 0</div>
+  <p class="card-sub" id="summaryNote" style="text-align:center"></p>
+  <div class="chip-row" id="missedChips"></div>
+  <div class="action-row">
+    <button type="button" class="primary" id="retryMissedBtn" style="display:none">🔁 只测错的字</button>
+    <button type="button" class="secondary" id="newTestBtn">重新选字测试</button>
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+
+  // Same Supabase project the practice app (index.html) uses, so the
+  // character library, weak-flags and daily check-in stay unified.
+  var SUPABASE_URL = 'https://uscpgatqeeqejbwnvyoh.supabase.co';
+  var SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_Tc5qBurC5SnTyNjB2jtA2A_jFs9T3og';
+  var cloudReady = !!SUPABASE_PUBLISHABLE_KEY && SUPABASE_PUBLISHABLE_KEY.indexOf('PASTE_YOUR') === -1;
+  var supabase = (cloudReady && window.supabase) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY) : null;
+
+  var GROUPS = [];
+  var LIBRARY = [];
+  var manualSelected = [];
+  var pickMode = 'group';
+
+  var session = { items: [], pos: 0, results: {} }; // results[char] = 'good' | 'practice'
+
+  function escapeHtml(s){ s = s || ''; return s.replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function dateKey(d){ d = d || new Date(); var y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0'); return y+'-'+m+'-'+day; }
+  function shuffle(arr){ var a=arr.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+  function formatGroup(name){ return (name||'').replace('P1-','P1 · '); }
+
+  async function loadLibrary(){
+    if(!supabase){
+      $('setupStatus').textContent = '云端生字库连不上，请检查网络后刷新（不影响你直接用手动选字）';
+      return;
+    }
+    try{
+      var g = await supabase.from('groups').select('id,name').order('id');
+      if(g.error) throw g.error;
+      GROUPS = g.data || [];
+      var res = await supabase.from('characters').select('id,char,pinyin,group_id,is_weak,groups(name)').order('id');
+      if(res.error) throw res.error;
+      LIBRARY = (res.data||[]).map(function(x){
+        return { id:x.id, char:x.char, pinyin:x.pinyin||'', group_id:x.group_id, group:(x.groups?x.groups.name:'未分组'), is_weak:!!x.is_weak };
+      });
+      renderGroupSelects();
+      renderManualGrid();
+    }catch(err){
+      $('setupStatus').textContent = '读取生字库失败：' + (err.message || err);
+    }
+  }
+
+  function renderGroupSelects(){
+    var opts = '<option value="all">全部生字</option><option value="__weak__">⭐ 需要加强的字</option>' +
+      GROUPS.map(function(gr){ return '<option value="'+gr.id+'">'+escapeHtml(formatGroup(gr.name))+'</option>'; }).join('');
+    $('testGroupSelect').innerHTML = opts;
+    $('manualGroupFilter').innerHTML = '<option value="all">全部分组</option>' +
+      GROUPS.map(function(gr){ return '<option value="'+gr.id+'">'+escapeHtml(formatGroup(gr.name))+'</option>'; }).join('');
+  }
+
+  function visibleManualItems(){
+    var q = ($('manualSearch').value||'').trim().toLowerCase();
+    var gf = $('manualGroupFilter').value;
+    return LIBRARY.filter(function(x){
+      var matchQ = !q || x.char.indexOf(q)>=0 || (x.pinyin||'').toLowerCase().indexOf(q)>=0;
+      var matchG = gf==='all' || String(x.group_id)===String(gf);
+      return matchQ && matchG;
+    });
+  }
+
+  function renderManualGrid(){
+    var grid = $('manualGrid');
+    var items = visibleManualItems();
+    if(!items.length){
+      grid.innerHTML = '<div class="empty-note">生字库还是空的，先去"中文练字"页面加一些字</div>';
+    }else{
+      grid.innerHTML = items.map(function(it){
+        var sel = manualSelected.some(function(s){ return s.id===it.id; });
+        return '<button type="button" class="char-item'+(sel?' selected':'')+(it.is_weak?' weak':'')+'" data-id="'+it.id+'">' +
+          '<span class="hanzi">'+escapeHtml(it.char)+'</span><span class="py">'+escapeHtml(it.pinyin)+'</span></button>';
+      }).join('');
+      grid.querySelectorAll('.char-item').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var id = Number(btn.getAttribute('data-id'));
+          var idx = manualSelected.findIndex(function(s){ return s.id===id; });
+          if(idx>=0) manualSelected.splice(idx,1);
+          else { var item = LIBRARY.find(function(x){ return x.id===id; }); if(item) manualSelected.push(item); }
+          renderManualGrid();
+        });
+      });
+    }
+    $('manualCount').textContent = '已选 ' + manualSelected.length + ' 个字';
+  }
+  $('manualSearch').addEventListener('input', renderManualGrid);
+  $('manualGroupFilter').addEventListener('change', renderManualGrid);
+
+  document.querySelectorAll('.pick-tab').forEach(function(tab){
+    tab.addEventListener('click', function(){
+      pickMode = tab.getAttribute('data-pick');
+      document.querySelectorAll('.pick-tab').forEach(function(t){ t.classList.toggle('active', t===tab); });
+      $('groupPick').style.display = pickMode==='group' ? '' : 'none';
+      $('manualPick').style.display = pickMode==='manual' ? '' : 'none';
+    });
+  });
+
+  function buildTestSet(){
+    var items;
+    if(pickMode==='manual'){
+      items = manualSelected.slice();
+    }else{
+      var gv = $('testGroupSelect').value;
+      var pool = gv==='all' ? LIBRARY.slice() : gv==='__weak__' ? LIBRARY.filter(function(x){ return x.is_weak; }) : LIBRARY.filter(function(x){ return String(x.group_id)===String(gv); });
+      var n = Math.max(1, Math.min(50, parseInt($('testCountInput').value,10)||10));
+      items = shuffle(pool).slice(0, n);
+    }
+    if($('shuffleToggle').checked) items = shuffle(items);
+    return items;
+  }
+
+  $('startTestBtn').addEventListener('click', function(){
+    var items = buildTestSet();
+    if(!items.length){
+      $('setupStatus').textContent = pickMode==='manual' ? '请先勾选至少一个字' : '这个分组还没有字，先去生字库加一些';
+      return;
+    }
+    $('setupStatus').textContent = '';
+    session = { items: items, pos: 0, results: {} };
+    $('setupCard').style.display = 'none';
+    $('summaryCard').style.display = 'none';
+    $('testCard').style.display = '';
+    renderTestItem();
+  });
+
+  /* ---------------- speech ---------------- */
+  function speakChar(ch){
+    if(!('speechSynthesis' in window)) return;
+    try{
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(ch);
+      u.lang = 'zh-CN'; u.rate = 0.68; u.pitch = 1;
+      window.speechSynthesis.speak(u);
+    }catch(e){}
+  }
+  $('listenBtn').addEventListener('click', function(){ speakChar(currentChar()); });
+
+  function currentChar(){ return session.items[session.pos]; }
+
+  /* ---------------- writing pad ---------------- */
+  var pad = { canvas:null, strokes:[], cur:null };
+
+  function setupPad(){
+    var canvas = $('padCanvas');
+    pad.canvas = canvas;
+    pad.strokes = [];
+    pad.cur = null;
+    var dpr = Math.max(1, window.devicePixelRatio||1);
+    function resize(){
+      var w = canvas.clientWidth, h = canvas.clientHeight;
+      canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+      var ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      drawGrid(ctx, w, h);
+      redraw();
+    }
+    window.addEventListener('resize', resize);
+    requestAnimationFrame(resize);
+
+    canvas.onpointerdown = function(e){
+      canvas.setPointerCapture(e.pointerId);
+      pad.cur = [pointFromEvent(canvas, e)];
+      e.preventDefault();
+    };
+    canvas.onpointermove = function(e){
+      if(!pad.cur) return;
+      var p = pointFromEvent(canvas, e);
+      pad.cur.push(p);
+      strokeSegment(canvas.getContext('2d'), pad.cur[pad.cur.length-2], p);
+      e.preventDefault();
+    };
+    function end(){ if(pad.cur){ if(pad.cur.length>1) pad.strokes.push(pad.cur); pad.cur=null; } }
+    canvas.onpointerup = end;
+    canvas.onpointercancel = end;
+    canvas.onpointerleave = end;
+  }
+  function pointFromEvent(canvas, e){
+    var r = canvas.getBoundingClientRect();
+    var pressure = (e.pointerType==='pen' && e.pressure>0) ? e.pressure : 0.5;
+    return { x:e.clientX-r.left, y:e.clientY-r.top, p:pressure };
+  }
+  function strokeSegment(ctx, a, b){
+    if(!a||!b) return;
+    ctx.strokeStyle = '#37474f';
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.lineWidth = 2 + b.p*4;
+    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+  }
+  function drawGrid(ctx, w, h){
+    ctx.clearRect(0,0,w,h);
+    ctx.strokeStyle = '#dbe2e8';
+    ctx.setLineDash([5,4]);
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(w/2,0); ctx.lineTo(w/2,h); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,h/2); ctx.lineTo(w,h/2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(w,h); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(w,0); ctx.lineTo(0,h); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  function redraw(){
+    var ctx = pad.canvas.getContext('2d');
+    pad.strokes.forEach(function(stroke){
+      for(var i=1;i<stroke.length;i++) strokeSegment(ctx, stroke[i-1], stroke[i]);
+    });
+  }
+  function clearPad(){
+    pad.strokes = [];
+    var w = pad.canvas.clientWidth, h = pad.canvas.clientHeight;
+    drawGrid(pad.canvas.getContext('2d'), w, h);
+  }
+  function undoPad(){
+    if(!pad.strokes.length) return;
+    pad.strokes.pop();
+    var w = pad.canvas.clientWidth, h = pad.canvas.clientHeight;
+    drawGrid(pad.canvas.getContext('2d'), w, h);
+    redraw();
+  }
+  $('undoBtn').addEventListener('click', undoPad);
+  $('clearBtn').addEventListener('click', clearPad);
+
+  /* ---------------- test flow ---------------- */
+  function renderProgress(){
+    $('progressLabel').textContent = (session.pos+1) + ' / ' + session.items.length;
+    var track = $('progressTrack');
+    track.innerHTML = '';
+    session.items.forEach(function(it, i){
+      var d = document.createElement('span');
+      d.className = 'dot' + (i===session.pos?' current':'') + (session.results[it.char]==='good'?' good':'') + (session.results[it.char]==='practice'?' practice':'');
+      track.appendChild(d);
+    });
+  }
+
+  function renderTestItem(){
+    var item = currentChar();
+    $('revealBlock').classList.remove('shown');
+    $('revealChar').textContent = '';
+    $('revealPy').textContent = '';
+    $('testActionRow').innerHTML = '<button type="button" class="secondary" id="checkBtn">✓ 对答案</button>';
+    $('checkBtn').addEventListener('click', onReveal);
+    setupPad();
+    renderProgress();
+    if($('autoplayToggle').checked) setTimeout(function(){ speakChar(item.char); }, 200);
+  }
+
+  function onReveal(){
+    var item = currentChar();
+    $('revealChar').textContent = item.char;
+    $('revealPy').textContent = item.pinyin || '';
+    $('revealBlock').classList.add('shown');
+    $('testActionRow').innerHTML =
+      '<button type="button" class="primary good-btn" id="markGood">✓ 写对了</button>' +
+      '<button type="button" class="primary practice-btn" id="markPractice">✗ 需要加强</button>';
+    $('markGood').addEventListener('click', function(){ mark('good'); });
+    $('markPractice').addEventListener('click', function(){ mark('practice'); });
+  }
+
+  async function mark(result){
+    var item = currentChar();
+    session.results[item.char] = result;
+    await addDailyCompletion(item.char);
+    await setWeak(item, result==='practice');
+    if(session.pos < session.items.length-1){
+      session.pos += 1;
+      renderTestItem();
+    }else{
+      renderSummary();
+    }
+  }
+
+  async function setWeak(item, weak){
+    if(!supabase || item.id==null) return;
+    try{
+      await supabase.from('characters').update({
+        is_weak: weak,
+        weak_marked_at: weak ? new Date().toISOString() : null,
+        weak_marked_by: weak ? 'test' : null
+      }).eq('id', item.id);
+      item.is_weak = weak;
+    }catch(e){ /* best-effort */ }
+  }
+
+  async function addDailyCompletion(char){
+    if(!supabase || !char) return;
+    try{
+      await supabase.from('practice').upsert({ practice_date: dateKey(), char: char }, { onConflict:'practice_date,char' });
+    }catch(e){ /* best-effort */ }
+  }
+
+  function renderSummary(){
+    $('testCard').style.display = 'none';
+    $('summaryCard').style.display = '';
+    var total = session.items.length;
+    var good = Object.keys(session.results).filter(function(k){ return session.results[k]==='good'; }).length;
+    var missed = session.items.filter(function(it){ return session.results[it.char]==='practice'; });
+    $('scoreLine').textContent = good + ' / ' + total;
+    $('summaryNote').textContent = missed.length ? '写错的字已经自动标记⭐需要加强了' : '这批字全部一次写对，太棒了！';
+    $('missedChips').innerHTML = missed.map(function(it){ return '<span class="chip">'+escapeHtml(it.char)+(it.pinyin?(' '+escapeHtml(it.pinyin)):'')+'</span>'; }).join('');
+    var retryBtn = $('retryMissedBtn');
+    if(missed.length){
+      retryBtn.style.display = '';
+      retryBtn.onclick = function(){
+        session = { items: missed.slice(), pos:0, results:{} };
+        $('summaryCard').style.display = 'none';
+        $('testCard').style.display = '';
+        renderTestItem();
+      };
+    }else{
+      retryBtn.style.display = 'none';
+    }
+  }
+
+  $('newTestBtn').addEventListener('click', function(){
+    $('summaryCard').style.display = 'none';
+    $('setupCard').style.display = '';
+  });
+
+  loadLibrary();
+})();
+</script>
+</body>
+</html>
