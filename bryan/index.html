@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bryan 学习</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f6f8fb;color:#263238}
+.app{max-width:1100px;margin:auto;padding:18px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+h1{margin:0;font-size:25px}
+.sub{color:#78909c;font-size:14px;margin-top:4px}
+.secondary{padding:11px 17px;border-radius:12px;font-weight:700;background:#eceff1;color:#37474f;text-decoration:none;display:inline-flex;align-items:center}
+.subjects{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.subject{display:block;background:white;border-radius:22px;padding:22px;box-shadow:0 5px 20px #0000000b;text-decoration:none;color:inherit;transition:transform .15s}
+.subject:hover{transform:translateY(-2px)}
+.subject .icon{font-size:40px}
+.subject h2{margin:10px 0 4px;font-size:20px}
+.subject p{margin:0;color:#78909c;font-size:14px}
+@media(max-width:760px){.app{padding:12px}h1{font-size:21px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div><h1>📘 Bryan 的学习</h1><div class="sub">选一个科目开始</div></div>
+  <a class="secondary" href="../index.html">↩ 返回首页</a>
+</header>
+<div class="subjects">
+  <a class="subject" href="chinese.html"><div class="icon">🀄</div><h2>中文 Chinese</h2><p>中文学习</p></a>
+  <a class="subject" href="english.html"><div class="icon">🔤</div><h2>英文 English</h2><p>English study</p></a>
+  <a class="subject" href="science.html"><div class="icon">🔬</div><h2>科学 Science</h2><p>Science study</p></a>
+</div>
+</div>
+</body>
+</html>
