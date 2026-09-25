@@ -25,7 +25,8 @@ h1{margin:0;font-size:25px}
 .library-card{background:white;border-radius:20px;padding:15px 16px;margin-bottom:14px;box-shadow:0 5px 20px #0000000b}
 .library-head{display:flex;justify-content:space-between;align-items:center;gap:15px}.library-head h2{margin:0;font-size:18px}
 .library-sub{font-size:13px;color:#78909c;margin-top:4px}.library-actions{display:flex;gap:8px;flex-wrap:wrap}
-.add-online{display:flex;align-items:center;gap:9px;margin:13px 0 5px;padding:11px;background:#f7f9fa;border-radius:13px}
+.add-online{display:flex;align-items:center;gap:9px;margin:13px 0 5px;padding:11px;background:#f7f9fa;border-radius:13px;flex-wrap:wrap}
+.row-label{font-size:13px;color:#607d8b;font-weight:700;white-space:nowrap}
 .addCharInput{width:130px;height:42px;border:1px solid #dfe6ea;border-radius:11px;background:#fff;padding:0 12px;font-size:24px;text-align:center}
 .online-note{font-size:12px;color:#78909c}
 .library-tools{display:flex;gap:9px;margin:12px 0}.search,.groupSelect{height:42px;border:1px solid #dfe6ea;border-radius:11px;background:#fff;padding:0 12px;font:inherit;color:#37474f}
@@ -43,9 +44,12 @@ h1{margin:0;font-size:25px}
 .daily-note{font-size:13px;color:#546e7a;margin-top:8px;line-height:1.6}
 .weakBtn{background:#fff3e0;color:#e65100}
 @media(max-width:760px){.library-head{align-items:flex-start;flex-direction:column}.library-tools{flex-direction:column}.library-grid{grid-template-columns:repeat(5,1fr);max-height:250px}}
-.queue-chips{display:flex;gap:6px;overflow-x:auto;padding:6px 2px}
-.queue-chip{flex:0 0 auto;min-width:40px;height:40px;padding:0 10px;border-radius:10px;background:white;box-shadow:0 2px 6px #0000000d;font-size:17px;color:#455a64;display:flex;align-items:center;justify-content:center;gap:2px}
+.queue-chips{display:flex;gap:6px;overflow-x:auto;padding:6px 2px;align-items:center}
+.queue-chip{flex:0 0 auto;min-width:40px;height:40px;padding:0 8px 0 10px;border-radius:10px;background:white;box-shadow:0 2px 6px #0000000d;font-size:17px;color:#455a64;display:flex;align-items:center;justify-content:center;gap:5px}
 .queue-chip.active{background:#455a64;color:#fff}
+.chip-remove{font-size:13px;line-height:1;opacity:.45;padding:2px 3px;border-radius:6px}
+.queue-chip:hover .chip-remove,.queue-chip.active .chip-remove{opacity:.85}
+.queue-clear-note{flex:0 0 auto;font-size:12px;color:#90a4ae;padding:0 4px}
 .practice-nav{display:flex;align-items:center;gap:10px;padding:2px 2px 14px}
 .practice-nav button{min-width:88px;height:44px;border-radius:12px;background:white;color:#455a64;box-shadow:0 2px 8px #0000000d;font-weight:700}
 .practice-nav button:disabled{opacity:.4}
@@ -116,20 +120,26 @@ h1{margin:0;font-size:25px}
 
 <section class="library-card">
   <div class="library-head">
-    <div><h2>📚 生字库</h2><div class="library-sub">下面筛选框选一个分组，点"▶ 练习这个分组"就直接练这组的字；如果想自己挑几个字组合练习，用勾选框＋"练习勾选的字"。点字卡左上角 ⭐ 可以标记"需要加强"，方便以后集中练习</div></div>
+    <div><h2>📚 生字库</h2><div class="library-sub">下面筛选框选一个分组，点"▶ 练习这个分组"就直接练这组的字；如果想自己挑几个字组合练习，用勾选框＋"练习勾选的字"。"全选"／"清空"只影响下面筛选出来的这些字，不是全部生字库。点字卡左上角 ⭐ 可以标记"需要加强"，方便以后集中练习</div></div>
     <div class="library-actions">
       <button class="primary" id="practiceGroupBtn">▶ 练习这个分组</button>
-      <button class="secondary" id="selectAllBtn">全选</button>
-      <button class="secondary" id="clearAllBtn">清空</button>
+      <button class="secondary" id="selectAllBtn">全选（当前筛选）</button>
+      <button class="secondary" id="clearAllBtn">清空全部勾选</button>
       <button class="secondary" id="practiceSelectedBtn">练习勾选的字（0）</button>
     </div>
   </div>
   <div class="add-online">
-  <input id="addCharInput" class="addCharInput" maxlength="80" placeholder="一次输入多个字，例如：学校老师同学朋友">
+  <span class="row-label">🗂️ 管理分组：</span>
   <select id="addGroupSelect" class="groupSelect"><option value="">选择分组</option></select>
-  <button class="secondary" id="addGroupBtn">＋ 新建分组</button><button class="secondary" id="deleteGroupBtn">🗑 删除分组</button>
-  <button class="primary" id="addCharBtn">＋ 批量添加生字</button>
+  <button class="secondary" id="addGroupBtn">＋ 新建</button>
+  <button class="secondary" id="renameGroupBtn">✏️ 重命名</button>
+  <button class="secondary" id="deleteGroupBtn">🗑 删除</button>
   <span class="online-note" id="cloudStatus">☁️ 云端同步中…</span>
+</div>
+<div class="add-online">
+  <span class="row-label">➕ 加字到上面选中的分组：</span>
+  <input id="addCharInput" class="addCharInput" maxlength="80" placeholder="一次输入多个字，例如：学校老师同学朋友">
+  <button class="primary" id="addCharBtn">批量添加</button>
 </div>
 <div class="library-tools">
     <input id="searchInput" class="search" type="search" placeholder="🔍 搜索汉字或拼音，例如：昨天 / zuo">
@@ -325,7 +335,7 @@ function renderDailyNote(){
 function renderDailyGroupOptions(){
   const sel=$('dailyGroupSelect'); if(!sel) return;
   const cur=sel.value;
-  sel.innerHTML='<option value="">\u4e0d\u81ea\u52a8\u6311\u9009\uff08\u624b\u52a8\u9009\u5b57\uff09</option>'+GROUPS.map(g=>'<option value="'+g.id+'">'+escapeHtml(formatGroup(g.name))+'</option>').join('');
+  sel.innerHTML='<option value="">\u4e0d\u81ea\u52a8\u6311\u9009\uff08\u624b\u52a8\u9009\u5b57\uff09</option>'+GROUPS.map(g=>'<option value="'+g.id+'">'+escapeHtml(formatGroup(g.name))+'\uff08'+groupCharCount(g)+'\u5b57\uff09</option>').join('');
   sel.value=GROUPS.some(g=>String(g.id)===cur)?cur:'';
 }
 async function applyDailyAutoPick(force){
@@ -382,7 +392,13 @@ async function loadCloudData(){
     renderLibrary(); renderPracticeNav(); renderMode(); renderCheckin(); return;
   }
   try{
-    await seedDefaults();
+    // Only bootstrap the starter groups/characters the very first time this
+    // Supabase project is used (an empty "groups" table). Once you've deleted
+    // or renamed a default group, it must stay gone — it should not silently
+    // reappear on the next page load.
+    const {data:existingGroups,error:gCheckErr}=await supabase.from('groups').select('id').limit(1);
+    if(gCheckErr) throw gCheckErr;
+    if(!existingGroups || !existingGroups.length) await seedDefaults();
     const {data:groups,error:gErr}=await supabase.from('groups').select('id,name').order('id');
     if(gErr) throw gErr;
     GROUPS=groups||[];
@@ -399,13 +415,15 @@ async function loadCloudData(){
     setCloudStatus('连接失败：'+(err.message||'请检查 key / RLS'),false);
   }
 }
+function groupCharCount(g){return LIBRARY.filter(x=>x.group_id===g.id).length;}
 function renderGroupOptions(){
   const filter=$('groupSelect'), add=$('addGroupSelect');
   const currentFilter=filter.value||'all';
-  filter.innerHTML='<option value="all">全部生字</option><option value="__weak__">⭐ 需要加强的字</option>'+GROUPS.map(g=>'<option value="'+escapeHtml(g.name)+'">'+escapeHtml(formatGroup(g.name))+'</option>').join('');
+  const currentAdd=add.value;
+  filter.innerHTML='<option value="all">全部生字</option><option value="__weak__">⭐ 需要加强的字</option>'+GROUPS.map(g=>'<option value="'+escapeHtml(g.name)+'">'+escapeHtml(formatGroup(g.name))+'（'+groupCharCount(g)+'）</option>').join('');
   filter.value=(currentFilter==='__weak__'||GROUPS.some(g=>g.name===currentFilter))?currentFilter:'all';
-  add.innerHTML='<option value="">选择分组</option>'+GROUPS.map(g=>'<option value="'+escapeHtml(g.name)+'">'+escapeHtml(formatGroup(g.name))+'</option>').join('');
-  if(GROUPS.length) add.value=GROUPS[0].name;
+  add.innerHTML='<option value="">选择分组</option>'+GROUPS.map(g=>'<option value="'+escapeHtml(g.name)+'">'+escapeHtml(formatGroup(g.name))+'（'+groupCharCount(g)+'字）</option>').join('');
+  add.value=GROUPS.some(g=>g.name===currentAdd)?currentAdd:(GROUPS.length?GROUPS[0].name:'');
   renderDailyGroupOptions();
 }
 function formatGroup(name){return name.replace('P1-','P1 · ');}
@@ -427,9 +445,8 @@ async function addGroup(){
 async function deleteGroup(){
   const name=$('addGroupSelect').value;
   if(!name){$('status').textContent='请先选择要删除的分组';$('status').className='status bad';return;}
-  if(DEFAULT_GROUPS.some(g=>g.name===name)){
-    $('status').textContent='系统默认分组不能删除：'+formatGroup(name);
-    $('status').className='status bad';return;
+  if(GROUPS.length<=1){
+    $('status').textContent='至少要保留一个分组';$('status').className='status bad';return;
   }
   const group=GROUPS.find(g=>g.name===name);
   if(!group)return;
@@ -439,6 +456,7 @@ async function deleteGroup(){
   if(!cloudReady){
     LIBRARY=LIBRARY.filter(x=>x.group_id!==group.id); GROUPS=GROUPS.filter(g=>g.id!==group.id);
     selectedChars=selectedChars.filter(x=>x.group_id!==group.id); saveSelected(); renderGroupOptions();
+    CHARS=CHARS.filter(x=>x.group_id!==group.id); if(current>=CHARS.length)current=Math.max(0,CHARS.length-1);
     if(String(APP_STATE.daily_group_id)===String(group.id)) await saveAppState({daily_group_id:null,queue:[],queue_group_id:null,last_pick_date:null,last_pick_chars:[]});
     renderDailySettingsInputs();renderDailyNote(); renderLibrary(); renderPracticeNav();
     $('status').textContent='✓ 已删除分组「'+formatGroup(name)+'」';$('status').className='status ok';return;
@@ -450,10 +468,35 @@ async function deleteGroup(){
     LIBRARY=LIBRARY.filter(x=>x.group_id!==group.id);
     selectedChars=selectedChars.filter(x=>x.group_id!==group.id); saveSelected();
     renderGroupOptions();
+    CHARS=CHARS.filter(x=>x.group_id!==group.id); if(current>=CHARS.length)current=Math.max(0,CHARS.length-1);
     if(String(APP_STATE.daily_group_id)===String(group.id)) await saveAppState({daily_group_id:null,queue:[],queue_group_id:null,last_pick_date:null,last_pick_chars:[]});
     renderDailySettingsInputs();renderDailyNote(); renderLibrary(); renderPracticeNav();
     $('status').textContent='✓ 已删除分组「'+formatGroup(name)+'」及其中生字';$('status').className='status ok';
   }catch(err){$('status').textContent='删除失败：'+err.message;$('status').className='status bad';}
+}
+
+async function renameGroup(){
+  const name=$('addGroupSelect').value;
+  if(!name){$('status').textContent='请先选择要重命名的分组';$('status').className='status bad';return;}
+  const group=GROUPS.find(g=>g.name===name);
+  if(!group)return;
+  const next=prompt('给「'+formatGroup(name)+'」改个新名字：',name);
+  if(next===null)return;
+  const clean=next.trim();
+  if(!clean||clean===name)return;
+  if(GROUPS.some(g=>g.name===clean)){$('status').textContent='已经有一个同名的分组了';$('status').className='status bad';return;}
+  if(!cloudReady){
+    group.name=clean; LIBRARY.forEach(x=>{if(x.group_id===group.id)x.group=clean;});
+    renderGroupOptions(); renderLibrary(); renderPracticeNav();
+    $('status').textContent='✓ 已重命名为「'+formatGroup(clean)+'」';$('status').className='status ok';return;
+  }
+  try{
+    const {error}=await supabase.from('groups').update({name:clean}).eq('id',group.id);
+    if(error)throw error;
+    group.name=clean; LIBRARY.forEach(x=>{if(x.group_id===group.id)x.group=clean;});
+    renderGroupOptions(); renderLibrary(); renderPracticeNav();
+    $('status').textContent='✓ 已重命名为「'+formatGroup(clean)+'」';$('status').className='status ok';
+  }catch(err){$('status').textContent='重命名失败：'+err.message;$('status').className='status bad';}
 }
 async function addOnlineCharacter(){
   const input=$('addCharInput');
@@ -548,17 +591,32 @@ function practiceFromLibrary(item){
   CHARS=items.slice();current=idx;destroyWriters();renderLibrary();renderMode();renderPracticeNav();
   $('status').textContent='▶ 正在练习「'+currentFilterLabel()+'」，从「'+item.char+'」开始';$('status').className='status ok';
 }
+function removeFromQueue(i){
+  const item=CHARS[i]; if(!item)return;
+  CHARS=CHARS.filter((x,idx)=>idx!==i);
+  const si=selectedChars.findIndex(x=>x.char===item.char);
+  if(si>=0){selectedChars.splice(si,1);saveSelected();}
+  if(current>=CHARS.length)current=Math.max(0,CHARS.length-1);
+  destroyWriters();renderLibrary();renderMode();renderPracticeNav();
+}
 function renderQueueChips(){
   const box=$('queueChips'); if(!box) return;
   box.innerHTML='';
+  if(!CHARS.length)return;
   CHARS.forEach((item,i)=>{
     const b=document.createElement('button');
     b.type='button';
     b.className='queue-chip'+(i===current?' active':'');
-    b.textContent=item.char+(item.is_weak?'⭐':'');
-    b.addEventListener('click',()=>selectChar(i));
+    b.innerHTML='<span>'+escapeHtml(item.char)+(item.is_weak?'⭐':'')+'</span><span class="chip-remove" title="从这次练习里去掉">×</span>';
+    b.addEventListener('click',e=>{ if(e.target.closest('.chip-remove')){removeFromQueue(i);return;} selectChar(i); });
     box.appendChild(b);
   });
+  if(CHARS.length>1){
+    const note=document.createElement('span');
+    note.className='queue-clear-note';
+    note.textContent='点 × 从这次练习里去掉一个字';
+    box.appendChild(note);
+  }
 }
 function renderPracticeNav(){
   renderPracticeWordInfo();
@@ -614,7 +672,7 @@ $('weakBtn').addEventListener('click',async()=>{
 });
 $('resetBtn').addEventListener('click',()=>{if(CHARS.length)selectChar(0);});
 document.querySelectorAll('.stage').forEach(el=>el.addEventListener('touchstart',e=>{if(mode==='quiz')e.preventDefault()},{passive:false}));
-$('addCharBtn').addEventListener('click',addOnlineCharacter);$('addGroupBtn').addEventListener('click',addGroup);$('deleteGroupBtn').addEventListener('click',deleteGroup);$('addCharInput').addEventListener('keydown',e=>{if(e.key==='Enter')addOnlineCharacter();});$('searchInput').addEventListener('input',renderLibrary);$('groupSelect').addEventListener('change',renderLibrary);$('selectAllBtn').addEventListener('click',selectAllVisible);$('clearAllBtn').addEventListener('click',clearAll);$('practiceSelectedBtn').addEventListener('click',startSelectedPractice);$('practiceGroupBtn').addEventListener('click',practiceThisGroup);
+$('addCharBtn').addEventListener('click',addOnlineCharacter);$('addGroupBtn').addEventListener('click',addGroup);$('renameGroupBtn').addEventListener('click',renameGroup);$('deleteGroupBtn').addEventListener('click',deleteGroup);$('addCharInput').addEventListener('keydown',e=>{if(e.key==='Enter')addOnlineCharacter();});$('searchInput').addEventListener('input',renderLibrary);$('groupSelect').addEventListener('change',renderLibrary);$('selectAllBtn').addEventListener('click',selectAllVisible);$('clearAllBtn').addEventListener('click',clearAll);$('practiceSelectedBtn').addEventListener('click',startSelectedPractice);$('practiceGroupBtn').addEventListener('click',practiceThisGroup);
 $('prevCharBtn').addEventListener('click',()=>{if(current>0)selectChar(current-1);});
 $('nextCharBtn').addEventListener('click',()=>{if(current<CHARS.length-1)selectChar(current+1);});
 $('saveDailyBtn').addEventListener('click',async()=>{
