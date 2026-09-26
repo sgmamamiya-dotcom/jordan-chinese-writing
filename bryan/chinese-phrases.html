@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bryan · 好词好句挑战</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F3EEE2;
+    --paper: #FBF8F1;
+    --ink: #26221C;
+    --ink-soft: #6B6355;
+    --rule: #DCD3BE;
+    --seal: #B23A2E;
+    --seal-soft: #E8D3CE;
+    --jade: #3F6656;
+    --jade-soft: #DCE7E0;
+    --gold: #B98A2E;
+    --gold-soft: #F0E3C6;
+    --font-serif: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+    --font-sans: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --bg: #1D1A15;
+      --paper: #26221B;
+      --ink: #EDE6D6;
+      --ink-soft: #A99F8B;
+      --rule: #3B362B;
+      --seal: #D9695C;
+      --seal-soft: #3D2A26;
+      --jade: #7DB39F;
+      --jade-soft: #253530;
+      --gold: #D6AA55;
+      --gold-soft: #362D1C;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1D1A15;
+    --paper: #26221B;
+    --ink: #EDE6D6;
+    --ink-soft: #A99F8B;
+    --rule: #3B362B;
+    --seal: #D9695C;
+    --seal-soft: #3D2A26;
+    --jade: #7DB39F;
+    --jade-soft: #253530;
+    --gold: #D6AA55;
+    --gold-soft: #362D1C;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    -webkit-font-smoothing: antialiased;
+  }
+  .stage {
+    max-width: 460px;
+    margin: 0 auto;
+    padding: 28px 18px 40px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  .screen { display: none; flex: 1; flex-direction: column; }
+  .screen.active { display: flex; }
+
+  .brush { width: 60px; height: 60px; margin: 0 auto 6px; display: block; }
+
+  h1.title {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 25px;
+    text-align: center;
+    margin: 0 0 6px;
+    letter-spacing: 0.02em;
+  }
+  p.subtitle {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0 0 24px;
+  }
+
+  button.primary {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 15.5px;
+    color: #fff;
+    background: var(--seal);
+    border: none;
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: transform 0.12s ease, opacity 0.12s ease;
+  }
+  button.primary:active { transform: scale(0.98); opacity: 0.92; }
+
+  button.ghost {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 11px 16px;
+    cursor: pointer;
+  }
+  button.ghost:active { opacity: 0.7; }
+
+  .back-row { margin-bottom: 10px; }
+  .back-btn {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 0;
+  }
+
+  .mode-card {
+    background: var(--paper);
+    border: 1.5px solid var(--rule);
+    border-radius: 12px;
+    padding: 15px 16px;
+    margin-bottom: 12px;
+    text-align: left;
+    cursor: pointer;
+    width: 100%;
+    font-family: var(--font-sans);
+  }
+  .mode-card:active { opacity: 0.9; }
+  .mode-tag {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--gold);
+    background: var(--gold-soft);
+    border-radius: 6px;
+    padding: 2px 8px;
+    margin-bottom: 6px;
+  }
+  .mode-tag.write { color: var(--jade); background: var(--jade-soft); }
+  .mode-name {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+  .mode-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.6; }
+
+  .mode-actions { margin-top: 6px; display: flex; flex-direction: column; }
+
+  /* ---- quiz screen ---- */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .track {
+    height: 6px;
+    background: var(--rule);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .fill {
+    height: 100%;
+    background: var(--gold);
+    width: 0%;
+    transition: width 0.35s ease;
+  }
+  .scene-card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--seal);
+    border-radius: 4px 12px 12px 4px;
+    padding: 18px 18px 16px;
+    margin-bottom: 18px;
+  }
+  .scene-label {
+    font-size: 12px;
+    color: var(--seal);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .scene-text {
+    font-family: var(--font-serif);
+    font-size: 17.5px;
+    line-height: 1.75;
+    font-weight: 500;
+  }
+  .blank {
+    display: inline-block;
+    min-width: 2.4em;
+    border-bottom: 2px solid var(--seal);
+    text-align: center;
+    color: var(--seal);
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+  .option {
+    text-align: left;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.6;
+    background: var(--paper);
+    border: 1.5px solid var(--rule);
+    border-radius: 10px;
+    padding: 13px 14px;
+    cursor: pointer;
+    color: var(--ink);
+  }
+  .option:active { opacity: 0.85; }
+  .option.correct { border-color: var(--jade); background: var(--jade-soft); }
+  .option.wrong { border-color: var(--seal); background: var(--seal-soft); }
+  .option[disabled] { cursor: default; }
+
+  .hint-row { display: flex; justify-content: flex-end; margin-bottom: 6px; }
+  .hint-btn { font-size: 13px; color: var(--jade); background: none; border: none; cursor: pointer; padding: 4px 2px; }
+  .hint-text {
+    font-size: 13.5px;
+    color: var(--jade);
+    background: var(--jade-soft);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    display: none;
+  }
+
+  .feedback {
+    display: none;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 14.5px;
+    line-height: 1.7;
+  }
+  .feedback.good { background: var(--jade-soft); color: var(--jade); }
+  .feedback.bad { background: var(--seal-soft); color: var(--seal); }
+  .feedback b { font-family: var(--font-serif); }
+
+  .next-row { margin-top: auto; }
+
+  /* ---- end screen ---- */
+  .stars { text-align: center; font-size: 42px; letter-spacing: 6px; margin: 8px 0 4px; }
+  .end-score { text-align: center; font-family: var(--font-serif); font-size: 20px; margin-bottom: 6px; }
+  .end-msg { text-align: center; color: var(--ink-soft); font-size: 14.5px; margin-bottom: 22px; line-height: 1.7; }
+  .best-line { text-align: center; font-size: 12.5px; color: var(--ink-soft); margin-bottom: 22px; }
+  .end-actions { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
+
+  /* ---- write (mini composition) screen ---- */
+  .write-intro {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--jade);
+    border-radius: 4px 12px 12px 4px;
+    padding: 16px 16px 14px;
+    margin-bottom: 20px;
+  }
+  .write-intro .scene-label { color: var(--jade); }
+  .write-intro p { font-size: 14px; line-height: 1.7; margin: 4px 0 0; color: var(--ink-soft); }
+
+  .stage-card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 15px 15px 14px;
+    margin-bottom: 16px;
+  }
+  .stage-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--seal);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    margin-right: 8px;
+  }
+  .stage-title {
+    font-family: var(--font-serif);
+    font-size: 15.5px;
+    font-weight: 700;
+    display: inline;
+  }
+  .stage-prompt {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin: 8px 0 10px;
+  }
+  textarea.write-input {
+    width: 100%;
+    min-height: 64px;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1.5px solid var(--rule);
+    border-radius: 8px;
+    padding: 10px 12px;
+    resize: vertical;
+  }
+  textarea.write-input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+
+  .example-toggle {
+    font-size: 12.5px;
+    color: var(--jade);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 0 0;
+  }
+  .example-box {
+    display: none;
+    font-size: 13px;
+    color: var(--jade);
+    background: var(--jade-soft);
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-top: 6px;
+    line-height: 1.6;
+  }
+
+  .finish-write-btn { width: 100%; margin: 6px 0 24px; }
+
+  .result-panel { display: none; }
+  .result-card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .result-label { font-size: 12px; color: var(--seal); font-weight: 700; margin-bottom: 8px; }
+  .result-text {
+    font-family: var(--font-serif);
+    font-size: 15.5px;
+    line-height: 1.85;
+    white-space: pre-wrap;
+  }
+  .result-count { font-size: 12px; color: var(--ink-soft); margin-top: 10px; text-align: right; }
+
+  .checklist { list-style: none; padding: 0; margin: 0; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist input { margin-top: 3px; width: 16px; height: 16px; flex-shrink: 0; }
+
+  .write-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; margin-bottom: 24px; }
+  .copy-note { font-size: 12px; color: var(--jade); text-align: center; margin-top: -2px; display: none; }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- START / MODE SELECT -->
+  <section id="start" class="screen active">
+    <div class="back-row"><a class="back-btn" href="chinese.html" style="text-decoration:none">↩ 返回中文</a></div>
+    <svg class="brush" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 44C18 30 26 14 34 10C40 7 44 12 40 18C34 27 20 40 12 48C9 51 7 47 10 44Z" fill="var(--seal)"/>
+      <circle cx="46" cy="16" r="4" fill="var(--gold)"/>
+    </svg>
+    <h1 class="title">好词好句挑战</h1>
+    <p class="subtitle">选一种练习开始吧——前三种是选择题，最后一种要真正动笔写。</p>
+
+    <div class="mode-actions">
+      <button class="mode-card" id="mode-fill">
+        <div class="mode-tag">选词填空</div>
+        <div class="mode-name">补一个最贴切的词</div>
+        <div class="mode-desc">句子里挖一个空，从4个近义词/短语里选出最准确的一个，考验用词的精准度。</div>
+      </button>
+
+      <button class="mode-card" id="mode-rewrite">
+        <div class="mode-tag">句子改写</div>
+        <div class="mode-name">挑出最生动的版本</div>
+        <div class="mode-desc">一句平淡的原句，配4个改写版本，选出既生动又贴切的那一句——其余的要么太夸张，要么比喻不搭。</div>
+      </button>
+
+      <button class="mode-card" id="mode-mix">
+        <div class="mode-tag">混合练习</div>
+        <div class="mode-name">全部12题一起来</div>
+        <div class="mode-desc">填空题和改写题混在一起，随机顺序，更接近真正考试的感觉。</div>
+      </button>
+
+      <button class="mode-card" id="mode-write">
+        <div class="mode-tag write">情景小练笔</div>
+        <div class="mode-name">主题：插队/违反规矩</div>
+        <div class="mode-desc">老师最常考的主题。跟着4个阶段的提示自己写，写完可以对照参考例句，再打勾自查。</div>
+      </button>
+    </div>
+  </section>
+
+  <!-- QUIZ (fill / rewrite / mix) -->
+  <section id="game" class="screen">
+    <div class="topbar">
+      <span id="progress-text">第 1 / 10 题</span>
+      <span id="score-text">答对 0</span>
+    </div>
+    <div class="track"><div class="fill" id="progress-fill"></div></div>
+
+    <div class="scene-card">
+      <div class="scene-label" id="scene-label">场景</div>
+      <div class="scene-text" id="scene-text"></div>
+    </div>
+
+    <div class="hint-row">
+      <button class="hint-btn" id="hint-btn">💡 要提示吗？</button>
+    </div>
+    <div class="hint-text" id="hint-text"></div>
+
+    <div class="options" id="options"></div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <div class="next-row">
+      <button class="primary" id="next-btn" style="display:none; width:100%;">下一题</button>
+    </div>
+  </section>
+
+  <!-- QUIZ END -->
+  <section id="end" class="screen">
+    <h1 class="title">挑战完成！</h1>
+    <div class="stars" id="stars"></div>
+    <div class="end-score" id="end-score"></div>
+    <div class="end-msg" id="end-msg"></div>
+    <div class="best-line" id="best-line"></div>
+    <div class="end-actions">
+      <button class="primary" id="retry-wrong-btn">只练刚才答错的题</button>
+      <button class="ghost" id="restart-btn">换一种练习</button>
+    </div>
+  </section>
+
+  <!-- WRITE (mini composition) -->
+  <section id="write" class="screen">
+    <div class="back-row">
+      <button class="back-btn" id="write-back-btn">← 换一种练习</button>
+    </div>
+    <h1 class="title">情景小练笔</h1>
+
+    <div class="write-intro">
+      <div class="scene-label">主题：插队 / 违反规矩后悔改</div>
+      <p>下课铃声响了，同学们冲向食堂排队，有人因为心急插了队，被发现后被老师批评，最后道歉、明白了道理。按下面4个阶段，每格写1-2句，写完可以按"参考例句"对照一下，看看能不能用上好词好句。</p>
+    </div>
+
+    <div class="stage-card">
+      <span class="stage-num">1</span><span class="stage-title">开头</span>
+      <div class="stage-prompt">铃声响了，大家在做什么？交代一下时间、地点、场景。</div>
+      <textarea class="write-input" id="w1" placeholder="例如：铃声一响，大家……"></textarea>
+      <button class="example-toggle" data-target="e1">💡 参考例句</button>
+      <div class="example-box" id="e1">"铃……"下课铃声一响，本来鸦雀无声的课室响起了同学们的欢笑声，大家一窝蜂地冲向食堂排队。</div>
+    </div>
+
+    <div class="stage-card">
+      <span class="stage-num">2</span><span class="stage-title">发展</span>
+      <div class="stage-prompt">谁插队了？为什么？同学们有什么反应？</div>
+      <textarea class="write-input" id="w2" placeholder="例如：他肚子很饿，看到队伍很长……"></textarea>
+      <button class="example-toggle" data-target="e2">💡 参考例句</button>
+      <div class="example-box" id="e2">小华肚子饿得咕噜咕噜叫，看到队伍很长，忍不住匆匆忙忙地跑到前面插队，同学们都大吃一惊，不知所措。</div>
+    </div>
+
+    <div class="stage-card">
+      <span class="stage-num">3</span><span class="stage-title">高潮</span>
+      <div class="stage-prompt">插队被发现后怎么样了？写出老师的表情、动作、说的话。</div>
+      <textarea class="write-input" id="w3" placeholder="例如：老师把他叫到办公室……"></textarea>
+      <button class="example-toggle" data-target="e3">💡 参考例句</button>
+      <div class="example-box" id="e3">老师板起了面孔，眉毛竖成了倒"八"字，眼睛瞪得又圆又大，严厉地问："你为什么插队？"他心里像十五个吊桶打水——七上八下。</div>
+    </div>
+
+    <div class="stage-card">
+      <span class="stage-num">4</span><span class="stage-title">结尾</span>
+      <div class="stage-prompt">道歉后，明白了什么道理？试试用一句俗语收尾。</div>
+      <textarea class="write-input" id="w4" placeholder="例如：经过这件事，他明白了……"></textarea>
+      <button class="example-toggle" data-target="e4">💡 参考例句</button>
+      <div class="example-box" id="e4">"经一事，长一智"，经过这件事，他明白了在学校要遵守秩序，不能插队。</div>
+    </div>
+
+    <button class="primary finish-write-btn" id="finish-write-btn">拼出我的短文</button>
+
+    <div class="result-panel" id="result-panel">
+      <div class="result-card">
+        <div class="result-label">我写的短文</div>
+        <div class="result-text" id="result-text"></div>
+        <div class="result-count" id="result-count"></div>
+      </div>
+
+      <div class="result-card">
+        <div class="result-label">写完自己检查一下</div>
+        <ul class="checklist">
+          <li><label><input type="checkbox"> 开头交代了时间、地点、场景</label></li>
+          <li><label><input type="checkbox"> 有具体的动作描写</label></li>
+          <li><label><input type="checkbox"> 有人物的表情或心理描写</label></li>
+          <li><label><input type="checkbox"> 用上了至少1句好词好句</label></li>
+          <li><label><input type="checkbox"> 结尾用俗语或感悟点题</label></li>
+        </ul>
+      </div>
+
+      <div class="write-actions">
+        <button class="ghost" id="copy-write-btn">复制这篇短文</button>
+        <div class="copy-note" id="copy-note">已复制～</div>
+        <button class="ghost" id="reset-write-btn">清空重写</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---- 选词填空题 ----
+  var FILL_Q = [
+    {
+      cat: "内心感受",
+      label: "选词填空",
+      scene: "老师竖起了大拇指称赞我时，我的心里就像喝了蜜糖一样，觉得<span class=\"blank\">____</span>的。",
+      correct: "甜滋滋",
+      wrong: ["酸溜溜", "苦哈哈", "麻辣辣"],
+      explain: "\"喝了蜜糖\"是甜的联想，所以后面接\"甜滋滋\"才前后呼应；\"酸溜溜\"常用来形容嫉妒、不是滋味的感觉。"
+    },
+    {
+      cat: "做错事",
+      label: "选词填空",
+      scene: "妹妹知道自己不对，害羞地低下头，脸红得像<span class=\"blank\">____</span>，显得很惭愧。",
+      correct: "番茄",
+      wrong: ["苹果", "柠檬", "西瓜"],
+      explain: "课文里的固定说法是\"脸红得像番茄\"；苹果虽然也是红色，但不是这句里原本的比喻，考试时要按最常见、最标准的搭配来写。"
+    },
+    {
+      cat: "比赛场面",
+      label: "选词填空",
+      scene: "发令枪一响，他像<span class=\"blank\">____</span>的箭一样向前跑，把所有对手远远地抛在后头。",
+      correct: "离弦",
+      wrong: ["离弓", "脱手", "出膛"],
+      explain: "\"离弦的箭\"是固定搭配，形容速度极快；\"离弓\"\"脱手\"\"出膛\"不是这个成语的正确用字。"
+    },
+    {
+      cat: "声音",
+      label: "选词填空",
+      scene: "\"<span class=\"blank\">____</span>\"的一声巨响，汽车撞上了大树。",
+      correct: "砰",
+      wrong: ["叮咚", "沙沙", "淅沥"],
+      explain: "\"砰\"专门摹写撞击、爆炸一类的巨响；\"叮咚\"是门铃声，\"沙沙\"\"淅沥\"是轻柔的风声雨声，都不适合形容撞车。"
+    },
+    {
+      cat: "动作",
+      label: "选词填空",
+      scene: "他知道自己闯祸了，<span class=\"blank\">____</span>跑出课室，逃得无影无踪。",
+      correct: "一溜烟地",
+      wrong: ["慢吞吞地", "大摇大摆地", "小心翼翼地"],
+      explain: "\"一溜烟地\"形容跑得又快又急，正好配上\"逃得无影无踪\"；其余几个词都带有\"慢\"或\"从容\"的意思，跟\"闯祸后逃跑\"的画面矛盾。"
+    },
+    {
+      cat: "天气开头",
+      label: "选词填空",
+      scene: "老天不作美，天空<span class=\"blank\">____</span>，雷声轰隆隆地响着，不久便下起了倾盆大雨。",
+      correct: "乌云密布",
+      wrong: ["万里无云", "晴空万里", "彩霞满天"],
+      explain: "后面接着\"雷声\"\"倾盆大雨\"，说明天气正在变坏，只有\"乌云密布\"符合；其余三个词都是形容晴朗天气的。"
+    }
+  ];
+
+  // ---- 句子改写选择题 ----
+  var REWRITE_Q = [
+    {
+      cat: "伤心 / 哭",
+      label: "原句（选出最生动的改写）",
+      scene: "原句：她听到坏消息，很伤心，一直哭。",
+      correct: "听到了坏消息，她哭成泪人，泪水像断了线的珍珠，一串串地掉落下来。",
+      wrong: [
+        "她听到坏消息，眼泪一直流下来，停不下来。",
+        "她伤心得像世界末日一样，哭得惊天动地，吓坏了大家。",
+        "她伤心得像泡了水的饼干，整个人软绵绵的。"
+      ],
+      explain: "\"泪水像断了线的珍珠\"用比喻具体写出眼泪一颗颗掉落的样子，恰当又生动；\"世界末日\"\"惊天动地\"太夸张，\"泡了水的饼干\"这个比喻跟伤心哭泣没有关系，会让人觉得奇怪。"
+    },
+    {
+      cat: "比赛场面",
+      label: "原句（选出最生动的改写）",
+      scene: "原句：运动会开始了，大家都很兴奋。",
+      correct: "球赛开始了，四面响起了\"加油，加油\"的喝彩声。",
+      wrong: [
+        "运动会开始了，大家都很开心，气氛很好。",
+        "运动会像打仗一样激烈，大家都拼了命，场面非常恐怖。",
+        "运动会那天，天空很蓝，小鸟在树上唱歌。"
+      ],
+      explain: "\"喝彩声\"具体写出了现场的声音，让读者\"听见\"热闹的气氛；\"像打仗一样\"用词过重，不适合运动会的场景；描写天空和小鸟跟\"大家很兴奋\"没有直接关系，偏题了。"
+    },
+    {
+      cat: "内心感受",
+      label: "原句（选出最生动的改写）",
+      scene: "原句：妈妈很担心弟弟，后来看到他没事就放心了。",
+      correct: "妈妈见弟弟平安无事，心中的一块大石头终于落了地。",
+      wrong: [
+        "妈妈很担心弟弟，后来终于放心了。",
+        "妈妈激动得当场晕倒，被大家扶到椅子上休息。",
+        "妈妈的心情像坐过山车一样，上上下下停不下来。"
+      ],
+      explain: "\"心中的一块大石头终于落了地\"精准写出\"担心之后放心\"的感受；\"当场晕倒\"太夸张，也不符合\"放心\"这个结果；\"坐过山车\"更像是形容忽上忽下的心情过程，不是\"放心\"这个结果。"
+    },
+    {
+      cat: "天气开头",
+      label: "原句（选出最生动的改写）",
+      scene: "原句：那天天气很热，太阳很大。",
+      correct: "一个烈日当空的下午，太阳像火球般高挂空中，天气热得令人发狂。",
+      wrong: [
+        "那天天气很热，大家都出了很多汗。",
+        "太阳像个大火炉，把整个世界都烤化了，路都要融化了。",
+        "那天风很大，路边的树叶被吹得到处飞。"
+      ],
+      explain: "\"太阳像火球般高挂空中\"用比喻具体写出炎热的画面，程度也合理；\"把世界都烤化了\"过于夸张不真实；最后一句写的其实是刮风，不是炎热，答非所问。"
+    },
+    {
+      cat: "做错事",
+      label: "原句（选出最生动的改写）",
+      scene: "原句：小华插队，被同学发现了，大家都很惊讶。",
+      correct: "小华匆匆忙忙地跑到前面插队，同学们都大吃一惊，不知所措。",
+      wrong: [
+        "小华插队，大家看见了，都很生气。",
+        "小华像超人一样飞快地插队，速度快得没人看清楚。",
+        "小华静悄悄地、慢慢地走到前面插队，一点也不着急。"
+      ],
+      explain: "\"匆匆忙忙\"\"大吃一惊，不知所措\"具体写出插队时的心急和同学的反应；\"像超人一样\"这个比喻用词太夸张、不合适；插队通常是想赶快占位，用\"静悄悄、慢慢地\"来形容反而不合理。"
+    },
+    {
+      cat: "帮助人",
+      label: "原句（选出最生动的改写）",
+      scene: "原句：老师看到我们排队守规矩，表扬了我们。",
+      correct: "老师看到他乖乖地排队时，称赞他：\"这才是遵守秩序的好孩子！\"",
+      wrong: [
+        "老师说我们排队排得很好，很不错。",
+        "老师感动得热泪盈眶，当场决定给全班放假一天。",
+        "老师冷冷地说：\"还可以吧。\""
+      ],
+      explain: "加上具体的对话\"这才是遵守秩序的好孩子！\"比单纯说\"表扬了我们\"更生动、更有画面感；\"放假一天\"这个反应太夸张不合理；\"冷冷地说'还可以吧'\"语气跟\"表扬\"矛盾，不符合原意。"
+    }
+  ];
+
+  var ALL_Q = FILL_Q.concat(REWRITE_Q);
+
+  // ---- quiz state ----
+  var queue = [];
+  var idx = 0;
+  var correctCount = 0;
+  var wrongThisRound = [];
+  var answered = false;
+  var lastMode = "mix";
+
+  var screens = {
+    start: document.getElementById("start"),
+    game: document.getElementById("game"),
+    end: document.getElementById("end"),
+    write: document.getElementById("write")
+  };
+  function showScreen(name) {
+    Object.keys(screens).forEach(function (k) {
+      screens[k].classList.toggle("active", k === name);
+    });
+  }
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function startRound(source, modeName) {
+    queue = shuffle(source);
+    idx = 0;
+    correctCount = 0;
+    wrongThisRound = [];
+    lastMode = modeName;
+    showScreen("game");
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    answered = false;
+    var q = queue[idx];
+    document.getElementById("progress-text").textContent = "第 " + (idx + 1) + " / " + queue.length + " 题";
+    document.getElementById("score-text").textContent = "答对 " + correctCount;
+    document.getElementById("progress-fill").style.width = (idx / queue.length * 100) + "%";
+    document.getElementById("scene-label").textContent = q.label || "场景";
+    document.getElementById("scene-text").innerHTML = q.scene;
+
+    var hintText = document.getElementById("hint-text");
+    hintText.style.display = "none";
+    hintText.textContent = "这题跟「" + q.cat + "」这一类的好词好句有关，再想想画面里的感觉。";
+    document.getElementById("hint-btn").style.display = "inline-block";
+
+    var feedback = document.getElementById("feedback");
+    feedback.style.display = "none";
+    feedback.className = "feedback";
+    document.getElementById("next-btn").style.display = "none";
+
+    var opts = shuffle([q.correct].concat(q.wrong));
+    var optionsEl = document.getElementById("options");
+    optionsEl.innerHTML = "";
+    opts.forEach(function (text) {
+      var btn = document.createElement("button");
+      btn.className = "option";
+      btn.type = "button";
+      btn.textContent = text;
+      btn.addEventListener("click", function () { handleAnswer(text === q.correct, btn, q); });
+      optionsEl.appendChild(btn);
+    });
+  }
+
+  function handleAnswer(isCorrect, btn, q) {
+    if (answered) return;
+    answered = true;
+    document.getElementById("hint-btn").style.display = "none";
+
+    var buttons = document.querySelectorAll("#options .option");
+    buttons.forEach(function (b) {
+      b.disabled = true;
+      if (b.textContent === q.correct) b.classList.add("correct");
+    });
+    if (!isCorrect) btn.classList.add("wrong");
+
+    var feedback = document.getElementById("feedback");
+    feedback.style.display = "block";
+    if (isCorrect) {
+      correctCount++;
+      feedback.classList.add("good");
+      feedback.innerHTML = "<b>答对了！</b> " + q.explain;
+    } else {
+      wrongThisRound.push(q);
+      feedback.classList.add("bad");
+      feedback.innerHTML = "<b>再想想～</b> 正确答案是绿色框那个。" + q.explain;
+    }
+    document.getElementById("score-text").textContent = "答对 " + correctCount;
+    document.getElementById("progress-fill").style.width = ((idx + 1) / queue.length * 100) + "%";
+    document.getElementById("next-btn").style.display = "block";
+  }
+
+  function nextQuestion() {
+    idx++;
+    if (idx >= queue.length) {
+      showEnd();
+    } else {
+      renderQuestion();
+    }
+  }
+
+  function bestScoreKey(mode) { return "bryan_phrase_challenge_best_" + mode + "_v1"; }
+  function readBest(mode) {
+    try {
+      var v = window.localStorage.getItem(bestScoreKey(mode));
+      return v ? parseInt(v, 10) : null;
+    } catch (e) { return null; }
+  }
+  function writeBest(mode, score, total) {
+    try {
+      var prev = readBest(mode);
+      var pct = Math.round(score / total * 100);
+      if (prev === null || pct > prev) {
+        window.localStorage.setItem(bestScoreKey(mode), String(pct));
+        return pct;
+      }
+      return prev;
+    } catch (e) { return null; }
+  }
+
+  function showEnd() {
+    showScreen("end");
+    var total = queue.length;
+    var pct = total ? correctCount / total : 0;
+    var starCount = pct >= 0.8 ? 3 : (pct >= 0.5 ? 2 : 1);
+    document.getElementById("stars").textContent = "★★★".slice(0, starCount) + "☆☆☆".slice(0, 3 - starCount);
+    document.getElementById("end-score").textContent = "答对 " + correctCount + " / " + total + " 题";
+
+    var msg;
+    if (pct === 1) msg = "太棒了，全部答对！这几种用词你已经拿捏得很准。";
+    else if (pct >= 0.8) msg = "很不错！再看看答错的那一两题，很快就能全对。";
+    else if (pct >= 0.5) msg = "有一半以上答对了，说明感觉是对的，再练几次会更准。";
+    else msg = "没关系，这种\"选最贴切\"的判断本来就要多练——挑错题再练一轮吧。";
+    document.getElementById("end-msg").textContent = msg;
+
+    var best = writeBest(lastMode, correctCount, total);
+    var bestLine = document.getElementById("best-line");
+    bestLine.textContent = best !== null ? "这个模式历史最佳：" + best + "%" : "";
+
+    var retryBtn = document.getElementById("retry-wrong-btn");
+    if (wrongThisRound.length > 0) {
+      retryBtn.style.display = "block";
+      retryBtn.textContent = "只练刚才答错的 " + wrongThisRound.length + " 题";
+    } else {
+      retryBtn.style.display = "none";
+    }
+  }
+
+  document.getElementById("mode-fill").addEventListener("click", function () {
+    startRound(FILL_Q, "fill");
+  });
+  document.getElementById("mode-rewrite").addEventListener("click", function () {
+    startRound(REWRITE_Q, "rewrite");
+  });
+  document.getElementById("mode-mix").addEventListener("click", function () {
+    startRound(ALL_Q, "mix");
+  });
+  document.getElementById("next-btn").addEventListener("click", nextQuestion);
+  document.getElementById("hint-btn").addEventListener("click", function () {
+    document.getElementById("hint-text").style.display = "block";
+    document.getElementById("hint-btn").style.display = "none";
+  });
+  document.getElementById("restart-btn").addEventListener("click", function () {
+    showScreen("start");
+  });
+  document.getElementById("retry-wrong-btn").addEventListener("click", function () {
+    var pool = wrongThisRound.slice();
+    startRound(pool, lastMode);
+  });
+
+  // ---- write (mini composition) mode ----
+  var WRITE_KEY = "bryan_write_chaqu_draft_v1";
+  var writeIds = ["w1", "w2", "w3", "w4"];
+
+  function loadDraft() {
+    try {
+      var raw = window.localStorage.getItem(WRITE_KEY);
+      if (!raw) return;
+      var data = JSON.parse(raw);
+      writeIds.forEach(function (id) {
+        if (data[id]) document.getElementById(id).value = data[id];
+      });
+    } catch (e) { /* ignore */ }
+  }
+  function saveDraft() {
+    try {
+      var data = {};
+      writeIds.forEach(function (id) { data[id] = document.getElementById(id).value; });
+      window.localStorage.setItem(WRITE_KEY, JSON.stringify(data));
+    } catch (e) { /* ignore */ }
+  }
+
+  document.getElementById("mode-write").addEventListener("click", function () {
+    showScreen("write");
+    document.getElementById("result-panel").style.display = "none";
+    loadDraft();
+  });
+  document.getElementById("write-back-btn").addEventListener("click", function () {
+    showScreen("start");
+  });
+
+  document.querySelectorAll(".example-toggle").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var box = document.getElementById(btn.getAttribute("data-target"));
+      var showing = box.style.display === "block";
+      box.style.display = showing ? "none" : "block";
+      btn.textContent = showing ? "💡 参考例句" : "🙈 收起例句";
+    });
+  });
+
+  writeIds.forEach(function (id) {
+    document.getElementById(id).addEventListener("input", saveDraft);
+  });
+
+  document.getElementById("finish-write-btn").addEventListener("click", function () {
+    var parts = writeIds.map(function (id) { return document.getElementById(id).value.trim(); })
+                         .filter(function (t) { return t.length > 0; });
+    var combined = parts.join("");
+    var resultText = document.getElementById("result-text");
+    resultText.textContent = combined.length > 0 ? combined : "（先在上面4格写一点内容，再来拼短文吧）";
+
+    var count = combined.replace(/\s/g, "").length;
+    document.getElementById("result-count").textContent = combined.length > 0 ? ("共 " + count + " 个字") : "";
+
+    document.getElementById("result-panel").style.display = "block";
+    document.getElementById("result-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  document.getElementById("copy-write-btn").addEventListener("click", function () {
+    var text = document.getElementById("result-text").textContent;
+    var note = document.getElementById("copy-note");
+    function flashNote() {
+      note.style.display = "block";
+      setTimeout(function () { note.style.display = "none"; }, 1600);
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(flashNote).catch(function () {});
+      }
+    } catch (e) { /* clipboard unavailable, silently ignore */ }
+  });
+
+  document.getElementById("reset-write-btn").addEventListener("click", function () {
+    writeIds.forEach(function (id) { document.getElementById(id).value = ""; });
+    document.querySelectorAll(".example-box").forEach(function (box) { box.style.display = "none"; });
+    document.querySelectorAll(".example-toggle").forEach(function (btn) { btn.textContent = "💡 参考例句"; });
+    document.getElementById("result-panel").style.display = "none";
+    document.querySelectorAll(".checklist input").forEach(function (cb) { cb.checked = false; });
+    try { window.localStorage.removeItem(WRITE_KEY); } catch (e) { /* ignore */ }
+  });
+})();
+</script>
+</body>
+</html>
