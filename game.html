@@ -1,0 +1,930 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Jordan's Spelling Dash</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap">
+<style>
+:root{
+  color-scheme: light dark;
+  --paper:#F7F8FB;
+  --card:#FFFFFF;
+  --ink:#24334A;
+  --ink-soft:#5B6B85;
+  --line:#C7D4E6;
+  --line-faint:#E4EBF5;
+  --accent:#FF6A4D;
+  --accent-ink:#FFFFFF;
+  --accent-soft:#FFE7E0;
+  --good:#1E9E85;
+  --good-bg:#E1F5F0;
+  --warn:#D98A1F;
+  --warn-bg:#FBEEDA;
+  --bad:#D9483F;
+  --ring:#5B8DEF;
+  --shadow:rgba(36,51,74,0.14);
+  --sky-top:#CFE8FF;
+  --sky-bot:#F3FBFF;
+  --ground:#8FA36B;
+  --dino:#3E5C55;
+  --dino-belly:#DDECC8;
+  --cactus:#3F8F5B;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#12161F;
+    --card:#1B212C;
+    --ink:#E9EEF7;
+    --ink-soft:#9FB0C9;
+    --line:#37455E;
+    --line-faint:#232B39;
+    --accent:#FF7A5C;
+    --accent-ink:#1B0E0A;
+    --accent-soft:#3A241D;
+    --good:#3FC4A8;
+    --good-bg:#123B33;
+    --warn:#F0B15C;
+    --warn-bg:#3B2C14;
+    --bad:#FF6B60;
+    --ring:#6FA1E8;
+    --shadow:rgba(0,0,0,0.5);
+    --sky-top:#1B2A3C;
+    --sky-bot:#0F1621;
+    --ground:#3E4A34;
+    --dino:#8FE0C6;
+    --dino-belly:#12362B;
+    --cactus:#4FBE7C;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#12161F; --card:#1B212C; --ink:#E9EEF7; --ink-soft:#9FB0C9;
+  --line:#37455E; --line-faint:#232B39; --accent:#FF7A5C; --accent-ink:#1B0E0A;
+  --accent-soft:#3A241D; --good:#3FC4A8; --good-bg:#123B33; --warn:#F0B15C;
+  --warn-bg:#3B2C14; --bad:#FF6B60; --ring:#6FA1E8; --shadow:rgba(0,0,0,0.5);
+  --sky-top:#1B2A3C; --sky-bot:#0F1621; --ground:#3E4A34; --dino:#8FE0C6;
+  --dino-belly:#12362B; --cactus:#4FBE7C;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Nunito Sans', system-ui, sans-serif;
+  padding-inline:16px;
+  min-height:100vh;
+}
+h1,h2,h3,.display{font-family:'Baloo 2', system-ui, sans-serif;}
+button{font-family:inherit;}
+a{color:inherit;text-decoration:none;}
+
+.app{
+  max-width:760px;
+  margin:0 auto;
+  padding-block:18px 40px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+}
+
+.topbar{
+  display:flex;align-items:center;gap:12px;padding:10px 14px;
+  background:var(--card);border-radius:16px;box-shadow:0 2px 10px var(--shadow);
+  flex-wrap:wrap;
+}
+.brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}
+.brand .emoji{font-size:22px;line-height:1;}
+.brand-text{display:flex;flex-direction:column;line-height:1.15;min-width:0;}
+.brand-text strong{font-family:'Baloo 2';font-size:1.05rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.brand-text span{font-size:.78rem;color:var(--ink-soft);font-weight:600;}
+.nav-link{
+  flex:none;height:38px;border-radius:10px;border:1.5px solid var(--line);
+  background:transparent;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;padding:0 12px;gap:6px;font-size:.85rem;font-weight:700;white-space:nowrap;
+}
+.nav-link:hover{color:var(--ink);border-color:var(--ink-soft);}
+.nav-link:focus-visible, button:focus-visible{outline:3px solid var(--ring);outline-offset:2px;}
+.icon-btn{
+  flex:none;width:38px;height:38px;border-radius:10px;border:1.5px solid var(--line);
+  background:transparent;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:18px;
+}
+.icon-btn:hover{color:var(--ink);border-color:var(--ink-soft);}
+.hidden{display:none!important;}
+
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(20,26,36,.5);
+  display:flex;align-items:center;justify-content:center;padding:20px;z-index:20;
+}
+.modal{
+  background:var(--card);border-radius:18px;padding:22px;max-width:560px;width:100%;
+  display:flex;flex-direction:column;gap:12px;
+  box-shadow:0 20px 50px var(--shadow);
+  max-height:88vh;overflow:auto;
+}
+.modal h2{margin:0;font-size:1.3rem;}
+.modal p{margin:0;color:var(--ink-soft);font-size:.9rem;line-height:1.5;}
+.modal code{background:var(--paper);padding:2px 5px;border-radius:5px;font-size:.85em;}
+#gameWordsEditor{
+  width:100%;min-height:190px;resize:vertical;
+  border:1.5px solid var(--line);border-radius:10px;padding:10px;
+  font-family:ui-monospace, monospace;font-size:.9rem;color:var(--ink);
+  background:var(--paper);
+  -webkit-user-select:text;user-select:text;-webkit-touch-callout:default;
+}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.spacer{flex:1;}
+.online-note{font-size:.8rem;color:var(--ink-soft);}
+.settings-label{font-size:.8rem;font-weight:800;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em;margin-top:6px;}
+.speed-row{display:flex;gap:8px;flex-wrap:wrap;}
+.speed-btn{padding:9px 14px;font-size:.9rem;}
+.speed-btn.active{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
+
+.card{
+  background:var(--card);border-radius:22px;box-shadow:0 6px 24px var(--shadow);
+  padding:20px 18px 22px;display:flex;flex-direction:column;gap:16px;
+}
+
+.hud-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.hearts{display:flex;gap:4px;font-size:20px;}
+.heart{transition:transform .15s ease, opacity .15s ease;}
+.heart.lost{opacity:.25;transform:scale(.8);}
+.score-box{display:flex;align-items:center;gap:14px;font-family:'Baloo 2';font-weight:800;}
+.score-box .score-val{font-size:1.3rem;color:var(--accent);}
+.score-box .best-val{font-size:.85rem;color:var(--ink-soft);font-weight:700;}
+.level-chip{
+  background:var(--accent-soft);color:var(--accent);font-weight:800;font-size:.8rem;
+  border-radius:999px;padding:5px 12px;font-family:'Baloo 2';white-space:nowrap;
+}
+
+.word-blanks{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:2px 0;}
+.word-tile{
+  width:32px;height:40px;border-bottom:4px solid var(--line);
+  display:flex;align-items:flex-end;justify-content:center;padding-bottom:3px;
+  font-family:'Baloo 2';font-weight:800;font-size:1.4rem;color:var(--accent);
+}
+.word-tile.filled{border-color:var(--good);color:var(--good);}
+
+.stage-wrap{
+  position:relative;border-radius:16px;overflow:hidden;
+  border:1.5px solid var(--line);background:linear-gradient(var(--sky-top),var(--sky-bot));
+}
+canvas#gameCanvas{display:block;width:100%;height:190px;}
+
+.overlay{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:12px;background:rgba(18,22,31,.55);color:#fff;text-align:center;padding:16px;
+}
+.overlay h2{margin:0;font-size:1.4rem;}
+.overlay p{margin:0;font-size:.9rem;color:#dfe7f5;max-width:320px;line-height:1.5;}
+.overlay .big-score{font-size:2.2rem;font-weight:800;color:#FFD27A;}
+
+.replay-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;}
+.btn{
+  border:none;border-radius:14px;font-weight:800;font-family:'Baloo 2';cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;padding:12px 20px;font-size:1rem;
+  transition:transform .08s ease, box-shadow .15s ease;
+}
+.btn:active{transform:scale(.97);}
+.btn.primary{background:var(--accent);color:var(--accent-ink);box-shadow:0 4px 14px var(--shadow);}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line);}
+.btn.ghost.onDark{color:#fff;border-color:rgba(255,255,255,.5);}
+.btn.big{padding:14px 28px;font-size:1.1rem;}
+
+.letters-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.letter-btn{
+  height:64px;border-radius:16px;border:none;background:var(--card);
+  box-shadow:0 3px 0 var(--line), 0 5px 14px var(--shadow);
+  font-family:'Baloo 2';font-weight:800;font-size:1.7rem;color:var(--ink);
+  cursor:pointer;
+  border:1.5px solid var(--line);
+}
+.letter-btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line), 0 2px 6px var(--shadow);}
+.letter-btn.correct{background:var(--good-bg);color:var(--good);border-color:var(--good);}
+.letter-btn.wrong{background:var(--bad);color:#fff;border-color:var(--bad);}
+
+.note{font-size:.8rem;color:var(--ink-soft);text-align:center;padding-top:4px;}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="emoji">🦖</span>
+      <div class="brand-text"><strong>Spelling Dash</strong><span>for Jordan</span></div>
+    </div>
+    <a class="nav-link" href="index.html">✏️ 中文练字</a>
+    <a class="nav-link" href="spelling.html">📝 英文拼写</a>
+    <a class="nav-link" href="test.html">🎧 听写测试</a>
+    <button class="icon-btn" id="settingsBtn" aria-label="Edit game word list">⚙️</button>
+  </header>
+
+  <section class="card">
+    <div class="hud-row">
+      <div class="hearts" id="hearts"></div>
+      <div class="score-box">
+        <span class="score-val" id="scoreVal">0</span>
+        <span class="best-val" id="bestVal">Best: 0</span>
+      </div>
+      <div class="level-chip" id="levelChip">Level 1</div>
+    </div>
+
+    <div class="word-blanks" id="wordBlanks"></div>
+
+    <div class="stage-wrap">
+      <canvas id="gameCanvas"></canvas>
+      <div class="overlay" id="startOverlay">
+        <h2>🦖 Spelling Dash</h2>
+        <p>Listen to the word, then tap the right letter before the cactus gets close — the dino jumps over it! Get 3 words wrong and it's game over.</p>
+        <button class="btn primary big" id="startBtn">▶ Start</button>
+      </div>
+      <div class="overlay" id="gameOverOverlay" style="display:none">
+        <h2>🌵 Game Over</h2>
+        <div class="big-score" id="finalScore">0</div>
+        <p id="finalNote">Words spelled: 0</p>
+        <button class="btn primary big" id="restartBtn">🔁 Play again</button>
+      </div>
+      <div class="overlay" id="pauseOverlay" style="display:none">
+        <h2>⏸ Paused</h2>
+        <button class="btn primary big" id="resumeBtn">▶ Resume</button>
+      </div>
+    </div>
+
+    <div class="replay-row">
+      <button class="btn ghost" id="replayBtn">🔊 Hear the word again</button>
+      <button class="btn ghost" id="pauseBtn">⏸ Pause</button>
+    </div>
+
+    <div class="letters-row" id="lettersRow"></div>
+  </section>
+
+  <p class="note">Tap ⚙️ above to set your own word list — it syncs across devices. High score is saved on this device only.</p>
+</div>
+
+<div class="modal-backdrop hidden" id="wordsBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Edit game word list">
+    <h2>Game settings</h2>
+    <p class="settings-label">Game speed — how long you get to tap each letter</p>
+    <div class="speed-row" id="speedRow"></div>
+    <p class="settings-label">Word list — one word per line (commas or spaces also work). Keep everyday words lowercase — only start a word with a capital letter if it's a name or place, like <code>Jordan</code> or <code>Monday</code>.</p>
+    <textarea id="gameWordsEditor" spellcheck="false"></textarea>
+    <span class="online-note" id="wordsStatus"></span>
+    <div class="modal-actions">
+      <button class="btn ghost" id="resetWordsBtn" type="button">Reset to default list</button>
+      <div class="spacer"></div>
+      <button class="btn ghost" id="cancelWordsBtn" type="button">Cancel</button>
+      <button class="btn primary" id="saveWordsBtn" type="button">Save</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+
+  /* ---------------- cloud (same Supabase project as the other pages) ---------------- */
+  var SUPABASE_URL = 'https://uscpgatqeeqejbwnvyoh.supabase.co';
+  var SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_Tc5qBurC5SnTyNjB2jtA2A_jFs9T3og';
+  var cloudReady = !!SUPABASE_PUBLISHABLE_KEY && SUPABASE_PUBLISHABLE_KEY.indexOf('PASTE_YOUR') === -1;
+  var supabase = (cloudReady && window.supabase) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY) : null;
+
+  /* ---------------- word bank ---------------- */
+  var DEFAULT_WORDS = [
+    "cat","dog","sun","run","box","bus","pen","hat","top","mat","red","big","sit","cup","bag",
+    "happy","apple","table","house","school","friend","orange","garden","purple","pencil","yellow","little","people",
+    "present","elephant","birthday","beautiful","umbrella","chocolate","dinosaur","favourite"
+  ];
+
+  // This game keeps its own word list, separate from the "英文拼写" dictation
+  // page's list — edit it with the ⚙️ button. It's saved to the same cloud
+  // project as the Chinese library, so it syncs across devices instead of
+  // living only in one browser. Case is kept exactly as typed: everyday
+  // words should be lowercase, and only a name/place like "Jordan" needs a
+  // capital first letter.
+  var WORDS_CACHE_KEY = 'sd_game_words_cache_v1'; // offline fallback only
+  function parseCustomWords(text){
+    return (text||'').split(/[\s,;]+/)
+      .map(function(w){ return w.trim(); })
+      .filter(function(w){ return w && /^[A-Za-z]+$/.test(w); });
+  }
+  function loadLocalWordsCache(){
+    try{ return localStorage.getItem(WORDS_CACHE_KEY); }catch(e){ return null; }
+  }
+  function saveLocalWordsCache(text){
+    try{ localStorage.setItem(WORDS_CACHE_KEY, text); }catch(e){}
+  }
+
+  function bucketWords(pool){
+    var b = [[],[],[]];
+    pool.forEach(function(w){
+      if(w.length<=4) b[0].push(w);
+      else if(w.length<=6) b[1].push(w);
+      else b[2].push(w);
+    });
+    if(!b[0].length) b[0]=DEFAULT_WORDS.filter(function(w){return w.length<=4;});
+    if(!b[1].length) b[1]=DEFAULT_WORDS.filter(function(w){return w.length>4&&w.length<=6;});
+    if(!b[2].length) b[2]=DEFAULT_WORDS.filter(function(w){return w.length>6;});
+    return b;
+  }
+
+  var currentWords = DEFAULT_WORDS.slice();
+  var WORD_BUCKETS = bucketWords(currentWords);
+  function applyWordPool(words){
+    currentWords = (words && words.length) ? words.slice() : DEFAULT_WORDS.slice();
+    WORD_BUCKETS = bucketWords(currentWords);
+  }
+
+  async function loadCloudWords(){
+    if(!supabase) return null;
+    try{
+      var res = await supabase.from('game_words').select('word').order('id');
+      if(res.error) throw res.error;
+      return (res.data||[]).map(function(r){ return r.word; }).filter(function(w){ return /^[A-Za-z]+$/.test(w); });
+    }catch(e){ return null; }
+  }
+
+  async function saveWordsToCloud(words){
+    if(!supabase){
+      saveLocalWordsCache(words.join('\n'));
+      return {ok:false, offline:true};
+    }
+    try{
+      var del = await supabase.from('game_words').delete().gte('id', 0);
+      if(del.error) throw del.error;
+      if(words.length){
+        var ins = await supabase.from('game_words').insert(words.map(function(w){ return {word:w}; }));
+        if(ins.error) throw ins.error;
+      }
+      saveLocalWordsCache(words.join('\n'));
+      return {ok:true};
+    }catch(e){ return {ok:false, error:e}; }
+  }
+
+  async function initWordsFromCloud(){
+    var words = await loadCloudWords();
+    if(words && words.length){
+      applyWordPool(words);
+      saveLocalWordsCache(words.join('\n'));
+      return;
+    }
+    if(words===null){
+      // couldn't reach the cloud table — fall back to the last synced copy on this device
+      var cached = loadLocalWordsCache();
+      if(cached) applyWordPool(parseCustomWords(cached));
+    }
+  }
+  initWordsFromCloud();
+
+  function pickWord(level, lastWord){
+    var idx = level<3 ? 0 : (level<7 ? 1 : 2);
+    var arr = WORD_BUCKETS[idx].length ? WORD_BUCKETS[idx] : (WORD_BUCKETS[1].length?WORD_BUCKETS[1]:WORD_BUCKETS[0]);
+    if(arr.length<=1) return arr[0];
+    var w;
+    do{ w = arr[Math.floor(Math.random()*arr.length)]; }while(w===lastWord);
+    return w;
+  }
+
+  /* ---------------- speech ---------------- */
+  var voice = null;
+  function pickVoice(){
+    var vs = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+    voice = vs.find(function(v){ return /en-GB/i.test(v.lang); }) ||
+            vs.find(function(v){ return /en-US/i.test(v.lang); }) ||
+            vs.find(function(v){ return /^en/i.test(v.lang); }) || null;
+  }
+  if(window.speechSynthesis){
+    pickVoice();
+    speechSynthesis.onvoiceschanged = pickVoice;
+  }
+  function speak(text, rate){
+    return new Promise(function(resolve){
+      if(!window.speechSynthesis){ resolve(); return; }
+      var u = new SpeechSynthesisUtterance(text);
+      if(voice) u.voice = voice;
+      u.lang = voice ? voice.lang : 'en-GB';
+      u.rate = rate || 0.9;
+      u.onend = function(){ resolve(); };
+      u.onerror = function(){ resolve(); };
+      speechSynthesis.speak(u);
+    });
+  }
+
+  /* ---------------- audio beeps ---------------- */
+  var audioCtx = null;
+  function beep(freq, dur, type, vol){
+    try{
+      if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+      var t0 = audioCtx.currentTime;
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      osc.type = type || 'square';
+      osc.frequency.setValueAtTime(freq, t0);
+      gain.gain.setValueAtTime(vol||0.15, t0);
+      gain.gain.exponentialRampToValueAtTime(0.001, t0+dur);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(t0); osc.stop(t0+dur);
+    }catch(e){}
+  }
+  function sfxCorrect(){ beep(720,0.10,'square',0.12); }
+  function sfxWrongTap(){ beep(200,0.08,'sawtooth',0.10); }
+  function sfxHit(){ beep(140,0.22,'sawtooth',0.16); }
+  function sfxWordDone(){
+    beep(523,0.10,'square',0.13);
+    setTimeout(function(){ beep(659,0.10,'square',0.13); },110);
+    setTimeout(function(){ beep(784,0.16,'square',0.14); },220);
+  }
+  function sfxGameOver(){
+    beep(300,0.18,'sawtooth',0.14);
+    setTimeout(function(){ beep(220,0.22,'sawtooth',0.14); },160);
+    setTimeout(function(){ beep(140,0.3,'sawtooth',0.14); },340);
+  }
+
+  /* ---------------- canvas + game state ---------------- */
+  var canvas = $('gameCanvas'), ctx = canvas.getContext('2d');
+  var W=720, H=190, dpr=1;
+  var GROUND_Y = H-34;
+  var DINO_X = 62, DINO_W=40, DINO_H=38;
+
+  function resize(){
+    dpr = Math.max(1, window.devicePixelRatio||1);
+    var w = canvas.clientWidth || 720;
+    W = w; H = canvas.clientHeight || 190;
+    GROUND_Y = H-34;
+    canvas.width = Math.round(W*dpr); canvas.height = Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  window.addEventListener('resize', resize);
+
+  var S = {
+    running:false, gameOver:false, speaking:false,
+    manualPaused:false, hiddenPaused:false, modalPaused:false,
+    level:1, score:0, best:0, hearts:3,
+    word:'', lastWord:'', filled:0,
+    letterStart:0, elapsedActive:0, letterTimeMs:4200,
+    groundOffset:0, legPhase:0, jumping:false, jumpStart:0, jumpDur:460,
+    hitShake:0, particles:[], resolvingLetter:false,
+    cactusFromX:0, jumpingCactus:false, jumpCactusX:0
+  };
+  function isPaused(){ return S.manualPaused || S.hiddenPaused || S.modalPaused; }
+
+  /* ---------------- speed setting ---------------- */
+  var SPEED_PRESETS = [
+    {key:'slow', label:'🐢 Slow', mult:1.6},
+    {key:'normal', label:'🙂 Normal', mult:1.0},
+    {key:'fast', label:'⚡ Fast', mult:0.72},
+    {key:'veryfast', label:'🚀 Very fast', mult:0.55}
+  ];
+  var SPEED_KEY = 'sd_game_speed_v1';
+  function loadSpeedKey(){
+    try{
+      var v = localStorage.getItem(SPEED_KEY);
+      return SPEED_PRESETS.some(function(p){ return p.key===v; }) ? v : 'normal';
+    }catch(e){ return 'normal'; }
+  }
+  function saveSpeedKey(k){ try{ localStorage.setItem(SPEED_KEY, k); }catch(e){} }
+  var currentSpeedKey = loadSpeedKey();
+  function speedMultiplier(){
+    var p = SPEED_PRESETS.find(function(p){ return p.key===currentSpeedKey; });
+    return p ? p.mult : 1.0;
+  }
+  function renderSpeedButtons(){
+    var row = $('speedRow'); if(!row) return;
+    row.innerHTML = '';
+    SPEED_PRESETS.forEach(function(p){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'btn ghost speed-btn'+(p.key===currentSpeedKey?' active':'');
+      b.textContent = p.label;
+      b.addEventListener('click', function(){
+        currentSpeedKey = p.key;
+        saveSpeedKey(p.key);
+        renderSpeedButtons();
+      });
+      row.appendChild(b);
+    });
+  }
+
+  function bestKey(){ return 'sd_game_best_v1'; }
+  function loadBest(){ try{ return Number(localStorage.getItem(bestKey())||0); }catch(e){ return 0; } }
+  function saveBest(v){ try{ localStorage.setItem(bestKey(), String(v)); }catch(e){} }
+
+  function letterTimeForLevel(level){
+    var base = 4200 - level*150;
+    return Math.max(900, Math.round(base * speedMultiplier()));
+  }
+
+  function renderHearts(){
+    var box = $('hearts'); box.innerHTML='';
+    for(var i=0;i<3;i++){
+      var span = document.createElement('span');
+      span.className = 'heart'+(i>=S.hearts?' lost':'');
+      span.textContent = '❤️';
+      box.appendChild(span);
+    }
+  }
+  function renderScore(){
+    $('scoreVal').textContent = S.score;
+    $('bestVal').textContent = 'Best: '+S.best;
+    $('levelChip').textContent = 'Level '+S.level;
+  }
+  function renderWordBlanks(){
+    var box = $('wordBlanks'); box.innerHTML='';
+    for(var i=0;i<S.word.length;i++){
+      var tile = document.createElement('div');
+      tile.className = 'word-tile'+(i<S.filled?' filled':'');
+      tile.textContent = i<S.filled ? S.word[i] : '';
+      box.appendChild(tile);
+    }
+  }
+
+  function makeLetterOptions(correctLetter){
+    // Decoys match the correct letter's case, so a capitalised first letter
+    // (a name/place) doesn't give itself away as the only uppercase option.
+    var isUpper = correctLetter === correctLetter.toUpperCase();
+    var alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    var opts = [correctLetter];
+    while(opts.length<4){
+      var c = alphabet[Math.floor(Math.random()*alphabet.length)];
+      var candidate = isUpper ? c.toUpperCase() : c;
+      if(opts.indexOf(candidate)===-1) opts.push(candidate);
+    }
+    // shuffle
+    for(var i=opts.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var t = opts[i]; opts[i]=opts[j]; opts[j]=t;
+    }
+    return opts;
+  }
+
+  function renderLetterButtons(){
+    var row = $('lettersRow'); row.innerHTML='';
+    var correct = S.word[S.filled];
+    var opts = makeLetterOptions(correct);
+    opts.forEach(function(letter){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'letter-btn';
+      b.textContent = letter;
+      b.addEventListener('click', function(){ onLetterTap(letter, b); });
+      row.appendChild(b);
+    });
+  }
+
+  function onLetterTap(letter, btnEl){
+    if(!S.running || S.gameOver || S.resolvingLetter || isPaused()) return;
+    var correct = S.word[S.filled];
+    if(letter === correct){
+      var progressNow = Math.min(1, S.elapsedActive / S.letterTimeMs);
+      S.jumpCactusX = S.cactusFromX - progressNow*(S.cactusFromX-(DINO_X+DINO_W+8));
+      S.jumpingCactus = true;
+      S.resolvingLetter = true;
+      btnEl.classList.add('correct');
+      S.score += 10;
+      renderScore();
+      sfxCorrect();
+      startJump();
+      setTimeout(function(){
+        S.filled += 1;
+        renderWordBlanks();
+        if(S.filled >= S.word.length){
+          onWordComplete();
+        }else{
+          startLetterRound();
+        }
+      }, 340);
+    }else{
+      btnEl.classList.add('wrong');
+      sfxWrongTap();
+      setTimeout(function(){ btnEl.classList.remove('wrong'); }, 220);
+    }
+  }
+
+  function onWordComplete(){
+    S.score += 40 + S.level*3;
+    renderScore();
+    sfxWordDone();
+    burstParticles();
+    S.resolvingLetter = true;
+    setTimeout(function(){
+      S.level += 1;
+      nextWord();
+    }, 900);
+  }
+
+  function loseHeart(){
+    S.hearts -= 1;
+    renderHearts();
+    sfxHit();
+    S.hitShake = 300;
+    if(S.hearts<=0){
+      endGame();
+    }else{
+      S.resolvingLetter = true;
+      setTimeout(function(){ startLetterRound(); }, 500);
+    }
+  }
+
+  function startJump(){
+    S.jumping = true;
+    S.jumpStart = performance.now();
+  }
+
+  function startLetterRound(){
+    S.resolvingLetter = false;
+    S.letterTimeMs = letterTimeForLevel(S.level);
+    S.letterStart = performance.now();
+    S.elapsedActive = 0;
+    S.cactusFromX = W - 26;
+    renderLetterButtons();
+  }
+
+  function nextWord(){
+    S.word = pickWord(S.level, S.lastWord);
+    S.lastWord = S.word;
+    S.filled = 0;
+    renderWordBlanks();
+    S.speaking = true;
+    speak(S.word, 0.8).then(function(){ S.speaking = false; startLetterRound(); });
+  }
+
+  function replayWord(){
+    if(!S.running || S.gameOver || !S.word || isPaused()) return;
+    S.speaking = true;
+    speak(S.word, 0.8).then(function(){ S.speaking = false; });
+  }
+
+  function burstParticles(){
+    var cx = DINO_X+DINO_W/2, cy = GROUND_Y-DINO_H;
+    var colors = ['#FF6A4D','#FFD27A','#1E9E85','#5B8DEF'];
+    for(var i=0;i<16;i++){
+      var ang = Math.random()*Math.PI*2;
+      var speed = 1+Math.random()*2.4;
+      S.particles.push({
+        x:cx, y:cy, vx:Math.cos(ang)*speed, vy:Math.sin(ang)*speed-1.2,
+        life:1, color:colors[i%colors.length]
+      });
+    }
+  }
+
+  function endGame(){
+    S.running = false;
+    S.gameOver = true;
+    sfxGameOver();
+    if(S.score > S.best){ S.best = S.score; saveBest(S.best); }
+    renderScore();
+    $('finalScore').textContent = S.score;
+    $('finalNote').textContent = 'Level reached: '+S.level;
+    $('gameOverOverlay').style.display = 'flex';
+  }
+
+  function startGame(){
+    S.running = true; S.gameOver = false;
+    S.manualPaused = false; S.hiddenPaused = false; S.modalPaused = false;
+    S.level = 1; S.score = 0; S.hearts = 3;
+    S.particles = [];
+    S.best = loadBest();
+    renderHearts(); renderScore();
+    $('startOverlay').style.display = 'none';
+    $('gameOverOverlay').style.display = 'none';
+    $('pauseOverlay').style.display = 'none';
+    $('pauseBtn').textContent = '⏸ Pause';
+    nextWord();
+  }
+
+  /* ---------------- drawing ---------------- */
+  function drawGround(){
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ground').trim();
+    ctx.fillRect(0, GROUND_Y, W, H-GROUND_Y);
+    ctx.strokeStyle = 'rgba(255,255,255,.35)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([16,14]);
+    ctx.lineDashOffset = -S.groundOffset;
+    ctx.beginPath();
+    ctx.moveTo(0, GROUND_Y+2);
+    ctx.lineTo(W, GROUND_Y+2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  function drawDino(x, groundY){
+    var dinoColor = getComputedStyle(document.documentElement).getPropertyValue('--dino').trim();
+    var bellyColor = getComputedStyle(document.documentElement).getPropertyValue('--dino-belly').trim();
+    var jumpOffset = 0;
+    if(S.jumping){
+      var t = (performance.now()-S.jumpStart)/S.jumpDur;
+      if(t>=1){ S.jumping=false; jumpOffset=0; }
+      else{ jumpOffset = -Math.sin(Math.PI*t) * 46; }
+    }
+    var baseY = groundY - DINO_H + jumpOffset;
+    ctx.save();
+    ctx.translate(x, baseY);
+    // legs (simple alternating, only when not jumping)
+    ctx.fillStyle = dinoColor;
+    var legPhaseUp = Math.sin(S.legPhase) > 0;
+    if(!S.jumping){
+      ctx.fillRect(6, DINO_H-8, 8, legPhaseUp?8:5);
+      ctx.fillRect(20, DINO_H-8, 8, legPhaseUp?5:8);
+    }else{
+      ctx.fillRect(6, DINO_H-8, 8, 8);
+      ctx.fillRect(20, DINO_H-8, 8, 8);
+    }
+    // tail
+    ctx.beginPath();
+    ctx.moveTo(2, DINO_H-16);
+    ctx.lineTo(-10, DINO_H-22);
+    ctx.lineTo(2, DINO_H-10);
+    ctx.closePath();
+    ctx.fill();
+    // body
+    roundRect(ctx, 2, 4, DINO_W-6, DINO_H-14, 8);
+    ctx.fill();
+    // belly
+    ctx.fillStyle = bellyColor;
+    roundRect(ctx, 6, DINO_H-20, DINO_W-16, 8, 4);
+    ctx.fill();
+    // head
+    ctx.fillStyle = dinoColor;
+    roundRect(ctx, DINO_W-20, -6, 22, 20, 7);
+    ctx.fill();
+    // eye
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(DINO_W-6, 2, 3, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#1B212C';
+    ctx.beginPath(); ctx.arc(DINO_W-5, 2, 1.4, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  function roundRect(ctx,x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  function drawCactus(x, groundY){
+    var color = getComputedStyle(document.documentElement).getPropertyValue('--cactus').trim();
+    ctx.fillStyle = color;
+    var h = 34, w = 12;
+    roundRect(ctx, x-w/2, groundY-h, w, h, 4);
+    ctx.fill();
+    roundRect(ctx, x-w/2-8, groundY-h+10, 8, 6, 3);
+    ctx.fill();
+    roundRect(ctx, x+w/2, groundY-h+16, 8, 6, 3);
+    ctx.fill();
+  }
+
+  function drawParticles(){
+    S.particles.forEach(function(p){
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  function render(){
+    ctx.clearRect(0,0,W,H);
+    var shakeX = S.hitShake>0 ? (Math.random()-0.5)*6 : 0;
+    ctx.save();
+    ctx.translate(shakeX, 0);
+    drawGround();
+    if(S.running && !S.gameOver){
+      if(S.jumpingCactus){
+        var jt = S.jumping ? (performance.now()-S.jumpStart)/S.jumpDur : 1;
+        if(jt>=1){ S.jumpingCactus=false; }
+        else{ drawCactus(S.jumpCactusX - jt*70, GROUND_Y); }
+      }else if(!S.speaking && !S.resolvingLetter && S.word){
+        var progress = Math.min(1, S.elapsedActive / S.letterTimeMs);
+        var cactusX = S.cactusFromX - progress*(S.cactusFromX-(DINO_X+DINO_W+8));
+        drawCactus(cactusX, GROUND_Y);
+      }
+    }
+    drawDino(DINO_X, GROUND_Y);
+    drawParticles();
+    ctx.restore();
+  }
+
+  /* ---------------- main loop ---------------- */
+  var lastTs = 0;
+  function loop(ts){
+    requestAnimationFrame(loop);
+    if(!lastTs) lastTs = ts;
+    var dt = Math.min(50, ts-lastTs);
+    lastTs = ts;
+
+    if(S.hitShake>0) S.hitShake -= dt;
+
+    S.particles.forEach(function(p){
+      p.x += p.vx; p.y += p.vy; p.vy += 0.12; p.life -= dt/600;
+    });
+    S.particles = S.particles.filter(function(p){ return p.life>0; });
+
+    if(S.running && !S.gameOver && !isPaused()){
+      var visualFactor = 1/speedMultiplier();
+      if(!S.jumping){ S.legPhase += dt*0.02*visualFactor; }
+      if(!S.speaking && !S.resolvingLetter){
+        S.groundOffset += dt*0.12*visualFactor;
+        S.elapsedActive += dt;
+        if(S.elapsedActive >= S.letterTimeMs){
+          S.resolvingLetter = true;
+          loseHeart();
+        }
+      }
+    }
+    render();
+  }
+  requestAnimationFrame(loop);
+
+  /* ---------------- keyboard support ---------------- */
+  document.addEventListener('keydown', function(e){
+    if(!S.running || S.gameOver || S.resolvingLetter || isPaused()) return;
+    var key = e.key || '';
+    if(key.length!==1 || !/[a-zA-Z]/.test(key)) return;
+    var keyLower = key.toLowerCase();
+    var btns = $('lettersRow').querySelectorAll('.letter-btn');
+    for(var i=0;i<btns.length;i++){
+      if(btns[i].textContent.toLowerCase()===keyLower){ onLetterTap(btns[i].textContent, btns[i]); break; }
+    }
+  });
+
+  /* ---------------- pause ---------------- */
+  function syncPauseUI(){
+    if(!S.running || S.gameOver) return;
+    $('pauseOverlay').style.display = S.manualPaused ? 'flex' : 'none';
+    $('pauseBtn').textContent = S.manualPaused ? '▶ Resume' : '⏸ Pause';
+  }
+  function togglePause(){
+    if(!S.running || S.gameOver) return;
+    S.manualPaused = !S.manualPaused;
+    if(S.manualPaused && window.speechSynthesis) speechSynthesis.pause();
+    else if(!S.manualPaused && window.speechSynthesis) speechSynthesis.resume();
+    syncPauseUI();
+  }
+
+  /* ---------------- wiring ---------------- */
+  $('startBtn').addEventListener('click', function(){
+    if(window.speechSynthesis) speechSynthesis.cancel();
+    startGame();
+  });
+  $('restartBtn').addEventListener('click', startGame);
+  $('replayBtn').addEventListener('click', replayWord);
+  $('pauseBtn').addEventListener('click', togglePause);
+  $('resumeBtn').addEventListener('click', function(){ if(S.manualPaused) togglePause(); });
+
+  $('settingsBtn').addEventListener('click', function(){
+    $('gameWordsEditor').value = currentWords.join('\n');
+    $('wordsStatus').textContent = cloudReady ? '' : '⚠️ No cloud connection — this list will only save on this device';
+    renderSpeedButtons();
+    S.modalPaused = true;
+    $('wordsBackdrop').classList.remove('hidden');
+  });
+  function closeWordsEditor(){
+    $('wordsBackdrop').classList.add('hidden');
+    S.modalPaused = false;
+  }
+  $('cancelWordsBtn').addEventListener('click', closeWordsEditor);
+  $('resetWordsBtn').addEventListener('click', function(){
+    $('gameWordsEditor').value = DEFAULT_WORDS.join('\n');
+  });
+  $('saveWordsBtn').addEventListener('click', function(){
+    var words = parseCustomWords($('gameWordsEditor').value);
+    var btn = $('saveWordsBtn');
+    btn.disabled = true; btn.textContent = 'Saving…';
+    saveWordsToCloud(words).then(function(result){
+      btn.disabled = false; btn.textContent = 'Save';
+      if(result.ok){
+        applyWordPool(words);
+        closeWordsEditor();
+      }else if(result.offline){
+        applyWordPool(words);
+        saveLocalWordsCache(words.join('\n'));
+        $('wordsStatus').textContent = '⚠️ Saved on this device only — no cloud connection right now';
+        closeWordsEditor();
+      }else{
+        $('wordsStatus').textContent = '⚠️ Save failed: '+((result.error&&result.error.message)||'please check your connection and try again');
+      }
+    });
+  });
+
+  document.addEventListener('visibilitychange', function(){
+    S.hiddenPaused = document.hidden;
+  });
+
+  resize();
+  S.best = loadBest();
+  renderSpeedButtons();
+  renderHearts(); renderScore();
+})();
+</script>
+</body>
+</html>
