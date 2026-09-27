@@ -208,6 +208,30 @@ canvas#gameCanvas{display:block;width:100%;height:190px;}
 .letter-btn.wrong{background:var(--bad);color:#fff;border-color:var(--bad);}
 
 .note{font-size:.8rem;color:var(--ink-soft);text-align:center;padding-top:4px;}
+
+/* On a wide desktop window, use the extra space instead of staying pinned
+   at phone/tablet size — bigger stage, bigger buttons, bigger text. */
+@media (min-width: 860px){
+  .app{max-width:980px;}
+  canvas#gameCanvas{height:320px;}
+  .card{padding:28px 32px 32px;}
+  .brand .emoji{font-size:28px;}
+  .brand-text strong{font-size:1.3rem;}
+  .brand-text span{font-size:.9rem;}
+  .nav-link{height:44px;font-size:.95rem;padding:0 16px;}
+  .icon-btn{width:44px;height:44px;font-size:21px;}
+  .hearts{font-size:28px;}
+  .score-box .score-val{font-size:1.7rem;}
+  .score-box .best-val{font-size:1rem;}
+  .level-chip{font-size:1rem;padding:7px 16px;}
+  .word-tile{width:44px;height:56px;font-size:2rem;border-bottom-width:5px;}
+  .letters-row{gap:16px;max-width:640px;margin:0 auto;width:100%;}
+  .letter-btn{height:88px;font-size:2.3rem;border-radius:20px;}
+  .btn{padding:14px 26px;font-size:1.1rem;}
+  .btn.big{padding:18px 36px;font-size:1.3rem;}
+  .replay-row{gap:16px;}
+  .note{font-size:.9rem;}
+}
 </style>
 </head>
 <body>
@@ -450,6 +474,13 @@ canvas#gameCanvas{display:block;width:100%;height:190px;}
   var canvas = $('gameCanvas'), ctx = canvas.getContext('2d');
   var W=720, H=190, dpr=1;
   var GROUND_Y = H-34;
+  // The dino/cactus artwork is drawn at this fixed reference size inside
+  // drawDino()/drawCactus() (via a canvas scale transform), so the sprites
+  // stay in proportion no matter how big the canvas itself is.
+  var REF_DINO_W=40, REF_DINO_H=38;
+  // Actual on-screen size/position — recalculated in resize() from the
+  // canvas' real dimensions, so the game looks bigger on a bigger screen
+  // instead of staying pinned at mobile size.
   var DINO_X = 62, DINO_W=40, DINO_H=38;
 
   function resize(){
@@ -457,6 +488,9 @@ canvas#gameCanvas{display:block;width:100%;height:190px;}
     var w = canvas.clientWidth || 720;
     W = w; H = canvas.clientHeight || 190;
     GROUND_Y = H-34;
+    DINO_H = Math.max(REF_DINO_H, Math.round(H*0.22));
+    DINO_W = Math.round(DINO_H * (REF_DINO_W/REF_DINO_H));
+    DINO_X = Math.max(50, Math.round(W*0.075));
     canvas.width = Math.round(W*dpr); canvas.height = Math.round(H*dpr);
     ctx.setTransform(dpr,0,0,dpr,0,0);
   }
@@ -720,44 +754,47 @@ canvas#gameCanvas{display:block;width:100%;height:190px;}
     if(S.jumping){
       var t = (performance.now()-S.jumpStart)/S.jumpDur;
       if(t>=1){ S.jumping=false; jumpOffset=0; }
-      else{ jumpOffset = -Math.sin(Math.PI*t) * 46; }
+      else{ jumpOffset = -Math.sin(Math.PI*t) * DINO_H*1.2; }
     }
     var baseY = groundY - DINO_H + jumpOffset;
+    var scale = DINO_H / REF_DINO_H;
     ctx.save();
     ctx.translate(x, baseY);
-    // legs (simple alternating, only when not jumping)
+    ctx.scale(scale, scale);
+    // legs (simple alternating, only when not jumping) — drawn at the fixed
+    // reference size; the scale() above stretches everything to fit DINO_H.
     ctx.fillStyle = dinoColor;
     var legPhaseUp = Math.sin(S.legPhase) > 0;
     if(!S.jumping){
-      ctx.fillRect(6, DINO_H-8, 8, legPhaseUp?8:5);
-      ctx.fillRect(20, DINO_H-8, 8, legPhaseUp?5:8);
+      ctx.fillRect(6, REF_DINO_H-8, 8, legPhaseUp?8:5);
+      ctx.fillRect(20, REF_DINO_H-8, 8, legPhaseUp?5:8);
     }else{
-      ctx.fillRect(6, DINO_H-8, 8, 8);
-      ctx.fillRect(20, DINO_H-8, 8, 8);
+      ctx.fillRect(6, REF_DINO_H-8, 8, 8);
+      ctx.fillRect(20, REF_DINO_H-8, 8, 8);
     }
     // tail
     ctx.beginPath();
-    ctx.moveTo(2, DINO_H-16);
-    ctx.lineTo(-10, DINO_H-22);
-    ctx.lineTo(2, DINO_H-10);
+    ctx.moveTo(2, REF_DINO_H-16);
+    ctx.lineTo(-10, REF_DINO_H-22);
+    ctx.lineTo(2, REF_DINO_H-10);
     ctx.closePath();
     ctx.fill();
     // body
-    roundRect(ctx, 2, 4, DINO_W-6, DINO_H-14, 8);
+    roundRect(ctx, 2, 4, REF_DINO_W-6, REF_DINO_H-14, 8);
     ctx.fill();
     // belly
     ctx.fillStyle = bellyColor;
-    roundRect(ctx, 6, DINO_H-20, DINO_W-16, 8, 4);
+    roundRect(ctx, 6, REF_DINO_H-20, REF_DINO_W-16, 8, 4);
     ctx.fill();
     // head
     ctx.fillStyle = dinoColor;
-    roundRect(ctx, DINO_W-20, -6, 22, 20, 7);
+    roundRect(ctx, REF_DINO_W-20, -6, 22, 20, 7);
     ctx.fill();
     // eye
     ctx.fillStyle = '#fff';
-    ctx.beginPath(); ctx.arc(DINO_W-6, 2, 3, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(REF_DINO_W-6, 2, 3, 0, Math.PI*2); ctx.fill();
     ctx.fillStyle = '#1B212C';
-    ctx.beginPath(); ctx.arc(DINO_W-5, 2, 1.4, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(REF_DINO_W-5, 2, 1.4, 0, Math.PI*2); ctx.fill();
     ctx.restore();
   }
 
@@ -773,14 +810,19 @@ canvas#gameCanvas{display:block;width:100%;height:190px;}
 
   function drawCactus(x, groundY){
     var color = getComputedStyle(document.documentElement).getPropertyValue('--cactus').trim();
+    var scale = DINO_H / REF_DINO_H;
+    ctx.save();
+    ctx.translate(x, groundY);
+    ctx.scale(scale, scale);
     ctx.fillStyle = color;
     var h = 34, w = 12;
-    roundRect(ctx, x-w/2, groundY-h, w, h, 4);
+    roundRect(ctx, -w/2, -h, w, h, 4);
     ctx.fill();
-    roundRect(ctx, x-w/2-8, groundY-h+10, 8, 6, 3);
+    roundRect(ctx, -w/2-8, -h+10, 8, 6, 3);
     ctx.fill();
-    roundRect(ctx, x+w/2, groundY-h+16, 8, 6, 3);
+    roundRect(ctx, w/2, -h+16, 8, 6, 3);
     ctx.fill();
+    ctx.restore();
   }
 
   function drawParticles(){
