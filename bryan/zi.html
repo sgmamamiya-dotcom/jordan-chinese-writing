@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>必考字练习</title>
+<style>
+:root{
+  --bg:#F1F5F3;--card:#FFFFFF;--ink:#17233C;--mute:#566275;--line:#D5DDE3;
+  --accent:#1F7A67;--on-accent:#FFFFFF;--ok:#1B7F45;--okbg:#E3F3EA;
+  --bad:#C0334A;--badbg:#FBE7EA;--gold:#E0A526;--grid:#8DBFB0;--chip:#EAF0EE;
+  --kai:"KaiTi","Kaiti SC","STKaiti","DFKai-SB","Noto Serif SC","Songti SC",serif;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#0F1720;--card:#18232F;--ink:#E8EEF3;--mute:#9AA8B8;--line:#2C3A49;
+  --accent:#4CC2A3;--on-accent:#0F1720;--ok:#5BD08A;--okbg:#17352A;
+  --bad:#FF8494;--badbg:#3A1E25;--grid:#3F6F63;--chip:#223140;
+}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+  padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+#app{max-width:560px;margin:0 auto;padding:16px 16px 40px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+button:disabled{opacity:.45;cursor:not-allowed}
+h1{font-size:26px;margin:8px 0 2px;letter-spacing:.02em}
+.sub{margin:0 0 18px;color:var(--mute)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+
+/* home */
+.days{display:grid;gap:10px}
+.day{display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"dn dr ds" "dc dc dc";gap:2px 10px;text-align:left;
+  background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;width:100%}
+.day .dn{grid-area:dn;font-weight:700}
+.day .dr{grid-area:dr;color:var(--mute);font-size:14px;align-self:center}
+.day .ds{grid-area:ds;font-size:14px;color:var(--ok);font-weight:600}
+.day .dc{grid-area:dc;font-family:var(--kai);font-size:22px;letter-spacing:.12em;margin-top:4px;word-break:break-all}
+.day.next{border:2px solid var(--accent)}
+.day.next .ds{color:var(--accent)}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 8px}
+.btn{border:0;border-radius:12px;padding:13px 16px;font-weight:600;background:var(--accent);color:var(--on-accent);width:100%}
+.btn.sec{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.link{background:none;border:0;color:var(--mute);text-decoration:underline;padding:10px 0;display:block;margin:6px auto 0}
+
+/* bars */
+.bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;color:var(--mute);font-size:14px}
+.back{background:none;border:0;padding:6px 8px 6px 0;color:var(--ink);font-size:15px}
+.prog{height:6px;background:var(--line);border-radius:3px;margin-bottom:14px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent)}
+
+/* 田字格 */
+.tzg{position:relative;width:min(68vw,236px);aspect-ratio:1;margin:0 auto 12px;border:2px solid var(--grid);background:var(--card)}
+.tzg::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1.5px dashed var(--grid)}
+.tzg::after{content:"";position:absolute;top:0;bottom:0;left:50%;border-left:1.5px dashed var(--grid)}
+.tzg .g{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--kai);
+  font-size:min(44vw,152px);line-height:1;color:var(--ink);z-index:1;user-select:none}
+.tzg .g.trace{opacity:.14}
+.tzg .g.blank{opacity:0}
+.tzg canvas{position:absolute;inset:0;width:100%;height:100%;z-index:2;touch-action:none;cursor:crosshair}
+.seg{display:flex;justify-content:center;gap:6px;align-items:center;margin-bottom:10px;font-size:14px;color:var(--mute)}
+.seg button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px 14px}
+.seg button.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.seg .clr{border-style:dashed;margin-left:6px}
+.py{display:flex;justify-content:center;align-items:center;gap:8px;font-size:26px;font-weight:600}
+.spk{border:1px solid var(--line);background:var(--card);border-radius:50%;width:38px;height:38px;font-size:18px;line-height:1}
+.src{text-align:center;color:var(--mute);font-size:13px;margin:2px 0 12px}
+.learn h3{font-size:14px;color:var(--mute);margin:14px 0 4px;font-weight:600}
+.learn p{margin:0 0 4px}
+.en{color:var(--mute);font-size:14px}
+mark{background:none;color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--chip);border-radius:8px;padding:2px 10px;font-size:16px}
+.chip.ch{font-family:var(--kai);font-size:20px}
+.row{margin:4px 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row b{font-size:13px;color:var(--mute);font-weight:600;min-width:2.5em}
+.note{margin-top:12px;border-left:4px solid var(--gold);background:var(--chip);padding:8px 12px;border-radius:0 10px 10px 0;font-size:15px}
+.nav{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:16px}
+
+/* quiz */
+.q{text-align:center}
+.tag{display:inline-block;font-size:13px;color:var(--mute);border:1px solid var(--line);border-radius:999px;padding:1px 12px;margin-bottom:10px}
+.qchar{font-family:var(--kai);font-size:92px;line-height:1.1}
+.qt{margin:6px 0;color:var(--mute)}
+.qdef{font-size:20px;font-weight:600;margin:6px 0 2px}
+.qen{color:var(--mute);margin:0 0 8px}
+.qs{font-size:21px;line-height:1.7;margin:8px 0 14px;text-align:left}
+.qword{font-size:34px;font-family:var(--kai);margin:6px 0 14px;letter-spacing:.1em}
+.blank{display:inline-block;min-width:1.2em;border-bottom:3px solid var(--accent);color:var(--accent);font-weight:700;text-align:center}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.opt{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 8px;font-size:22px}
+.opts.ch .opt{font-family:var(--kai);font-size:36px;padding:10px 8px}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}
+.opt.bad{border-color:var(--bad);background:var(--badbg)}
+.fb{margin-top:14px;text-align:left;border-radius:12px;padding:12px 14px}
+.fb.ok{background:var(--okbg)}
+.fb.bad{background:var(--badbg)}
+.fb .h{font-weight:700;margin-bottom:4px}
+.fb .ex{display:block;margin-top:4px;font-size:15px}
+.fb .btn{margin-top:12px}
+
+/* result */
+.res{text-align:center}
+.stars{font-size:40px;letter-spacing:.1em;color:var(--gold)}
+.score{font-size:44px;font-weight:700;margin:0}
+.miss{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:12px 0}
+.mc{background:var(--chip);border-radius:12px;padding:6px 12px;text-align:center}
+.mc span{display:block;font-family:var(--kai);font-size:34px;line-height:1.2}
+.mc small{color:var(--mute)}
+.wl{display:grid;gap:8px;margin:12px 0}
+.wi{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.wi .c{font-family:var(--kai);font-size:38px;line-height:1}
+.empty{color:var(--mute);text-align:center;padding:24px 0}
+@media(prefers-reduced-motion:no-preference){.opt,.btn,.day{transition:background .15s,border-color .15s}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<noscript>请打开浏览器的 JavaScript 功能。</noscript>
+<script>
+const DATA = {
+  "meta": {
+    "title": "小学华文/高级华文 必考生字 第286-350字",
+    "publisher": "Singapore Asia Publishers",
+    "pages": "96-117",
+    "count": 65,
+    "fields": "n=序号, ch=字, py=拼音, src=课文出处, def=解释, en=英文, ex=例句, words=构词, shape=形似字, sound=音似字, note=注意(一字多义, 可选)"
+  },
+  "characters": [
+    {"n":286,"ch":"瞧","py":"qiáo","src":"高级华文6B 第十一课","def":"见。","en":"look; see","ex":["他只是说了一句开玩笑的话，瞧你就这么生气了。","我刚瞧见到从这里走过，应该走不远。"],"words":["瞧见","瞧到","瞧得见","瞧不见","瞧得到","瞧不到"],"shape":["憔","樵","礁","焦","蕉"],"sound":["侨","桥","翘"]},
+    {"n":287,"ch":"屈","py":"qū","src":"高级华文5B 第十四课","def":"受到不合理的待遇或不应该有的指责而心里难过。","en":"feel wronged or mistreated","ex":["辛苦了半天，还是受到指责，我觉得很委屈。","虽然她受尽了委屈，可是还是默默不出一声。"],"words":["委屈","受屈","冤屈","喊冤叫屈"],"shape":["届","掘","倔"],"sound":["曲","区","趋","躯"],"note":"“屈”也有“弯曲”的意思，如：花猫屈着后腿要跳上墙。"},
+    {"n":288,"ch":"确","py":"què","src":"高级华文6B 第十一课","def":"坚定；坚决。","en":"firm; determined","ex":["你明天的生日会，我确定会出席。","这次选班长，我确信李大盛会中选。"],"words":["确定","确保","确认","确诊","确立","确证","的确","明确"],"shape":["触","解","涌"],"sound":["却","榷","缺"],"note":"“确”也有“真实；实在”的意思，如：千真万确。"},
+    {"n":289,"ch":"扰","py":"rǎo","src":null,"def":"破坏安宁、秩序。","en":"trouble; harass","ex":["真讨厌，我做功课的时候，弟弟总是来打扰。","我们正在讨论重要的事，你别来扰乱。"],"words":["扰乱(使混乱或不安)","打扰","干扰"],"shape":["拢","忧","优"],"sound":["绕","饶","娆"]},
+    {"n":290,"ch":"扔","py":"rēng","src":"高级华文3B 第十课","def":"丢；抛；丢弃。","en":"throw; throw away","ex":["你爱乱扔垃圾，这种行为是不对的。","他站在海边，拾了一块石头扔向海面。"],"words":["扔球","扔下","扔垃圾","扔石头","扔进垃圾桶","乱扔垃圾"],"shape":["奶","乃","芮"],"sound":["仍"]},
+    {"n":291,"ch":"塞","py":"sè","src":"高级华文6B 第十一课","def":"有障碍而不能通过；阻塞。","en":"jam","ex":["上班时间，交通堵塞，搞得人人烦躁不已。","亮灯仪式开始了，人群阻塞了道路，车辆都无法通行了。"],"words":["堵塞","阻塞","闭塞"],"shape":["寒","赛","寨"],"sound":["啬","涩","色","瑟"]},
+    {"n":292,"ch":"善","py":"shàn","src":"高级华文5A 第六课","def":"心地纯洁，没有恶意。","en":"kind","ex":["李阿姨心地善良，很会关心别人。","王大叔充满善心，常常帮助有困难的邻居。"],"words":["善良","善意","善心"],"shape":["膳","缮","鳝"],"sound":["扇","擅","闪"]},
+    {"n":293,"ch":"稍","py":"shāo","src":"高级华文6B 第十二课","def":"表示程度不深、数量不多或时间不长。","en":"a little; a bit; slightly; a trifle","ex":["咖啡不要太甜，稍微放一点糖就行了。","姐姐要出国读书，我稍微有一些伤感。"],"words":["稍稍","稍微","稍为","稍许"],"shape":["消","梢","悄","哨","捎","艄","俏","峭"],"sound":["烧","绍","勺"]},
+    {"n":294,"ch":"舍","py":"shě","src":"高级华文4A 第三课","def":"丢掉；放弃；不要。","en":"give up; abandon","ex":["为了国家，他甘愿舍弃个人的利益。","让年幼的女儿一个人出国读书，妈妈真是舍不得。"],"words":["舍得","舍弃","舍不得","舍己为人","舍不得放手","很舍得","依依不舍"],"shape":["合","舌","吞"],"sound":["蛇","设","射"],"note":"“舍”也有“把财物送给穷人”的意思，如：施舍钱财。"},
+    {"n":295,"ch":"盛","py":"shèng","src":"高级华文5B 第十课","def":"隆重；规模大。","en":"grand; magnificent","ex":["爷爷今天过生日，爸爸为他举行生日盛宴。","今天的盛会来了许多嘉宾，十分热闹。"],"words":["盛大","盛况","盛开","盛会","盛宴"],"shape":["成","诚","城"],"sound":["胜","圣","剩"]},
+    {"n":296,"ch":"胜","py":"shèng","src":"高级华文6A 第七课","def":"优美的。","en":"superb; wonderful; lovely","ex":["中国到处都是名山胜迹，最适合旅游观光。","马来西亚的云顶高原气候凉爽，景色优美，是新马人民最常前往的避暑胜地。"],"words":["胜地","胜境","胜景","胜迹(有名的古迹)","引人入胜(引人进入风景等佳境)"],"shape":["姓","性","牲"],"sound":["盛","剩","圣"]},
+    {"n":297,"ch":"束","py":"shù","src":"高级华文4A 第五课","def":"控制；限制。","en":"control; restrain","ex":["协会颁布这些严格的规定，束缚了会员活动的空间。","领队约束所有的队员，夜间不可出外活动，以免发生意外。"],"words":["束缚(使受到约束限制)","约束"],"shape":["来","中","衷"],"sound":["术","树","数"],"note":"“束”也有“捆绑”的意思，如：束手就擒。"},
+    {"n":298,"ch":"摔","py":"shuāi","src":"高级华文5A 第一课","def":"身体失去平衡而跌倒。","en":"tumble; fall","ex":["他没注意，一时踢到地上的石头，摔了一跤。","我跑到中途，突然双腿发软，立刻摔倒在地上。"],"words":["摔倒","摔跤","摔伤","摔跟头","摔了一跤","摔了个四脚朝天"],"shape":["率","蟀","拌"],"sound":["衰","甩","帅"],"note":"“摔”也有“东西掉在地上而破损”的意思，如：玻璃杯摔坏了。"},
+    {"n":299,"ch":"抬","py":"tái","src":"高级华文3B 第十六课","def":"(把头)举起来。","en":"raise one's head","ex":["我坐在草地上，抬头看天上的星星。","有人在叫我，我抬起头看是谁。"],"words":["抬头","抬起头来","把头抬起来"],"shape":["始","治","胎","怡"],"sound":["台","苔","跆"],"note":"“抬”也有“共同用手搬或用肩扛”的意思，如：两人抬桌子。"},
+    {"n":300,"ch":"贪","py":"tān","src":"高级华文6A 第五课","def":"过分地追求；不知足。","en":"greedy","ex":["这个人十分贪心，永不知足，令人讨厌。","我不是贪财的人，怎么会做出这种见利忘义的事！"],"words":["贪财","贪钱","贪心","贪多","贪图","贪便宜","贪得无厌(十分贪心，一直不满足)","很贪","太贪","不贪"],"shape":["贫","负","贡","贵"],"sound":["摊","滩","坍"]},
+    {"n":301,"ch":"摊","py":"tān","src":"高级华文6B 第八课","def":"设在路旁或广场上的售货处。","en":"stall","ex":["这条街道有许多售卖小饰品的贩摊。","叔叔在熟食中心租了一个摊子卖水果。"],"words":["摊子","摊位","书摊","地摊","报摊","摆摊","租书摊","旧书摊"],"shape":["滩","难","推"],"sound":["贪","瘫","坍","谈"],"note":"“摊”也有“分担”的意思，如：分摊任务。"},
+    {"n":302,"ch":"叹","py":"tàn","src":"高级华文5B 第十三课","def":"心里感到不痛快而呼出长气，发出声音。","en":"sigh","ex":["大家听到发生这种不愉快的事，都不禁摇头叹息。","他见没人睬他，便叹了一口气，转身走了。"],"words":["叹气","叹息","叹了一口气"],"shape":["仅","汉","奴","权","取","双"],"sound":["探","炭","碳"]},
+    {"n":303,"ch":"挺","py":"tǐng","src":"高级华文5B 第十五课","def":"凸出(身体的一部分)。","en":"stick out; straighten up (physically); throw out (one's chest)","ex":["面对流氓的胡闹，他挺起胸，理直气壮地和对方理论。","士兵在操场操练，个个挺着胸膛，踏着健步，十分威武。"],"words":["挺胸","挺身","挺起胸","挺胸昂首"],"shape":["铤","蜓","廷","庭"],"sound":["艇","霆","停"]},
+    {"n":304,"ch":"托","py":"tuō","src":"高级华文6A 第七课","def":"手或其他东西向上面承受(物体)。","en":"support with the hand or other objects; hold","ex":["石缝中伸出一根细长的茎，托起了一朵美丽的小红花。","妈妈用手托住我的下巴，要我张开嘴让她看我的舌头。"],"words":["托起","托住","托着","托上","托起来","托上来","托了起来"],"shape":["扎","抚","扼"],"sound":["拖","脱","妥"],"note":"“托”也有“请人代办事情”的意思，如：托同学买书。"},
+    {"n":305,"ch":"挖","py":"wā","src":"高级华文3B 第十四课","def":"从物体的表面向里用力，取出其中一部分。","en":"dig","ex":["我们在地上挖了一个洞，把小树苗种下去。","探险人员正在挖掘地下宝藏。"],"words":["挖坑","挖掘","挖土","挖洞","挖水坑","挖地道"],"shape":["探","控","拧"],"sound":["蛙","哇","洼"]},
+    {"n":306,"ch":"唯","py":"wéi","src":"高级华文5B 第十二课","def":"只；单单。","en":"only; alone","ex":["在本地，我是他的唯一亲人，必须要照顾他。","这个人很怕输，什么事都要争先，唯恐落后。"],"words":["唯一","唯有","唯恐(只怕)","唯独","唯利是图(只贪图钱财，别的什么都不要)"],"shape":["惟","维","堆","难","谁","雅","稚","锥","准"],"sound":["为","违","围","桅"]},
+    {"n":307,"ch":"慰","py":"wèi","src":"高级华文5A 第二课","def":"使人心情安适。","en":"comfort","ex":["小华这次考得不好，十分沮丧，我去他家里慰问他。","医生安慰我们不必担心，说爷爷的病并不严重。"],"words":["慰问","慰劳","安慰"],"shape":["蔚","尉","怒"],"sound":["卫","位","未"]},
+    {"n":308,"ch":"温","py":"wēn","src":"高级华文5B 第十四课","def":"温和柔顺。","en":"gentle","ex":["妹妹长得温柔可爱，是爸爸妈妈的心肝宝贝。","她的性格温顺，很容易和人相处。"],"words":["温柔","温和","温顺","温情"],"shape":["瘟","湿","蕴"],"sound":["纹","闻","稳"],"note":"“温”也有“不冷不热”的意思，如：一杯温水。"},
+    {"n":309,"ch":"污","py":"wū","src":"高级华文5B 第十六课","def":"弄脏。","en":"dirty; pollution","ex":["河岸一家工厂把废水倒入河里，河水受到污染，许多鱼都死了。","学校发生火灾，图书馆的图书污损严重，令人心痛。"],"words":["污染","污化","玷污(弄脏)"],"shape":["亏","汗","汀"],"sound":["屋","乌","呜"]},
+    {"n":310,"ch":"捂","py":"wǔ","src":"高级华文6A 第五课","def":"盖住或封闭起来。","en":"cover; seal; muffle","ex":["要打雷了，我赶快捂住耳朵。","妹妹门牙掉了，一笑就用手捂住嘴巴。"],"words":["捂住","捂着","捂耳","捂嘴","捂住耳","捂住嘴","捂住眼"],"shape":["悟","语","晤","梧"],"sound":["伍","怃","侮"]},
+    {"n":311,"ch":"悟","py":"wù","src":"高级华文5B 第十三课","def":"领会；了解。","en":"realize; awaken","ex":["听了爸爸的劝戒，哥哥终于醒悟，知道自己做错了。","小丽说出事情的真相，同学们才恍然大悟，知道事情并非大家所想象的情况。"],"words":["悟性(人对事物的理解能力)","悟出一个道理","悔悟","觉悟","领悟","省悟","醒悟","恍然大悟"],"shape":["语","晤","捂","梧"],"sound":["物","误","务","吾"]},
+    {"n":312,"ch":"悉","py":"xī","src":"高级华文5B 第十六课","def":"知道。","en":"know","ex":["我们的班主任很关心同学，对每个人的家庭情况都很熟悉。","获悉姐姐已被大学录取，我们一家人都为她高兴。"],"words":["熟悉","获悉","知悉","得悉"],"shape":["蟋","采","态"],"sound":["希","息","昔"],"note":"“悉”也有“尽；全”的意思，如：悉力协助。"},
+    {"n":313,"ch":"限","py":"xiàn","src":"高级华文5B 第十一课","def":"规定时间、数量等的范围；不许超过。","en":"limit; restrict","ex":["演唱会的座位有限，你要去听就要尽早买票。","这次义跑活动人数不限，任何人随时都可以报名参加。"],"words":["限定","限量","限期","限制","有限","无限"],"shape":["根","跟","很","恨","艰","眼"],"sound":["县","现","陷","线","献","羡"]},
+    {"n":314,"ch":"献","py":"xiàn","src":"高级华文5B 第十二课","def":"恭敬地表现出来给人看。","en":"respectfully present","ex":["今天的晚会，我们班的同学会呈献合唱表演。","舞台上，艺人为观众献上精彩的歌舞节目。"],"words":["献上","献给","呈献"],"shape":["喃","楠","吠"],"sound":["羡","现","限","陷","线"],"note":"“献”也有“恭敬地送给”的意思，如：上台献花。"},
+    {"n":315,"ch":"享","py":"xiǎng","src":"高级华文4A 第六课","def":"得到满足。","en":"enjoy","ex":["我这次获奖，要和家人一起分享这份喜悦。","我准备了一些小点，大家尽情享用，不必客气。"],"words":["享受","享用","享有","享福","坐享其成","有福同享"],"shape":["亨","烹","醇"],"sound":["想","响","饷"]},
+    {"n":316,"ch":"谐","py":"xié","src":"高级华文5B 第十六课","def":"配合得适当。","en":"harmonious","ex":["他们几个人住在一起，关系相当调谐。","人和人之间如果关系和谐，就会减少冲突。"],"words":["谐和","谐调","和谐","调谐(和谐)"],"shape":["偕","揩","楷","皆"],"sound":["协","斜","鞋"]},
+    {"n":317,"ch":"须","py":"xū","src":"高级华文5A 第四课","def":"表示必要；一定要。","en":"must","ex":["读书须要用功，成绩才会进步。","这些人在组屋楼下乱喊乱叫，必须打电话给警察局。"],"words":["须要","必须","不须","无须"],"shape":["顺","烦","顶","项"],"sound":["需","虚","许"]},
+    {"n":318,"ch":"训","py":"xùn","src":"高级华文4A 第六课","def":"有计划、有步骤地进行教育指导，使具有某种特长或技能。","en":"train; drill","ex":["李教练培训运动员非常严格，要求也很高。","每个军人都必须接受严格的军事训练。"],"words":["训练","培训","受训","集训","军训"],"shape":["驯","顺","川"],"sound":["迅","讯","徇"],"note":"“训”也有“教导”的意思，如：被教训了一顿。"},
+    {"n":319,"ch":"严","py":"yán","src":"高级华文5A 第五课","def":"认真；不放松。","en":"strict; severe; stern","ex":["新来的科学老师很严，同学们都很怕他。","他一向很严肃，你别对他乱开玩笑。"],"words":["严肃","严格","严厉","严正","威严","庄严"],"shape":["产","广","厂"],"sound":["言","炎","岩","沿","研","盐","颜","延"]},
+    {"n":320,"ch":"验","py":"yàn","src":"高级华文6B 第十二课","def":"察看；检查。","en":"examine; check","ex":["他虽然失败了数百次，但还是继续进行实验，誓不放弃。","工程经过认真验收，绝对不会出现问题。"],"words":["验证","验算","验看","实验","试验","测验","查验","检验","化验"],"shape":["险","检","脸","捡"],"sound":["艳","咽","焰","厌","宴"]},
+    {"n":321,"ch":"扬","py":"yáng","src":"高级华文4A 第八课","def":"称赞。","en":"praise","ex":["班长每天帮助行动不便的同学来学校，受到校长的表扬。","他一生为国任劳任怨，作出巨大的贡献，得到全国人民的颂扬。"],"words":["表扬","发扬","宣扬","赞扬","颂扬"],"shape":["杨","汤","场"],"sound":["洋","阳","仰"],"note":"“扬”也有“飘动”的意思，如：国旗飘扬。"},
+    {"n":322,"ch":"隐","py":"yǐn","src":"高级华文6B 第十一课","def":"藏起来，不让人发现。","en":"hide; conceal","ex":["兔子隐藏在茂密的草丛里，逃避老鹰的猎捕。","这种先进的隐形无人机来去无踪，雷达完全侦测不到。"],"words":["隐形","隐性","隐蔽","隐藏","隐没","隐匿"],"shape":["稳","瘾","急"],"sound":["引","饮","印"]},
+    {"n":323,"ch":"赢","py":"yíng","src":"高级华文6A 第八课","def":"在较量时打败对方；胜。","en":"win","ex":["我队势力强，这场球赛一定能打赢。","如果想要打赢对方，就要加倍苦练。"],"words":["赢了","赢得漂亮","大赢","打赢"],"shape":["嬴","盲","肓"],"sound":["盈","营","迎"]},
+    {"n":324,"ch":"硬","py":"yìng","src":"高级华文6A 第三课","def":"物体内部的组织紧密，受外力作用后不易改变形状。","en":"hard","ex":["这种种子的外壳太硬了，敲都敲不破。","这些木板又厚又硬，适合用来造桥。"],"words":["硬壳","硬木","硬如铁","坚硬","很硬","不硬"],"shape":["使","哽","梗","鲠"],"sound":["映","应","影"],"note":"“硬”也有“刚强；坚定”的意思，如：采取强硬手段。"},
+    {"n":325,"ch":"拥","py":"yōng","src":"高级华文5B 第十课","def":"具有(财产、资源、时间、健康等)。","en":"own","ex":["该国河流密布，拥有巨大的水电资源。","王老板拥有很多房地产，十分富有。"],"words":["拥有","拥有文凭"],"shape":["佣","用","痈"],"sound":["庸","臃","勇"],"note":"“拥”也有“支持”的意思，如：受到拥护。"},
+    {"n":326,"ch":"忧","py":"yōu","src":"高级华文6B 第八课","def":"为某事发愁；担心。","en":"worry","ex":["儿子不长进，李大婶十分担忧。","王大叔患病，卧床不起，王大婶忧伤不已。"],"words":["忧虑","忧愁","忧烦","忧闷","忧伤","忧郁","担忧","无忧无虑"],"shape":["优","扰","犹"],"sound":["攸","悠","幽"]},
+    {"n":327,"ch":"愉","py":"yú","src":"高级华文5A 第四课","def":"开心；舒畅；欢乐。","en":"happy","ex":["我们一边在池畔走，一边愉快地聊着。","林伯伯退休后和儿女住在一起，生活过得很愉悦。"],"words":["愉快","愉悦","愉快的笑声","欢愉"],"shape":["偷","喻","榆"],"sound":["于","愚","娱"]},
+    {"n":328,"ch":"余","py":"yú","src":"高级华文6B 第十课","def":"剩下的；留下的。","en":"surplus; remaining","ex":["他这次不遗余力地帮助我，令我十分感动。","我的零用钱没花完，就把余钱存进银行里。"],"words":["余存","余额","余钱","余暇","不遗余力"],"shape":["佘[shé]","途","涂","除","徐"],"sound":["于","予","愚","愉"],"note":"“余”也有“某种活动以外或以后的时间”的意思，如：课余时间。"},
+    {"n":329,"ch":"遇","py":"yù","src":"高级华文5A 第五课","def":"事先没有约定而见到；遇见；碰到；碰见。","en":"meet","ex":["昨天，我在路上遇见以前的华文老师。","我在戏院里遇到一个以前的同学。"],"words":["遇到","遇见","巧遇","偶遇"],"shape":["偶","愚","寓","隅"],"sound":["欲","喻","预"]},
+    {"n":330,"ch":"源","py":"yuán","src":"高级华文5B 第十六课","def":"事物的根源；来源。","en":"source; origin","ex":["这部电视剧的情节来源于人们的日常生活。","该国土地广阔，天然资源丰富，充满发展的空间。"],"words":["资源","电源","货源","根源","水源","能源","来源","水资源"],"shape":["原","愿","潦"],"sound":["元","园","员","缘","援"]},
+    {"n":331,"ch":"怨","py":"yuàn","src":"高级华文6B 第十二课","def":"强烈地不满。","en":"blame; complain; grumble","ex":["这件事怪不了任何人，你也别一直抱怨。","他曾经陷害过我，我至今还很怨恨他。"],"words":["怨恨","怨言","抱怨","埋怨","结怨","任劳任怨"],"shape":["恕","怒","恣"],"sound":["院","愿","苑"]},
+    {"n":332,"ch":"载","py":"zài","src":"高级华文5A 第七课","def":"用交通工具把东西或人送去别的地方；装载。","en":"drive; carry","ex":["那辆载满搭客的巴士，在半路上坏了。","每天清早，工人便载着货物到处去发送。"],"words":["载货","载重","载客","载人","运载","装载","载客量"],"shape":["戴","栽","裁","截"],"sound":["再","在","灾"],"note":"“载”也有“又；且”的意思，如：载歌载舞。"},
+    {"n":333,"ch":"暂","py":"zàn","src":"高级华文6B 第十课","def":"较短的时间之内。","en":"temporarily; for the time being; for the moment","ex":["为了准备会考，我要暂停打球了。","我明天要去乡下外婆的家住一段时间，我们暂时无法见面了。"],"words":["暂时","暂且","暂停","暂用","暂定","短暂"],"shape":["斩","渐","惭","薪"],"sound":["赞","簪","咱"]},
+    {"n":334,"ch":"遭","py":"zāo","src":"高级华文6B 第九课","def":"受到(不幸或损害)。","en":"encounter","ex":["他最近在工作上遭到打击，以致整天愁眉苦脸。","就算这次遭受失败，我们也不要灰心。"],"words":["遭受","遭到","遭遇","遭劫","遭难","遭殃"],"shape":["嘈","糟","槽","曹"],"sound":["造","噪","躁"],"note":"“遭”也有“回；次”的意思，如：头一遭坐飞机。"},
+    {"n":335,"ch":"择","py":"zé","src":"高级华文6A 第五课","def":"从一些事物或人中找出适合要求的；挑选。","en":"choose","ex":["这次的野餐活动，我们由班长负责选择地点。","这么难吃的东西你也吃，真是饥不择食！"],"words":["择友","择交","选择","采择","饥不择食"],"shape":["泽","释","译","铎"],"sound":["则","责","啧"]},
+    {"n":336,"ch":"增","py":"zēng","src":"高级华文5A 第九课","def":"加多；添加。","en":"add","ex":["圣诞节期间，乌节路挂满了灯饰，增添了浓浓的节日气氛。","为了增加产量，工厂最近购置了几台新机器。"],"words":["增添","增进","增强","增加","增长","激增","与日俱增"],"shape":["僧","缯","甑"],"sound":["曾","憎","赠"]},
+    {"n":337,"ch":"眨","py":"zhǎ","src":"高级华文6B 第十一课","def":"形容时间很短；瞬间。","en":"very short time","ex":["我才看到他，怎么一眨眼就不见了。","他太厉害了，眨眼工夫就把乱绳解开了。"],"words":["眨眼间","眨眼工夫","一眨眼就不见踪影"],"shape":["贬","泛","乏"],"sound":["闸","诈","炸"],"note":"“眨”也有“眼睛很快的一闭一睁”的意思，如：两眼不停地眨着。"},
+    {"n":338,"ch":"仗","py":"zhàng","src":"高级华文5A 第九课","def":"指战争。","en":"battle; war","ex":["士兵连夜行军，准备前往前线打仗。","这次打了胜仗，全国军民十分兴奋。"],"words":["打仗","胜仗","败仗","打胜仗","打败仗"],"shape":["杖","丈","仪"],"sound":["涨","帐","账","胀"]},
+    {"n":339,"ch":"胀","py":"zhàng","src":"高级华文6B 第十一课","def":"身体内壁受到压迫而产生不舒服的感觉。","en":"be bloated","ex":["我吃太多了，感觉肚子好胀，很不舒服。","我现在肚子还胀胀的，一点也不饿。"],"words":["胀感","胀气","发胀","肿胀","肚子好胀","肚子发胀"],"shape":["张","账","帐"],"sound":["杖","障","丈"]},
+    {"n":340,"ch":"挣","py":"zhèng","src":"高级华文6B 第九课","def":"用力支撑；勉强支持。","en":"struggle","ex":["上钩的大鱼在水中不断抵抗，希望能挣脱鱼钩逃命。","我见到同学们来医院看我，便挣扎着从病床上坐了起来。"],"words":["挣扎","挣脱","扎挣","垂死挣扎"],"shape":["净","狰","睁","峥","争"],"sound":["征","症","蒸","怔"]},
+    {"n":341,"ch":"值","py":"zhí","src":"高级华文4A 第四课","def":"(在一定时间内)担当。","en":"be on duty","ex":["今天我值日，负责扫地和倒垃圾。","今天轮到王主任值班，要到货仓监督清点存货。"],"words":["值日","值班","值日生","轮值"],"shape":["植","殖","直"],"sound":["执","职","侄"],"note":"“值”也有“价格”的意思，如：价值不小。"},
+    {"n":342,"ch":"智","py":"zhì","src":"高级华文6A 第三课","def":"辨析判断、发明创造的能力。","en":"wisdom; intelligence","ex":["一个聪慧有能力的人，应该服务社会，为国家作贡献。","这些古建筑物十分特出，显出了古代人类的智慧。"],"words":["慧心(指智慧)","慧根(指人天赋的智慧)","智慧","聪慧"],"shape":["彗","急","悲"],"sound":["惠","会","汇","绘","诲","晦"]},
+    {"n":343,"ch":"质","py":"zhì","src":"高级华文6A 第四课","def":"货品的优劣程度。","en":"quality","ex":["这双运动鞋质地好，又美观，值得买。","这种品牌的羽毛球质量好，十分耐用，很受球员的欢迎。"],"words":["质量","质地","质料","品质","物质","性质"],"shape":["负","贡","贫"],"sound":["至","智","志","置"],"note":"“质”也有“根据事实来问明或辨别是非”的意思，如：质问对方。"},
+    {"n":344,"ch":"治","py":"zhì","src":"高级华文6A 第七课","def":"医治。","en":"cure","ex":["我的皮肤病已经给杨医生治疗好了。","这间医院设有隔离病房，专门用来治疗传染病。"],"words":["治疗","治病","治标","治本","医治","救治","诊治","调治"],"shape":["冶","抬","始","怡","胎"],"sound":["致","制","智","置"],"note":"“治”也有“治理；管理”的意思，如：治理国家。"},
+    {"n":345,"ch":"著","py":"zhù","src":"高级华文5B 第十二课","def":"非常明显。","en":"marked; notable","ex":["他是我国著名的作家，作品深受读者欢迎。","他一生贡献社会，成就昭著，受到国家的表扬。"],"words":["著名","著称(因著名而被称道)","显著","昭著(明显)","卓著(突出地好)"],"shape":["者","煮","猪","赌"],"sound":["助","住","注","祝"]},
+    {"n":346,"ch":"赚","py":"zhuàn","src":"高级华文6B 第八课","def":"用劳动换取金钱。","en":"earn (money)","ex":["爸爸赚钱很辛苦，妈妈要我们不能乱花钱。","他用劳力赚取生活费，值得鼓励。"],"words":["赚钱","赚多钱","赚少钱","有赚钱","没赚钱","有钱赚","没钱赚"],"shape":["嫌","谦","歉","兼"],"sound":["传","转","专"]},
+    {"n":347,"ch":"资","py":"zī","src":"高级华文5B 第十六课","def":"生产、生活中需要的东西。","en":"means; material","ex":["该国资源丰富，一旦开发，国家就能大事发展。","这里生产资料充足，适合发展工业。"],"words":["资源","资料","水资源"],"shape":["瓷","盗","姿","咨","恣"],"sound":["滋","孜","吱","紫"],"note":"“资”也有“钱财；财物；费用”的意思，如：车资花费。"},
+    {"n":348,"ch":"族","py":"zú","src":"高级华文6B 第九课","def":"种族；民族。","en":"race; nationality","ex":["爸爸有很多朋友，其中几位是印族朋友。","我家隔壁是一家马来族邻居，我们经常有来往。"],"words":["族人","族群","华族","民族","家族","宗族","中华民族"],"shape":["旅","旋","镞"],"sound":["足","卒","租"]},
+    {"n":349,"ch":"阻","py":"zǔ","src":"高级华文5A 第六课","def":"阻止；拦挡。","en":"stop","ex":["你要去办对大家都有益的好事，谁都不会阻止你！","这里是军事重地，你要进去，一定会受到阻拦。"],"words":["阻拦","阻止","阻碍","阻挡","阻隔","阻挠","阻塞","拦阻","劝阻"],"shape":["租","祖","粗","姐","咀","组","龃"],"sound":["诅","族","卒"]},
+    {"n":350,"ch":"遵","py":"zūn","src":"高级华文6A 第六课","def":"依照；按照。","en":"obey; follow","ex":["去外国旅游，每个人都要遵守该地的法律。","你吩咐的任务，我一定会遵命照办。"],"words":["遵命","遵守","遵从","遵照","遵嘱","遵行","遵依","遵循(遵照)","遵纪守法"],"shape":["尊","蹲","撙","僔","噂"],"sound":["樽","鳟","嶟"]}
+  ]
+}
+;
+const CH = DATA.characters;
+const BY = {}; CH.forEach(c => BY[c.n] = c);
+const DAYSIZE = 10;
+const days = [];
+for (let i = 0; i < CH.length; i += DAYSIZE) days.push(CH.slice(i, i + DAYSIZE));
+
+/* ---------- storage ---------- */
+const KEY = 'bryan_zi_v1';
+let mem = null;
+function load() {
+  try { const s = localStorage.getItem(KEY); if (s) return JSON.parse(s); } catch (e) {}
+  return mem || { done: {}, wrong: {}, stats: {} };
+}
+function save() { mem = state; try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+let state = load();
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const app = $('#app');
+const esc = s => String(s).replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const strip = s => s.replace(/[(（][^)）]*[)）]/g, '').trim();
+const base = p => p.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const hl = (s, ch) => esc(s).split(ch).join('<mark>' + ch + '</mark>');
+const today = () => new Date().toISOString().slice(0, 10);
+function speak(t) {
+  try { const u = new SpeechSynthesisUtterance(t); u.lang = 'zh-CN'; u.rate = .8; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) {}
+}
+function render(h) { app.innerHTML = h; try { window.scrollTo(0, 0); } catch (e) {} }
+
+/* ---------- question generation ---------- */
+function distChars(c, k = 3) {
+  const pool = [...new Set([...c.shape, ...c.sound])].filter(x => /^[\u4e00-\u9fff]$/.test(x) && x !== c.ch);
+  let out = shuffle(pool).slice(0, k);
+  if (out.length < k) {
+    const rest = shuffle(CH.map(x => x.ch).filter(x => x !== c.ch && !out.includes(x)));
+    out = out.concat(rest.slice(0, k - out.length));
+  }
+  return out;
+}
+function distPy(c, k = 3) {
+  const all = [...new Set(CH.map(x => x.py))].filter(p => p !== c.py);
+  const b = base(c.py);
+  const same = shuffle(all.filter(p => base(p) === b));
+  const near = shuffle(all.filter(p => base(p) !== b && base(p)[0] === b[0]));
+  const rest = shuffle(all.filter(p => base(p)[0] !== b[0]));
+  return [...same, ...near, ...rest].slice(0, k);
+}
+function qPinyin(c) {
+  return { c, type: '读音', kind: 'py', ans: c.py, opts: shuffle([c.py, ...distPy(c)]),
+    prompt: `<div class="qchar">${c.ch}</div><p class="qt">这个字怎么读？</p>` };
+}
+function qMeaning(c) {
+  return { c, type: '字义', kind: 'ch', ans: c.ch, opts: shuffle([c.ch, ...distChars(c)]),
+    prompt: `<p class="qt">哪个字的意思是：</p><p class="qdef">${esc(c.def)}</p><p class="qen">${esc(c.en)}</p>` };
+}
+function qSentence(c) {
+  const ex = shuffle(c.ex).find(e => e.includes(c.ch));
+  if (!ex) return null;
+  const s = esc(ex).split(c.ch).join('<span class="blank">＿</span>');
+  return { c, type: '例句', kind: 'ch', ans: c.ch, opts: shuffle([c.ch, ...distChars(c)]),
+    prompt: `<p class="qt">选出适合的字：</p><p class="qs">${s}</p>` };
+}
+function qWord(c) {
+  const ws = c.words.map(strip).filter(w => w.length >= 2 && w.includes(c.ch));
+  if (!ws.length) return null;
+  const s = esc(pick(ws)).split(c.ch).join('<span class="blank">＿</span>');
+  return { c, type: '词语', kind: 'ch', ans: c.ch, opts: shuffle([c.ch, ...distChars(c)]),
+    prompt: `<p class="qt">补全词语（${esc(c.en)}）</p><p class="qword">${s}</p>` };
+}
+function makeQ(c, used = []) {
+  const bs = shuffle([qPinyin, qMeaning, qSentence, qWord]);
+  for (const b of bs) { const q = b(c); if (q && !used.includes(q.type)) return q; }
+  return qPinyin(c);
+}
+
+/* ---------- screens ---------- */
+let L = null, Q = null;
+
+function home() {
+  const wrongN = Object.keys(state.wrong).length;
+  const doneN = Object.keys(state.done).length;
+  const next = days.findIndex((_, i) => !state.done[i]);
+  const learned = days.flatMap((d, i) => state.done[i] ? d : []);
+  render(`
+    <h1>必考字练习</h1>
+    <p class="sub">第${CH[0].n}–${CH[CH.length - 1].n}字，每天${DAYSIZE}个字。已完成 ${doneN}/${days.length} 天</p>
+    <div class="days">${days.map((d, i) => {
+      const dn = state.done[i];
+      const st = dn ? `✓ ${dn.score}分` : (next === i ? '今天学这个' : '');
+      return `<button class="day ${next === i ? 'next' : ''}" data-act="day" data-i="${i}">
+        <span class="dn">第${i + 1}天</span><span class="dr">${d[0].n}–${d[d.length - 1].n}</span><span class="ds">${st}</span>
+        <span class="dc">${d.map(c => c.ch).join('')}</span></button>`;
+    }).join('')}</div>
+    <div class="tools">
+      <button class="btn sec" data-act="wrongbook" ${wrongN ? '' : 'disabled'}>错字本（${wrongN}）</button>
+      <button class="btn sec" data-act="random" ${learned.length ? '' : 'disabled'}>随机测验</button>
+    </div>
+    <button class="link" data-act="reset">清除学习记录</button>`);
+}
+
+function learn() {
+  const day = days[L.d], c = day[L.i], n = day.length;
+  const chips = (arr, cls = '') => arr.map(x => `<span class="chip ${cls}">${esc(x)}</span>`).join('');
+  render(`
+    <div class="bar"><button class="back" data-act="home">‹ 返回</button><span>第${L.d + 1}天 · ${L.i + 1}/${n}</span></div>
+    <section class="card learn">
+      <div class="tzg"><div class="g ${L.m}" id="g">${c.ch}</div><canvas id="cv"></canvas></div>
+      <div class="seg" role="group" aria-label="写字模式">写一写
+        ${[['show', '看'], ['trace', '描'], ['blank', '默']].map(([m, t]) => `<button data-act="wmode" data-m="${m}" class="${L.m === m ? 'on' : ''}">${t}</button>`).join('')}
+        <button class="clr" data-act="clear">擦掉</button></div>
+      <div class="py"><span>${c.py}</span><button class="spk" data-act="speak" aria-label="朗读">🔊</button></div>
+      <p class="src">${c.src ? esc(c.src) : '课文出处待补'}</p>
+      <h3>意思</h3><p>${esc(c.def)}<br><span class="en">${esc(c.en)}</span></p>
+      <h3>例句</h3>${c.ex.map(e => `<p>${hl(e, c.ch)}</p>`).join('')}
+      <h3>词语</h3><div class="chips">${chips(c.words)}</div>
+      <h3>容易混淆</h3>
+      <div class="row"><b>形似</b>${chips(c.shape, 'ch')}</div>
+      <div class="row"><b>音似</b>${chips(c.sound, 'ch')}</div>
+      ${c.note ? `<div class="note">${esc(c.note)}</div>` : ''}
+      <div class="nav">
+        <button class="btn sec" data-act="prev" ${L.i === 0 ? 'disabled' : ''}>上一个</button>
+        <button class="btn" data-act="next">${L.i === n - 1 ? '开始练习' : '下一个'}</button>
+      </div>
+    </section>`);
+  setupCanvas();
+}
+
+function setupCanvas() {
+  const cv = $('#cv'); if (!cv) return;
+  const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+  cv.width = r.width * dpr; cv.height = r.height * dpr;
+  const x = cv.getContext('2d'); x.scale(dpr, dpr);
+  x.lineCap = 'round'; x.lineJoin = 'round'; x.lineWidth = Math.max(5, r.width / 24);
+  x.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#1F7A67';
+  let down = false, lx = 0, ly = 0;
+  const pt = e => { const b = cv.getBoundingClientRect(); return [e.clientX - b.left, e.clientY - b.top]; };
+  cv.onpointerdown = e => { down = true; [lx, ly] = pt(e); try { cv.setPointerCapture(e.pointerId); } catch (_) {} x.beginPath(); x.moveTo(lx, ly); x.lineTo(lx + .01, ly); x.stroke(); };
+  cv.onpointermove = e => { if (!down) return; const [p, q] = pt(e); x.beginPath(); x.moveTo(lx, ly); x.lineTo(p, q); x.stroke(); lx = p; ly = q; };
+  cv.onpointerup = cv.onpointercancel = () => { down = false; };
+}
+function clearCanvas() {
+  const cv = $('#cv'); if (!cv) return;
+  const x = cv.getContext('2d'); x.save(); x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, cv.width, cv.height); x.restore();
+}
+
+/* ---------- quiz ---------- */
+function startQuiz(o) {
+  const items = (o.review || []).map(c => ({ q: makeQ(c), review: true }));
+  let main = [];
+  o.chars.forEach(c => { const used = []; for (let k = 0; k < o.per; k++) { const q = makeQ(c, used); used.push(q.type); main.push({ q, review: false }); } });
+  const queue = [...items, ...shuffle(main)];
+  Q = { o, queue, i: 0, ok: 0, first: queue.length, missed: [], answered: false };
+  quiz();
+}
+function beginDay(d) {
+  const chars = days[d];
+  const review = Object.keys(state.wrong).map(Number).filter(n => !chars.some(c => c.n === n)).slice(0, 5).map(n => BY[n]);
+  startQuiz({ mode: 'day', d, chars, review, per: 2 });
+}
+function quiz() {
+  const it = Q.queue[Q.i], q = it.q; Q.answered = false;
+  const tag = it.review ? '复习' : it.retry ? '再试一次' : q.type;
+  render(`
+    <div class="bar"><button class="back" data-act="home">‹ 退出</button><span>${Q.i + 1}/${Q.queue.length}</span></div>
+    <div class="prog"><i style="width:${Q.i / Q.queue.length * 100}%"></i></div>
+    <section class="card q"><span class="tag">${tag}</span>${q.prompt}
+      <div class="opts ${q.kind}">${q.opts.map((o, i) => `<button class="opt" data-act="opt" data-i="${i}">${esc(o)}</button>`).join('')}</div>
+      <div id="fb"></div></section>`);
+}
+function answer(idx) {
+  if (Q.answered) return; Q.answered = true;
+  const it = Q.queue[Q.i], q = it.q, c = q.c;
+  const right = q.opts[idx] === q.ans;
+  const btns = document.querySelectorAll('.opt');
+  btns.forEach((b, i) => { b.disabled = true; b.style.opacity = 1; if (q.opts[i] === q.ans) b.classList.add('ok'); else if (i === idx) b.classList.add('bad'); });
+  if (!it.retry) {
+    const st = state.stats[c.n] || (state.stats[c.n] = { ok: 0, bad: 0 });
+    if (right) { Q.ok++; st.ok++; if (state.wrong[c.n]) { state.wrong[c.n]--; if (state.wrong[c.n] <= 0) delete state.wrong[c.n]; } }
+    else { st.bad++; state.wrong[c.n] = 2; if (!Q.missed.includes(c.n)) Q.missed.push(c.n); }
+  }
+  if (!right && (it.tries || 0) < 2) Q.queue.push({ q: makeQ(c, [q.type]), review: false, retry: true, tries: (it.tries || 0) + 1 });
+  save();
+  const last = Q.i + 1 >= Q.queue.length;
+  $('#fb').innerHTML = `<div class="fb ${right ? 'ok' : 'bad'}">
+    <div class="h">${right ? '答对了' : '正确答案：' + esc(q.ans)}</div>
+    <div><b style="font-family:var(--kai);font-size:20px">${c.ch}</b> ${c.py}　${esc(c.def)}</div>
+    <span class="ex">${hl(c.ex[0], c.ch)}</span>
+    <button class="btn" data-act="nextq">${last ? '看结果' : '下一题'}</button></div>`;
+  $('#fb .btn').focus();
+}
+function finish() {
+  const pct = Q.first ? Math.round(Q.ok / Q.first * 100) : 0;
+  if (Q.o.mode === 'day') {
+    const prev = state.done[Q.o.d];
+    state.done[Q.o.d] = { date: today(), score: Math.max(pct, prev ? prev.score : 0) }; save();
+  }
+  const stars = pct >= 90 ? 3 : pct >= 70 ? 2 : 1;
+  render(`
+    <section class="card res">
+      <div class="stars">${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}</div>
+      <p class="score">${pct}分</p>
+      <p class="qt">一次答对 ${Q.ok}/${Q.first} 题</p>
+      ${Q.missed.length ? `<p>这些字加入了错字本，明天会再复习：</p>
+        <div class="miss">${Q.missed.map(n => { const c = BY[n]; return `<div class="mc"><span>${c.ch}</span><small>${c.py}</small></div>`; }).join('')}</div>`
+        : '<p>全部一次答对，太棒了！</p>'}
+      <div class="tools"><button class="btn sec" data-act="again">再练一遍</button><button class="btn" data-act="home">回首页</button></div>
+    </section>`);
+}
+function wrongBook() {
+  const ns = Object.keys(state.wrong).map(Number);
+  render(`
+    <div class="bar"><button class="back" data-act="home">‹ 返回</button><span>错字本</span></div>
+    ${ns.length ? `<div class="wl">${ns.map(n => { const c = BY[n]; return `<div class="wi"><span class="c">${c.ch}</span><div><b>${c.py}</b>　<span class="en">${esc(c.en)}</span><br>${esc(c.def)}</div></div>`; }).join('')}</div>
+      <button class="btn" data-act="wrongquiz">复习这些字</button>`
+      : '<p class="empty">错字本是空的。</p>'}`);
+}
+
+/* ---------- events ---------- */
+app.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
+  const a = b.dataset.act;
+  if (a === 'home' || a === 'exit') home();
+  else if (a === 'day') { L = { d: +b.dataset.i, i: 0, m: 'show' }; learn(); }
+  else if (a === 'prev') { L.i--; learn(); }
+  else if (a === 'next') { if (L.i < days[L.d].length - 1) { L.i++; learn(); } else beginDay(L.d); }
+  else if (a === 'speak') speak(days[L.d][L.i].ch);
+  else if (a === 'wmode') {
+    L.m = b.dataset.m; $('#g').className = 'g ' + L.m;
+    document.querySelectorAll('[data-act=wmode]').forEach(x => x.classList.toggle('on', x === b));
+  }
+  else if (a === 'clear') clearCanvas();
+  else if (a === 'opt') answer(+b.dataset.i);
+  else if (a === 'nextq') { Q.i++; if (Q.i >= Q.queue.length) finish(); else quiz(); }
+  else if (a === 'again') startQuiz(Q.o.mode === 'day' ? Q.o : Q.o.redo ? Q.o.redo() : Q.o);
+  else if (a === 'wrongbook') wrongBook();
+  else if (a === 'wrongquiz') startQuiz({ mode: 'wrong', chars: shuffle(Object.keys(state.wrong).map(Number)).slice(0, 10).map(n => BY[n]), review: [], per: 1 });
+  else if (a === 'random') {
+    const pool = days.flatMap((d, i) => state.done[i] ? d : []);
+    const o = { mode: 'random', chars: shuffle(pool).slice(0, 10), review: [], per: 1 };
+    o.redo = () => ({ ...o, chars: shuffle(pool).slice(0, 10) });
+    startQuiz(o);
+  }
+  else if (a === 'reset') { if (confirm('确定清除所有学习记录和错字本吗？')) { state = { done: {}, wrong: {}, stats: {} }; save(); home(); } }
+});
+home();
+</script>
+</body>
+</html>
