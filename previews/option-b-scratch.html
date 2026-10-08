@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bryan & Jordan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito+Sans:wght@400;700&display=swap">
+<style>
+:root{
+  --bg:#EFE9FF;--purple:#5B2BD9;--ink:#1D1640;--mute:#5F5880;--yellow:#FFC93C;--mint:#13B9A5;--card:#FFFFFF;
+  --display:"Baloo 2",system-ui,sans-serif;
+  --body:"Nunito Sans",system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:17px/1.55 var(--body);min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:22px 16px 48px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,7vw,52px);line-height:1;margin:6px 0 4px;color:var(--purple)}
+.hello{color:var(--mute);margin:0 0 22px}
+
+/* ticket */
+.ticket{position:relative;background:var(--card);border-radius:22px;padding:22px 22px 24px;box-shadow:0 10px 0 var(--purple);
+  border:3px solid var(--purple)}
+.ticket::before,.ticket::after{content:"";position:absolute;top:50%;width:26px;height:26px;border-radius:50%;background:var(--bg);border:3px solid var(--purple);transform:translateY(-50%)}
+.ticket::before{left:-16px;clip-path:inset(0 0 0 50%)}
+.ticket::after{right:-16px;clip-path:inset(0 50% 0 0)}
+.thead{display:flex;justify-content:space-between;align-items:center;font-weight:700;color:var(--mute);font-size:14px;margin-bottom:12px}
+.thead b{font-family:var(--display);font-size:20px;color:var(--ink)}
+.zone{position:relative;border-radius:14px;min-height:190px;background:#F7F4FF;overflow:hidden}
+.reveal{padding:22px;display:flex;gap:16px;align-items:flex-start}
+.reveal .em{font-size:52px;line-height:1}
+.reveal p{margin:0;font-size:clamp(19px,2.6vw,22px);font-weight:700;line-height:1.45}
+canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;transition:opacity .5s}
+canvas.gone{opacity:0;pointer-events:none}
+.tfoot{margin-top:12px;font-size:14px;color:var(--mute);min-height:22px}
+
+/* doors */
+.doors{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:34px}
+.door{display:flex;flex-direction:column;text-decoration:none;color:var(--ink);background:var(--card);border-radius:22px;padding:18px;
+  border:3px solid var(--ink);box-shadow:0 8px 0 var(--ink);transition:transform .12s,box-shadow .12s}
+.door:hover{transform:translateY(3px);box-shadow:0 5px 0 var(--ink)}
+.door:focus-visible{outline:4px solid var(--yellow);outline-offset:4px}
+.badge{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:34px;color:#fff;margin-bottom:10px}
+.bryan .badge{background:var(--purple)}
+.jordan .badge{background:var(--mint)}
+.door h2{font-family:var(--display);font-weight:800;font-size:30px;margin:0;line-height:1.1}
+.door p{margin:4px 0 0;color:var(--mute);font-size:15px}
+.door .enter{margin-top:14px;font-weight:700}
+@media(max-width:520px){.doors{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){canvas,.door{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Hi Bryan! Hi Jordan!</h1>
+  <p class="hello" id="today"></p>
+
+  <section class="ticket" aria-label="Today's surprise">
+    <div class="thead"><b>🎁 Today's surprise</b><span>one a day</span></div>
+    <div class="zone">
+      <div class="reveal"><span class="em" id="emoji"></span><p id="fact"></p></div>
+      <canvas id="scratch" aria-hidden="true"></canvas>
+    </div>
+    <div class="tfoot" id="hint">Scratch the silver with your finger or mouse.</div>
+  </section>
+
+  <nav class="doors">
+    <a class="door bryan" href="../bryan/index.html">
+      <div class="badge">B</div>
+      <h2>Bryan</h2>
+      <p>必考字 · 作文 · 好词好句 · English · Science</p>
+      <span class="enter">Go to Bryan's page →</span>
+    </a>
+    <a class="door jordan" href="../jordan.html">
+      <div class="badge">J</div>
+      <h2>Jordan</h2>
+      <p>中文练字 · 听写测试 · 英文拼写 · 拼字游戏</p>
+      <span class="enter">Go to Jordan's page →</span>
+    </a>
+  </nav>
+</div>
+<script src="../facts.js"></script>
+<script>
+const now = new Date();
+today.textContent = now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'}) + ' · 今天的小惊喜在下面';
+const f = FACTS[factIndexForToday()];
+emoji.textContent = f.e; fact.textContent = f.fact;
+
+const KEY = 'home_scratched';
+const stamp = now.toDateString();
+let done = false;
+try { done = localStorage.getItem(KEY) === stamp; } catch (e) {}
+
+const cv = document.getElementById('scratch'), ctx = cv.getContext('2d');
+function finish(){
+  cv.classList.add('gone'); hint.textContent = 'Come back tomorrow for a new one!';
+  try { localStorage.setItem(KEY, stamp); } catch (e) {}
+}
+function paint(){
+  const r = cv.getBoundingClientRect(), s = devicePixelRatio || 1;
+  cv.width = r.width * s; cv.height = r.height * s; ctx.scale(s, s);
+  const g = ctx.createLinearGradient(0, 0, r.width, r.height);
+  g.addColorStop(0,'#C9C6D6'); g.addColorStop(.5,'#ECEAF3'); g.addColorStop(1,'#B7B3C7');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, r.width, r.height);
+  ctx.fillStyle = '#7A7491'; ctx.font = '800 26px "Baloo 2", sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('✨ Scratch me! ✨', r.width/2, r.height/2 + 8);
+  ctx.globalCompositeOperation = 'destination-out';
+}
+if (done) finish(); else {
+  paint(); document.fonts.load('800 26px "Baloo 2"').then(() => { ctx.globalCompositeOperation = 'source-over'; ctx.setTransform(1,0,0,1,0,0); paint(); });
+  let down = false, moves = 0;
+  const at = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  cv.addEventListener('pointerdown', e => { down = true; cv.setPointerCapture(e.pointerId); scratch(e); });
+  cv.addEventListener('pointermove', e => down && scratch(e));
+  cv.addEventListener('pointerup', () => { down = false; check(); });
+  function scratch(e){ const [x,y] = at(e); ctx.beginPath(); ctx.arc(x, y, 22, 0, 7); ctx.fill(); moves++; }
+  function check(){
+    if (moves < 15) return;
+    const px = ctx.getImageData(0, 0, cv.width, cv.height).data; let clear = 0;
+    for (let i = 3; i < px.length; i += 64) if (px[i] === 0) clear++;
+    if (clear / (px.length / 64) > .45) finish();
+  }
+}
+</script>
+</body>
+</html>
