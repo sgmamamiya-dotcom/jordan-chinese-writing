@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Jordan 中文练字 V17 Cloud</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f6f8fb;color:#263238}
+button{font:inherit;cursor:pointer;border:0}
+.app{max-width:1100px;margin:auto;padding:18px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap} h1{margin:0;font-size:25px}
+.sub{color:#78909c;font-size:14px;margin-top:4px}
+ 
+.checkin-card{background:white;border-radius:20px;padding:16px;margin-bottom:14px;box-shadow:0 5px 20px #0000000b}
+.checkin-top{display:flex;justify-content:space-between;align-items:center;gap:12px}.checkin-top h2{margin:0;font-size:18px}
+.checkin-sub{font-size:13px;color:#78909c;margin-top:4px}.streak{background:#fff3e0;color:#e65100;padding:8px 12px;border-radius:12px;font-weight:800}
+.checkin-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}.stat{background:#f7f9fa;border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-size:22px}.stat span{font-size:11px;color:#78909c}.progress-wrap{height:10px;background:#eceff1;border-radius:10px;overflow:hidden}.progress-bar{height:100%;width:0%;background:#455a64;border-radius:10px;transition:width .3s}
+.calendar-title{font-size:13px;color:#78909c;margin:12px 0 7px}.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.day{padding:7px 2px;border-radius:10px;background:#f7f9fa;text-align:center}.day .dow{font-size:10px;color:#90a4ae}.day .num{font-size:16px;font-weight:700}.day .done{font-size:10px;color:#78909c}
+.day.active{background:#eceff1}.day.complete{background:#e8f5e9}.day.complete .done{color:#2e7d32;font-weight:700}
+@media(max-width:760px){.checkin-stats{grid-template-columns:repeat(2,1fr)}.checkin-top{align-items:flex-start;flex-direction:column}}
+.library-card{background:white;border-radius:20px;padding:15px 16px;margin-bottom:14px;box-shadow:0 5px 20px #0000000b}
+.library-head{display:flex;justify-content:space-between;align-items:center;gap:15px}.library-head h2{margin:0;font-size:18px}
+.library-sub{font-size:13px;color:#78909c;margin-top:4px}.library-actions{display:flex;gap:8px;flex-wrap:wrap}
+.add-online{display:flex;align-items:center;gap:9px;margin:13px 0 5px;padding:11px;background:#f7f9fa;border-radius:13px;flex-wrap:wrap}
+.row-label{font-size:13px;color:#607d8b;font-weight:700;white-space:nowrap}
+.addCharInput{width:130px;height:42px;border:1px solid #dfe6ea;border-radius:11px;background:#fff;padding:0 12px;font-size:24px;text-align:center}
+.online-note{font-size:12px;color:#78909c}
+.library-tools{display:flex;gap:9px;margin:12px 0}.search,.groupSelect{height:42px;border:1px solid #dfe6ea;border-radius:11px;background:#fff;padding:0 12px;font:inherit;color:#37474f}
+.search{flex:1;min-width:180px}.groupSelect{min-width:145px}.library-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:8px;max-height:230px;overflow:auto;padding:2px}
+.lib-item{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:72px;border:2px solid #e7edf0;border-radius:13px;background:#fff;user-select:none}
+.lib-item.selected{border-color:#455a64;background:#f0f4f6}.lib-item .hanzi{font-size:29px;line-height:1.05}.lib-item .py{font-size:11px;color:#78909c;margin-top:4px}
+.lib-item input{position:absolute;top:7px;right:7px;width:17px;height:17px;accent-color:#455a64}
+.lib-item.weak{border-color:#f9a825;background:#fff8e1}
+.lib-item.practicing{box-shadow:0 0 0 3px #455a64 inset}
+.lib-item .starBtn{position:absolute;top:6px;left:6px;width:21px;height:21px;border-radius:50%;background:#fff;border:1px solid #eceff1;font-size:12px;display:flex;align-items:center;justify-content:center;padding:0;line-height:1}
+.lib-item .starBtn.on{background:#ffb300;border-color:#ffb300}
+.daily-row{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:12px 0 4px}
+.daily-row select,.daily-row input[type=number]{height:42px;border:1px solid #dfe6ea;border-radius:11px;background:#fff;padding:0 12px;font:inherit;color:#37474f}
+.daily-row input[type=number]{width:78px}
+.daily-note{font-size:13px;color:#546e7a;margin-top:8px;line-height:1.6}
+.weakBtn{background:#fff3e0;color:#e65100}
+@media(max-width:760px){.library-head{align-items:flex-start;flex-direction:column}.library-tools{flex-direction:column}.library-grid{grid-template-columns:repeat(5,1fr);max-height:250px}}
+.queue-chips{display:flex;gap:6px;overflow-x:auto;padding:6px 2px;align-items:center}
+.queue-chip{flex:0 0 auto;min-width:40px;height:40px;padding:0 8px 0 10px;border-radius:10px;background:white;box-shadow:0 2px 6px #0000000d;font-size:17px;color:#455a64;display:flex;align-items:center;justify-content:center;gap:5px}
+.queue-chip.active{background:#455a64;color:#fff}
+.chip-remove{font-size:13px;line-height:1;opacity:.45;padding:2px 3px;border-radius:6px}
+.queue-chip:hover .chip-remove,.queue-chip.active .chip-remove{opacity:.85}
+.queue-clear-note{flex:0 0 auto;font-size:12px;color:#90a4ae;padding:0 4px}
+.practice-nav{display:flex;align-items:center;gap:10px;padding:2px 2px 14px}
+.practice-nav button{min-width:88px;height:44px;border-radius:12px;background:white;color:#455a64;box-shadow:0 2px 8px #0000000d;font-weight:700}
+.practice-nav button:disabled{opacity:.4}
+.practice-nav-info{flex:1;text-align:center;font-size:15px;font-weight:700;color:#37474f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tab{flex:1;padding:12px 8px;border-radius:14px;background:white;color:#546e7a;font-weight:700}
+.tab.active{background:#455a64;color:white}
+.grid{display:grid;grid-template-columns:1fr;gap:16px}
+.card{background:white;border-radius:22px;padding:16px;box-shadow:0 5px 20px #0000000b}
+.card h2{font-size:18px;margin:0}.card-head{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px}.sound-row{display:flex;align-items:center;gap:8px}
+.stage{width:100%;max-width:500px;margin:auto;aspect-ratio:1;border-radius:18px;background:#fff;border:2px solid #eceff1;overflow:hidden;position:relative;touch-action:none}
+.stage.gridbg{background-image:linear-gradient(#eceff1 1px,transparent 1px),linear-gradient(90deg,#eceff1 1px,transparent 1px);background-size:25% 25%;background-position:center}
+.writer{width:100%;height:100%;display:flex;align-items:center;justify-content:center}.writer canvas{display:block!important}
+#practiceCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;z-index:5;display:none;cursor:crosshair}
+.hint{font-size:14px;color:#78909c;margin:10px 0;text-align:center;min-height:20px}.trace-mode .guide{opacity:.22!important}
+.controls{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+.primary,.secondary{padding:11px 17px;border-radius:12px;font-weight:700}
+.primary{background:#455a64;color:#fff}.secondary{background:#eceff1;color:#37474f}
+.practice-word-info{display:flex;align-items:center;justify-content:center;gap:12px;margin:2px 0 12px}.practice-char{font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:54px;line-height:1}.practice-pinyin{font-size:24px;font-weight:700;color:#546e7a}.soundBtn{width:44px;height:44px;border-radius:50%;background:#eaf1ff;font-size:22px}.soundBtn:active{transform:scale(.95)}
+.status{text-align:center;font-weight:700;min-height:24px}
+.ok{color:#2e7d32}.bad{color:#c62828}
+@media(max-width:760px){.app{padding:12px}h1{font-size:21px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div><h1>✏️ Jordan 中文练字</h1><div class="sub">鼠标 / Apple Pencil 都可以练</div></div>
+  <a class="secondary" href="test.html" style="text-decoration:none;display:inline-flex;align-items:center;">🎧 听写测试</a>
+  <a class="secondary" href="spelling.html" style="text-decoration:none;display:inline-flex;align-items:center;">📝 英文拼写</a>
+  <a class="secondary" href="game.html" style="text-decoration:none;display:inline-flex;align-items:center;">🦖 拼字游戏</a>
+  <a class="secondary" href="jordan.html" style="text-decoration:none;display:inline-flex;align-items:center;">🏠 Jordan</a>
+  <button class="secondary" id="resetBtn">重新开始</button>
+</header>
+
+
+<section class="checkin-card">
+  <div class="checkin-top">
+    <div>
+      <h2>🔥 每日练字打卡</h2>
+      <div class="checkin-sub">今天完成练习就会自动记录，不需要另外按保存</div>
+    </div>
+    <div class="streak" id="streak">连续 0 天</div>
+  </div>
+  <div class="checkin-stats">
+    <div class="stat"><b id="todayCount">0</b><span>今天完成</span></div>
+    <div class="stat"><b id="todayTarget">10</b><span>今日目标</span></div>
+    <div class="stat"><b id="monthCount">0</b><span>本月完成</span></div>
+    <div class="stat"><b id="totalCount">0</b><span>累计完成</span></div>
+  </div>
+  <div class="progress-wrap"><div class="progress-bar" id="dailyProgress"></div></div>
+  <div class="calendar-title">最近 7 天</div>
+  <div class="week-grid" id="weekGrid"></div>
+</section>
+
+<section class="library-card" id="dailyAutoCard">
+  <div class="library-head">
+    <div><h2>🎯 每日自动练习</h2><div class="library-sub">选一个分组后，Jordan 每天打开网页会自动从这个分组里随机挑一批字；练完这批，下次打开就换下一批，一轮抽完再重新开始</div></div>
+  </div>
+  <div class="daily-row">
+    <select id="dailyGroupSelect"><option value="">不自动挑选（手动选字）</option></select>
+    <span>每天</span>
+    <input type="number" id="dailyCountInput" min="1" max="50" value="10">
+    <span>个字</span>
+    <button class="primary" id="saveDailyBtn">保存设置</button>
+    <button class="secondary" id="reshuffleBtn">🔀 换一批</button>
+  </div>
+  <div class="daily-note" id="dailyNote"></div>
+</section>
+
+<section class="library-card">
+  <div class="library-head">
+    <div><h2>📚 生字库</h2><div class="library-sub">下面筛选框选一个分组，点"▶ 练习这个分组"就直接练这组的字；如果想自己挑几个字组合练习，用勾选框＋"练习勾选的字"。"全选"／"清空"只影响下面筛选出来的这些字，不是全部生字库。点字卡左上角 ⭐ 可以标记"需要加强"，方便以后集中练习</div></div>
+    <div class="library-actions">
+      <button class="primary" id="practiceGroupBtn">▶ 练习这个分组</button>
+      <button class="secondary" id="selectAllBtn">全选（当前筛选）</button>
+      <button class="secondary" id="clearAllBtn">清空全部勾选</button>
+      <button class="secondary" id="practiceSelectedBtn">练习勾选的字（0）</button>
+    </div>
+  </div>
+  <div class="add-online">
+  <span class="row-label">🗂️ 管理分组：</span>
+  <select id="addGroupSelect" class="groupSelect"><option value="">选择分组</option></select>
+  <button class="secondary" id="addGroupBtn">＋ 新建</button>
+  <button class="secondary" id="renameGroupBtn">✏️ 重命名</button>
+  <button class="secondary" id="deleteGroupBtn">🗑 删除</button>
+  <span class="online-note" id="cloudStatus">☁️ 云端同步中…</span>
+</div>
+<div class="add-online">
+  <span class="row-label">➕ 加字到上面选中的分组：</span>
+  <input id="addCharInput" class="addCharInput" maxlength="80" placeholder="一次输入多个字，例如：学校老师同学朋友">
+  <button class="primary" id="addCharBtn">批量添加</button>
+</div>
+<div class="library-tools">
+    <input id="searchInput" class="search" type="search" placeholder="🔍 搜索汉字或拼音，例如：昨天 / zuo">
+    <select id="groupSelect" class="groupSelect">
+      <option value="all">全部生字</option>
+      <option value="P1-第一组">P1 · 第一组</option>
+      <option value="P1-第二组">P1 · 第二组</option>
+      <option value="常用">常用字</option><option value="我添加的字">我添加的字</option>
+    </select>
+  </div>
+  <div class="library-grid" id="libraryGrid"></div>
+</section>
+<div class="queue-chips" id="queueChips"></div>
+<div class="practice-nav" id="practiceNav">
+  <button class="secondary" id="prevCharBtn">◀ 上一个</button>
+  <div class="practice-nav-info" id="practiceNavInfo">请先选字</div>
+  <button class="secondary" id="nextCharBtn">下一个 ▶</button>
+</div>
+<div class="tabs">
+  <button class="tab active" data-mode="trace">① 描红</button>
+  <button class="tab" data-mode="quiz">② 自己写＋批改</button>
+  </div>
+
+<div class="grid">
+  <section class="card">
+    <div class="card-head"><h2 id="leftTitle">描红</h2><div class="sound-row"><span id="practicePinyin" class="practice-pinyin">zuó</span><button class="soundBtn" id="soundBtn" aria-label="播放读音">🔊</button></div></div>
+    <div class="stage gridbg" id="practiceStage"><div id="writer" class="writer"></div><canvas id="practiceCanvas"></canvas></div>
+    <div class="hint" id="hint">沿着灰色笔画慢慢写</div>
+    <div class="controls">
+      <button class="primary" id="startBtn">开始练习</button><button class="secondary" id="finishBtn">✓ 完成这个字</button>
+      <button class="secondary weakBtn" id="weakBtn">🌱 记不熟，标记</button>
+      <button class="secondary" id="clearBtn">清除</button>
+    </div>
+    <div class="status" id="status"></div>
+  </section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.29.4/dist/index.js"></script>
+<script>
+(function(){
+'use strict';
+
+// ===== Supabase 云端配置 =====
+// 把你刚才复制的 Publishable key 粘贴到下面这一行。
+// 不要填写 Secret key。Publishable key 可以放在网页前端。
+const SUPABASE_URL = 'https://uscpgatqeeqejbwnvyoh.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_Tc5qBurC5SnTyNjB2jtA2A_jFs9T3og';
+const cloudReady=SUPABASE_PUBLISHABLE_KEY && !SUPABASE_PUBLISHABLE_KEY.includes('PASTE_YOUR');
+const supabase=cloudReady ? window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY) : null;
+
+const DEFAULT_GROUPS=[
+  {name:'P1-第一组'},
+  {name:'P1-第二组'},
+  {name:'常用字'},
+  {name:'我添加的字'}
+];
+const DEFAULT_CHARS=[
+{char:'昨',pinyin:'zuó',group:'P1-第一组'},{char:'明',pinyin:'míng',group:'P1-第一组'},
+{char:'给',pinyin:'gěi',group:'P1-第一组'},{char:'快',pinyin:'kuài',group:'P1-第一组'},
+{char:'乐',pinyin:'lè',group:'P1-第一组'},{char:'每',pinyin:'měi',group:'P1-第二组'},
+{char:'兔',pinyin:'tù',group:'P1-第二组'},{char:'爪',pinyin:'zhǎo',group:'P1-第二组'},
+{char:'尖',pinyin:'jiān',group:'P1-第二组'},{char:'园',pinyin:'yuán',group:'P1-第二组'},
+{char:'我',pinyin:'wǒ',group:'常用字'},{char:'你',pinyin:'nǐ',group:'常用字'},
+{char:'他',pinyin:'tā',group:'常用字'},{char:'学',pinyin:'xué',group:'常用字'},
+{char:'校',pinyin:'xiào',group:'常用字'},{char:'家',pinyin:'jiā',group:'常用字'},
+{char:'天',pinyin:'tiān',group:'常用字'},{char:'大',pinyin:'dà',group:'常用字'},
+{char:'小',pinyin:'xiǎo',group:'常用字'},{char:'人',pinyin:'rén',group:'常用字'},
+{char:'上',pinyin:'shàng',group:'常用字'},{char:'下',pinyin:'xià',group:'常用字'}
+];
+let LIBRARY=[];
+let GROUPS=[];
+let selectedChars=[];
+let CHARS=[];
+let current=0,mode='trace',writer=null,quizActive=false;
+let practiceRows=[];
+const DAILY_TARGET=10;
+const APP_STATE_LOCAL_KEY='jordanAppState_v1';
+const WEAK_LOCAL_KEY='jordanWeakChars_v1';
+let APP_STATE={daily_group_id:null,daily_count:10,last_pick_date:null,last_pick_chars:[],queue:[],queue_group_id:null};
+const $=id=>document.getElementById(id);
+
+function setCloudStatus(text,good=true){
+  $('cloudStatus').textContent=(good?'☁️ ':'⚠️ ')+text;
+  $('cloudStatus').style.color=good?'#78909c':'#c62828';
+}
+function localSelected(){
+  try{return JSON.parse(localStorage.getItem('jordanSelectedChars_v171')||'[]');}catch(e){return [];}
+}
+function saveSelected(){try{localStorage.setItem('jordanSelectedChars_v171',JSON.stringify(selectedChars.map(x=>x.char)));}catch(e){}}
+function restoreSelected(){
+  const old=localSelected();
+  const charsOnly=old.map(x=>typeof x==='string'?x:x?.char).filter(Boolean);
+  selectedChars=charsOnly.map(c=>LIBRARY.find(x=>x.char===c)).filter(Boolean);
+  CHARS=selectedChars.slice();
+  current=0;
+  saveSelected();
+}
+function updateSelectedButton(){$('practiceSelectedBtn').textContent='练习勾选的字（'+selectedChars.length+'）';}
+function currentFilterLabel(){
+  const v=$('groupSelect').value;
+  if(v==='all')return '全部生字';
+  if(v==='__weak__')return '⭐ 需要加强的字';
+  return formatGroup(v);
+}
+function stripTone(s=''){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function getPinyin(char){
+  try{
+    if(window.pinyinPro && typeof window.pinyinPro.pinyin==='function'){
+      return window.pinyinPro.pinyin(char,{toneType:'symbol'})||'';
+    }
+  }catch(e){}
+  return '';
+}
+async function backfillMissingPinyin(){
+  const missing=LIBRARY.filter(x=>!x.pinyin);
+  if(!missing.length) return;
+  missing.forEach(item=>{item.pinyin=getPinyin(item.char);});
+  if(!cloudReady) return;
+  const toSave=missing.filter(x=>x.pinyin);
+  if(!toSave.length) return;
+  try{
+    await Promise.all(toSave.map(item=>supabase.from('characters').update({pinyin:item.pinyin}).eq('id',item.id)));
+  }catch(err){console.error('回填拼音失败',err);}
+}
+function loadLocalWeakSet(){try{return new Set(JSON.parse(localStorage.getItem(WEAK_LOCAL_KEY)||'[]'));}catch(e){return new Set();}}
+function saveLocalWeakSet(set){try{localStorage.setItem(WEAK_LOCAL_KEY,JSON.stringify([...set]));}catch(e){}}
+
+async function toggleWeak(item,source){
+  if(!item)return;
+  const newVal=!item.is_weak;
+  if(cloudReady){
+    try{
+      const {error}=await supabase.from('characters').update({is_weak:newVal,weak_marked_at:newVal?new Date().toISOString():null,weak_marked_by:newVal?source:null}).eq('id',item.id);
+      if(error) throw error;
+    }catch(err){
+      alert('\u6807\u8bb0\u5931\u8d25\uff0c\u8bf7\u786e\u8ba4\u5df2\u5728 Supabase \u8fd0\u884c\u4e86\u5347\u7ea7\u811a\u672c\uff08characters \u8868\u9700\u8981 is_weak \u5b57\u6bb5\uff09\uff1a\n'+err.message);
+      return;
+    }
+  }else{
+    const set=loadLocalWeakSet();
+    if(newVal)set.add(item.char);else set.delete(item.char);
+    saveLocalWeakSet(set);
+  }
+  item.is_weak=newVal;
+  renderLibrary();renderPracticeNav();
+}
+
+async function loadAppState(){
+  if(!cloudReady){
+    try{APP_STATE=Object.assign({},APP_STATE,JSON.parse(localStorage.getItem(APP_STATE_LOCAL_KEY)||'{}'));}catch(e){}
+    return;
+  }
+  try{
+    const {data,error}=await supabase.from('app_state').select('*').eq('id',1).maybeSingle();
+    if(error) throw error;
+    if(data) APP_STATE=Object.assign({},APP_STATE,data);
+  }catch(err){console.error('\u8bfb\u53d6\u6bcf\u65e5\u7ec3\u4e60\u8bbe\u7f6e\u5931\u8d25',err);}
+}
+async function saveAppState(patch){
+  APP_STATE=Object.assign({},APP_STATE,patch);
+  if(!cloudReady){
+    try{localStorage.setItem(APP_STATE_LOCAL_KEY,JSON.stringify(APP_STATE));}catch(e){}
+    return true;
+  }
+  try{
+    const row=Object.assign({id:1},patch);
+    const {error}=await supabase.from('app_state').upsert(row,{onConflict:'id'});
+    if(error) throw error;
+    return true;
+  }catch(err){console.error('\u4fdd\u5b58\u6bcf\u65e5\u7ec3\u4e60\u8bbe\u7f6e\u5931\u8d25',err);return false;}
+}
+function setSelectionFromChars(charList){
+  selectedChars=charList.map(c=>LIBRARY.find(x=>x.char===c)).filter(Boolean);
+  CHARS=selectedChars.slice();current=0;saveSelected();
+}
+function renderDailySettingsInputs(){
+  const gSel=$('dailyGroupSelect'); if(!gSel) return;
+  gSel.value=APP_STATE.daily_group_id!=null?String(APP_STATE.daily_group_id):'';
+  $('dailyCountInput').value=APP_STATE.daily_count||10;
+}
+function renderDailyNote(){
+  const note=$('dailyNote'); if(!note) return;
+  if(!APP_STATE.daily_group_id){note.textContent='\u5f53\u524d\u662f\u624b\u52a8\u9009\u5b57\u6a21\u5f0f\uff1a\u5728\u4e0b\u9762\u751f\u5b57\u5e93\u91cc\u52fe\u9009\u60f3\u7ec3\u7684\u5b57\uff0c\u518d\u70b9\u201c\u7ec3\u4e60\u5df2\u9009\u201d\u3002';return;}
+  const g=GROUPS.find(x=>String(x.id)===String(APP_STATE.daily_group_id));
+  const list=(APP_STATE.last_pick_chars||[]).join(' ');
+  note.textContent='\u4eca\u5929\uff08'+dateKey()+'\uff09\u4ece\u300c'+(g?formatGroup(g.name):'\u8be5\u5206\u7ec4')+'\u300d\u968f\u673a\u62bd\u4e86 '+(APP_STATE.last_pick_chars||[]).length+' \u4e2a\u5b57\uff1a'+(list||'\uff08\u8fd9\u4e2a\u5206\u7ec4\u91cc\u8fd8\u6ca1\u6709\u5b57\uff0c\u8bf7\u5148\u5728\u751f\u5b57\u5e93\u6dfb\u52a0\uff09');
+}
+function renderDailyGroupOptions(){
+  const sel=$('dailyGroupSelect'); if(!sel) return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">\u4e0d\u81ea\u52a8\u6311\u9009\uff08\u624b\u52a8\u9009\u5b57\uff09</option>'+GROUPS.map(g=>'<option value="'+g.id+'">'+escapeHtml(formatGroup(g.name))+'\uff08'+groupCharCount(g)+'\u5b57\uff09</option>').join('');
+  sel.value=GROUPS.some(g=>String(g.id)===cur)?cur:'';
+}
+async function applyDailyAutoPick(force){
+  await loadAppState();
+  renderDailySettingsInputs();
+  const groupId=APP_STATE.daily_group_id;
+  if(!groupId){restoreSelected();renderDailyNote();return;}
+  const today=dateKey();
+  if(!force && APP_STATE.last_pick_date===today && Array.isArray(APP_STATE.last_pick_chars) && APP_STATE.last_pick_chars.length){
+    setSelectionFromChars(APP_STATE.last_pick_chars);renderDailyNote();return;
+  }
+  const groupChars=LIBRARY.filter(x=>String(x.group_id)===String(groupId)).map(x=>x.char);
+  if(!groupChars.length){setSelectionFromChars([]);renderDailyNote();return;}
+  let queue=(String(APP_STATE.queue_group_id)===String(groupId) && Array.isArray(APP_STATE.queue))?APP_STATE.queue.filter(c=>groupChars.includes(c)):[];
+  if(!queue.length) queue=shuffle(groupChars);
+  const n=Math.max(1,Math.min(50,APP_STATE.daily_count||10));
+  const picked=queue.splice(0,n);
+  await saveAppState({last_pick_date:today,last_pick_chars:picked,queue,queue_group_id:groupId});
+  setSelectionFromChars(picked);
+  renderDailyNote();
+}
+
+async function seedDefaults(){
+  if(!cloudReady) return;
+  const {error:gErr}=await supabase.from('groups').upsert(DEFAULT_GROUPS,{onConflict:'name',ignoreDuplicates:true});
+  if(gErr) throw gErr;
+  const {data:groups,error:e2}=await supabase.from('groups').select('id,name').order('id');
+  if(e2) throw e2;
+  const map=Object.fromEntries(groups.map(g=>[g.name,g.id]));
+  const rows=DEFAULT_CHARS.map(x=>({char:x.char,pinyin:x.pinyin,group_id:map[x.group]})).filter(x=>x.group_id);
+  const {error:cErr}=await supabase.from('characters').upsert(rows,{onConflict:'char,group_id',ignoreDuplicates:true});
+  if(cErr) throw cErr;
+}
+async function fetchLibraryRows(){
+  let res=await supabase.from('characters').select('id,char,pinyin,group_id,is_weak,groups(name)').order('id');
+  if(res.error){
+    // Falls back to the pre-upgrade schema if the is_weak column hasn't been added yet in Supabase.
+    res=await supabase.from('characters').select('id,char,pinyin,group_id,groups(name)').order('id');
+  }
+  if(res.error) throw res.error;
+  return (res.data||[]).map(x=>({id:x.id,char:x.char,pinyin:x.pinyin||'',group_id:x.group_id,group:x.groups?.name||'未分组',is_weak:!!x.is_weak}));
+}
+async function loadCloudData(){
+  if(!cloudReady){
+    setCloudStatus('请把 Publishable key 粘贴到 HTML 里',false);
+    // Preview fallback so the page still works before the key is pasted.
+    GROUPS=DEFAULT_GROUPS.map((x,i)=>({id:i+1,name:x.name}));
+    LIBRARY=DEFAULT_CHARS.map((x,i)=>({...x,id:i+1,group_id:GROUPS.find(g=>g.name===x.group)?.id,is_weak:false}));
+    const weakSet=loadLocalWeakSet();
+    LIBRARY.forEach(x=>{if(weakSet.has(x.char))x.is_weak=true;});
+    await backfillMissingPinyin();
+    renderGroupOptions();
+    await applyDailyAutoPick();
+    renderLibrary(); renderPracticeNav(); renderMode(); renderCheckin(); return;
+  }
+  try{
+    // Only bootstrap the starter groups/characters the very first time this
+    // Supabase project is used (an empty "groups" table). Once you've deleted
+    // or renamed a default group, it must stay gone — it should not silently
+    // reappear on the next page load.
+    const {data:existingGroups,error:gCheckErr}=await supabase.from('groups').select('id').limit(1);
+    if(gCheckErr) throw gCheckErr;
+    if(!existingGroups || !existingGroups.length) await seedDefaults();
+    const {data:groups,error:gErr}=await supabase.from('groups').select('id,name').order('id');
+    if(gErr) throw gErr;
+    GROUPS=groups||[];
+    LIBRARY=await fetchLibraryRows();
+    await backfillMissingPinyin();
+    renderGroupOptions();
+    await applyDailyAutoPick();
+    renderLibrary(); renderPracticeNav();
+    await loadPractice();
+    renderMode(); renderCheckin();
+    setCloudStatus('已连接云端');
+  }catch(err){
+    console.error(err);
+    setCloudStatus('连接失败：'+(err.message||'请检查 key / RLS'),false);
+  }
+}
+function groupCharCount(g){return LIBRARY.filter(x=>x.group_id===g.id).length;}
+function renderGroupOptions(){
+  const filter=$('groupSelect'), add=$('addGroupSelect');
+  const currentFilter=filter.value||'all';
+  const currentAdd=add.value;
+  filter.innerHTML='<option value="all">全部生字</option><option value="__weak__">⭐ 需要加强的字</option>'+GROUPS.map(g=>'<option value="'+escapeHtml(g.name)+'">'+escapeHtml(formatGroup(g.name))+'（'+groupCharCount(g)+'）</option>').join('');
+  filter.value=(currentFilter==='__weak__'||GROUPS.some(g=>g.name===currentFilter))?currentFilter:'all';
+  add.innerHTML='<option value="">选择分组</option>'+GROUPS.map(g=>'<option value="'+escapeHtml(g.name)+'">'+escapeHtml(formatGroup(g.name))+'（'+groupCharCount(g)+'字）</option>').join('');
+  add.value=GROUPS.some(g=>g.name===currentAdd)?currentAdd:(GROUPS.length?GROUPS[0].name:'');
+  renderDailyGroupOptions();
+}
+function formatGroup(name){return name.replace('P1-','P1 · ');}
+function escapeHtml(s=''){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+async function addGroup(){
+  const name=prompt('输入新分组名称，例如：P1-第三组');
+  if(!name||!name.trim()) return;
+  const clean=name.trim();
+  if(GROUPS.some(g=>g.name===clean)){ $('addGroupSelect').value=clean; return; }
+  if(!cloudReady){
+    GROUPS.push({id:Date.now(),name:clean}); renderGroupOptions(); $('addGroupSelect').value=clean; setCloudStatus('预览模式：请先填写 Publishable key',false); return;
+  }
+  const {data,error}=await supabase.from('groups').insert({name:clean}).select('id,name').single();
+  if(error){$('status').textContent='新建分组失败：'+error.message;$('status').className='status bad';return;}
+  GROUPS.push(data); renderGroupOptions(); $('addGroupSelect').value=clean; setCloudStatus('分组已保存到云端');
+}
+
+async function deleteGroup(){
+  const name=$('addGroupSelect').value;
+  if(!name){$('status').textContent='请先选择要删除的分组';$('status').className='status bad';return;}
+  if(GROUPS.length<=1){
+    $('status').textContent='至少要保留一个分组';$('status').className='status bad';return;
+  }
+  const group=GROUPS.find(g=>g.name===name);
+  if(!group)return;
+  const count=LIBRARY.filter(x=>x.group_id===group.id).length;
+  const msg=count?('删除「'+formatGroup(name)+'」会同时删除里面的 '+count+' 个生字，且云端不可恢复。确定删除吗？'):('确定删除分组「'+formatGroup(name)+'」吗？');
+  if(!confirm(msg))return;
+  if(!cloudReady){
+    LIBRARY=LIBRARY.filter(x=>x.group_id!==group.id); GROUPS=GROUPS.filter(g=>g.id!==group.id);
+    selectedChars=selectedChars.filter(x=>x.group_id!==group.id); saveSelected(); renderGroupOptions();
+    CHARS=CHARS.filter(x=>x.group_id!==group.id); if(current>=CHARS.length)current=Math.max(0,CHARS.length-1);
+    if(String(APP_STATE.daily_group_id)===String(group.id)) await saveAppState({daily_group_id:null,queue:[],queue_group_id:null,last_pick_date:null,last_pick_chars:[]});
+    renderDailySettingsInputs();renderDailyNote(); renderLibrary(); renderPracticeNav();
+    $('status').textContent='✓ 已删除分组「'+formatGroup(name)+'」';$('status').className='status ok';return;
+  }
+  try{
+    const {error}=await supabase.from('groups').delete().eq('id',group.id);
+    if(error)throw error;
+    GROUPS=GROUPS.filter(g=>g.id!==group.id);
+    LIBRARY=LIBRARY.filter(x=>x.group_id!==group.id);
+    selectedChars=selectedChars.filter(x=>x.group_id!==group.id); saveSelected();
+    renderGroupOptions();
+    CHARS=CHARS.filter(x=>x.group_id!==group.id); if(current>=CHARS.length)current=Math.max(0,CHARS.length-1);
+    if(String(APP_STATE.daily_group_id)===String(group.id)) await saveAppState({daily_group_id:null,queue:[],queue_group_id:null,last_pick_date:null,last_pick_chars:[]});
+    renderDailySettingsInputs();renderDailyNote(); renderLibrary(); renderPracticeNav();
+    $('status').textContent='✓ 已删除分组「'+formatGroup(name)+'」及其中生字';$('status').className='status ok';
+  }catch(err){$('status').textContent='删除失败：'+err.message;$('status').className='status bad';}
+}
+
+async function renameGroup(){
+  const name=$('addGroupSelect').value;
+  if(!name){$('status').textContent='请先选择要重命名的分组';$('status').className='status bad';return;}
+  const group=GROUPS.find(g=>g.name===name);
+  if(!group)return;
+  const next=prompt('给「'+formatGroup(name)+'」改个新名字：',name);
+  if(next===null)return;
+  const clean=next.trim();
+  if(!clean||clean===name)return;
+  if(GROUPS.some(g=>g.name===clean)){$('status').textContent='已经有一个同名的分组了';$('status').className='status bad';return;}
+  if(!cloudReady){
+    group.name=clean; LIBRARY.forEach(x=>{if(x.group_id===group.id)x.group=clean;});
+    renderGroupOptions(); renderLibrary(); renderPracticeNav();
+    $('status').textContent='✓ 已重命名为「'+formatGroup(clean)+'」';$('status').className='status ok';return;
+  }
+  try{
+    const {error}=await supabase.from('groups').update({name:clean}).eq('id',group.id);
+    if(error)throw error;
+    group.name=clean; LIBRARY.forEach(x=>{if(x.group_id===group.id)x.group=clean;});
+    renderGroupOptions(); renderLibrary(); renderPracticeNav();
+    $('status').textContent='✓ 已重命名为「'+formatGroup(clean)+'」';$('status').className='status ok';
+  }catch(err){$('status').textContent='重命名失败：'+err.message;$('status').className='status bad';}
+}
+async function addOnlineCharacter(){
+  const input=$('addCharInput');
+  const groupName=$('addGroupSelect').value;
+  const charsIn=[...new Set(Array.from(input.value.trim()).filter(c=>/[\u3400-\u9fff]/.test(c)))];
+  if(!charsIn.length){$('status').textContent='请输入一组中文汉字';$('status').className='status bad';return;}
+  if(!groupName){$('status').textContent='请先选择分组';$('status').className='status bad';return;}
+  const group=GROUPS.find(g=>g.name===groupName);
+  if(!group){return;}
+  const existingChars=LIBRARY.filter(x=>charsIn.includes(x.char)&&x.group_id===group.id);
+  const newChars=charsIn.filter(c=>!existingChars.some(x=>x.char===c));
+  if(!cloudReady){
+    newChars.forEach(c=>{const item={id:Date.now()+Math.random(),char:c,pinyin:getPinyin(c),group:groupName,group_id:group.id,is_weak:false};LIBRARY.push(item);selectedChars.push(item);});
+    renderLibrary();renderPracticeNav();input.value='';setCloudStatus('预览模式：请先填写 Publishable key',false);return;
+  }
+  try{
+    const rows=newChars.map(c=>({char:c,pinyin:getPinyin(c),group_id:group.id}));
+    if(rows.length){
+      const {error}=await supabase.from('characters').upsert(rows,{onConflict:'char,group_id',ignoreDuplicates:true});
+      if(error) throw error;
+    }
+    await refreshLibrary();
+    for(const c of charsIn){const item=LIBRARY.find(x=>x.char===c&&x.group_id===group.id);if(item&&!selectedChars.some(x=>x.char===c))selectedChars.push(item);}
+    saveSelected(); renderLibrary(); renderPracticeNav(); input.value='';
+    $('status').textContent='✓ 已把 '+charsIn.length+' 个字保存到「'+formatGroup(groupName)+'」';$('status').className='status ok';
+  }catch(err){$('status').textContent='添加失败：'+err.message;$('status').className='status bad';}
+}
+async function refreshLibrary(){
+  LIBRARY=await fetchLibraryRows();
+}
+
+async function loadPractice(){
+  if(!cloudReady){practiceRows=[];return;}
+  const {data,error}=await supabase.from('practice').select('practice_date,char,completed_at').order('practice_date');
+  if(error) throw error;
+  practiceRows=data||[];
+}
+function practiceMap(){
+  const p={};
+  practiceRows.forEach(r=>{if(!p[r.practice_date])p[r.practice_date]=[];if(!p[r.practice_date].includes(r.char))p[r.practice_date].push(r.char);});
+  return p;
+}
+function dateKey(d=new Date()){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day;}
+async function addDailyCompletion(char){
+  if(!char)return;
+  const key=dateKey();
+  if(cloudReady){
+    const {error}=await supabase.from('practice').upsert({practice_date:key,char},{onConflict:'practice_date,char'});
+    if(error){console.error(error);$('status').textContent='打卡保存失败：'+error.message;$('status').className='status bad';return;}
+    await loadPractice();
+  }else{
+    try{const p=JSON.parse(localStorage.getItem('jordanDailyPractice')||'{}');p[key]??={chars:[],count:0};if(!p[key].chars.includes(char))p[key].chars.push(char);p[key].count=p[key].chars.length;localStorage.setItem('jordanDailyPractice',JSON.stringify(p));}catch(e){}
+  }
+  renderCheckin();
+}
+function renderCheckin(){
+  const p=cloudReady?practiceMap():(()=>{try{return JSON.parse(localStorage.getItem('jordanDailyPractice')||'{}');}catch(e){return {};}})();
+  const today=dateKey(),todayCount=(p[today]||[]).length||p[today]?.count||0;
+  let total=0;Object.values(p).forEach(x=>{total+=Array.isArray(x)?x.length:(x.chars?x.chars.length:(x.count||0));});
+  const now=new Date(),monthPrefix=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  let month=0;Object.entries(p).forEach(([k,x])=>{if(k.startsWith(monthPrefix))month+=Array.isArray(x)?x.length:(x.chars?x.chars.length:(x.count||0));});
+  let streak=0;const d=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  while(true){const k=dateKey(d),x=p[k],n=x?(Array.isArray(x)?x.length:(x.chars?x.chars.length:(x.count||0))):0;if(n>0){streak++;d.setDate(d.getDate()-1);}else break;}
+  $('todayCount').textContent=todayCount;$('todayTarget').textContent=DAILY_TARGET;$('monthCount').textContent=month;$('totalCount').textContent=total;$('streak').textContent='连续 '+streak+' 天';$('dailyProgress').style.width=Math.min(100,todayCount/DAILY_TARGET*100)+'%';
+  const grid=$('weekGrid');grid.innerHTML='';const names=['日','一','二','三','四','五','六'];
+  for(let i=6;i>=0;i--){const x=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i),k=dateKey(x),v=p[k],n=v?(Array.isArray(v)?v.length:(v.chars?v.chars.length:(v.count||0))):0;const el=document.createElement('div');el.className='day '+(k===today?'active ':'')+(n>0?'complete':'');el.innerHTML='<div class="dow">周'+names[x.getDay()]+'</div><div class="num">'+x.getDate()+'</div><div class="done">'+(n?n+'字':'—')+'</div>';grid.appendChild(el);}
+}
+function matchesGroup(x,group){return group==='all'||(group==='__weak__'?!!x.is_weak:x.group===group);}
+function renderLibrary(){
+  const q=$('searchInput').value.trim().toLowerCase(),q2=stripTone(q),group=$('groupSelect').value,grid=$('libraryGrid');grid.innerHTML='';
+  LIBRARY.filter(x=>(!q||x.char.includes(q)||(x.pinyin||'').toLowerCase().includes(q)||stripTone(x.pinyin||'').includes(q2))&&matchesGroup(x,group)).forEach(item=>{
+    const d=document.createElement('div');const checked=selectedChars.some(x=>x.char===item.char);const practicing=!!(CHARS[current]&&CHARS[current].char===item.char);d.className='lib-item '+(checked?'selected':'')+(item.is_weak?' weak':'')+(practicing?' practicing':'');d.title='点这个字直接开始练它；打勾＝加入"练习勾选的字"';d.innerHTML='<button type="button" class="starBtn'+(item.is_weak?' on':'')+'" title="标记/取消：需要加强">⭐</button><input type="checkbox" '+(checked?'checked':'')+'><span class="hanzi">'+escapeHtml(item.char)+'</span><span class="py">'+escapeHtml(item.pinyin||'')+'</span>';d.querySelector('input').addEventListener('click',e=>e.stopPropagation());d.querySelector('input').addEventListener('change',()=>toggleSelected(item));d.querySelector('.starBtn').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();toggleWeak(item,'parent');});d.addEventListener('click',e=>{if(e.target.closest('.starBtn')||e.target.tagName==='INPUT')return;practiceFromLibrary(item);});grid.appendChild(d);
+  });updateSelectedButton();
+}
+function toggleSelected(item){const i=selectedChars.findIndex(x=>x.char===item.char);if(i>=0)selectedChars.splice(i,1);else selectedChars.push(item);saveSelected();renderLibrary();renderPracticeNav();}
+function visibleItems(){const q=$('searchInput').value.trim().toLowerCase(),q2=stripTone(q),group=$('groupSelect').value;return LIBRARY.filter(x=>(!q||x.char.includes(q)||(x.pinyin||'').toLowerCase().includes(q)||stripTone(x.pinyin||'').includes(q2))&&matchesGroup(x,group));}
+function selectAllVisible(){visibleItems().forEach(x=>{if(!selectedChars.some(y=>y.char===x.char))selectedChars.push(x);});saveSelected();renderLibrary();renderPracticeNav();}
+function clearAll(){selectedChars=[];saveSelected();renderLibrary();renderPracticeNav();}
+function startSelectedPractice(){if(!selectedChars.length){$('status').textContent='请先在生字库勾选至少一个字';$('status').className='status bad';return;}CHARS=selectedChars.slice();current=0;destroyWriters();renderLibrary();renderMode();renderPracticeNav();$('status').textContent='▶ 正在练习勾选的字，共 '+CHARS.length+' 个';$('status').className='status ok';}
+function practiceThisGroup(){
+  const items=visibleItems();
+  if(!items.length){$('status').textContent='这个分组还没有字';$('status').className='status bad';return;}
+  CHARS=items.slice();current=0;destroyWriters();renderLibrary();renderMode();renderPracticeNav();
+  $('status').textContent='▶ 正在练习「'+currentFilterLabel()+'」，共 '+CHARS.length+' 个字';$('status').className='status ok';
+}
+function practiceFromLibrary(item){
+  const existingIdx=CHARS.findIndex(x=>x.char===item.char);
+  if(existingIdx>=0){selectChar(existingIdx);return;}
+  const items=visibleItems();
+  const idx=items.findIndex(x=>x.char===item.char);
+  if(idx<0)return;
+  CHARS=items.slice();current=idx;destroyWriters();renderLibrary();renderMode();renderPracticeNav();
+  $('status').textContent='▶ 正在练习「'+currentFilterLabel()+'」，从「'+item.char+'」开始';$('status').className='status ok';
+}
+function removeFromQueue(i){
+  const item=CHARS[i]; if(!item)return;
+  CHARS=CHARS.filter((x,idx)=>idx!==i);
+  const si=selectedChars.findIndex(x=>x.char===item.char);
+  if(si>=0){selectedChars.splice(si,1);saveSelected();}
+  if(current>=CHARS.length)current=Math.max(0,CHARS.length-1);
+  destroyWriters();renderLibrary();renderMode();renderPracticeNav();
+}
+function renderQueueChips(){
+  const box=$('queueChips'); if(!box) return;
+  box.innerHTML='';
+  if(!CHARS.length)return;
+  CHARS.forEach((item,i)=>{
+    const b=document.createElement('button');
+    b.type='button';
+    b.className='queue-chip'+(i===current?' active':'');
+    b.innerHTML='<span>'+escapeHtml(item.char)+(item.is_weak?'⭐':'')+'</span><span class="chip-remove" title="从这次练习里去掉">×</span>';
+    b.addEventListener('click',e=>{ if(e.target.closest('.chip-remove')){removeFromQueue(i);return;} selectChar(i); });
+    box.appendChild(b);
+  });
+  if(CHARS.length>1){
+    const note=document.createElement('span');
+    note.className='queue-clear-note';
+    note.textContent='点 × 从这次练习里去掉一个字';
+    box.appendChild(note);
+  }
+}
+function renderPracticeNav(){
+  renderPracticeWordInfo();
+  renderQueueChips();
+  const info=$('practiceNavInfo'),prev=$('prevCharBtn'),next=$('nextCharBtn');
+  if(!CHARS.length){info.textContent='请先选字';prev.disabled=true;next.disabled=true;return;}
+  const item=CHARS[current];
+  info.textContent=(current+1)+' / '+CHARS.length+'　'+item.char+(item.is_weak?' ⭐':'')+(item.pinyin?'　'+item.pinyin:'');
+  prev.disabled=current<=0;
+  next.disabled=current>=CHARS.length-1;
+}
+function renderPracticeWordInfo(){const item=CHARS[current];if(!item)return;$('practicePinyin').textContent=item.pinyin||'';}
+function selectChar(i){current=i;destroyWriters();renderMode();renderPracticeNav();renderLibrary();}
+function safe(fn){try{return fn()}catch(e){console.error(e);return null}}
+function destroyWriters(){safe(()=>writer&&writer.cancelQuiz&&writer.cancelQuiz());writer=null;quizActive=false;$('writer').innerHTML='';$('practiceStage').classList.remove('trace-mode');$('practiceCanvas').style.display='none';const c=$('practiceCanvas'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);}
+function makeQuiz(){if(!CHARS[current])return;if(!window.HanziWriter){$('status').textContent='笔顺库还没加载，请检查网络后刷新';$('status').className='status bad';return;}writer=HanziWriter.create('writer',CHARS[current].char,{width:480,height:480,padding:8,showCharacter:false,showOutline:false,drawingWidth:18,showHintAfterMisses:2,highlightOnComplete:true,onLoadCharDataError:()=>{$('status').textContent='笔顺数据加载失败';$('status').className='status bad';}});writer.quiz({showHintAfterMisses:2,onCorrectStroke:d=>{$('status').textContent='✓ 第 '+(d.strokeNum+1)+' 笔正确！';$('status').className='status ok';},onMistake:d=>{$('status').textContent='再试一次这一笔 🙂';$('status').className='status bad';},onComplete:async d=>{quizActive=false;await addDailyCompletion(CHARS[current].char);$('status').textContent='🎉 全部写对了！';$('status').className='status ok';}});quizActive=true;}
+function makeTrace(){if(!CHARS[current])return;if(!window.HanziWriter){$('status').textContent='笔顺库还没加载，请检查网络后刷新';$('status').className='status bad';return;}$('practiceCanvas').style.display='block';$('practiceStage').classList.add('trace-mode');writer=HanziWriter.create('writer',CHARS[current].char,{width:480,height:480,padding:8,showCharacter:false,showOutline:false,strokeColor:'#b0bec5',outlineColor:'#cfd8dc',strokeAnimationSpeed:1,drawingFadeDuration:300});setupTraceCanvas();autoSpeakCurrent();setTimeout(()=>{if(writer&&mode==='trace')writer.animateCharacter();},180);}
+function setupTraceCanvas(){const canvas=$('practiceCanvas'),stage=$('practiceStage'),rect=stage.getBoundingClientRect(),dpr=Math.max(1,window.devicePixelRatio||1);canvas.width=Math.round(rect.width*dpr);canvas.height=Math.round(rect.height*dpr);canvas.style.width=rect.width+'px';canvas.style.height=rect.height+'px';const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=Math.max(6,rect.width*0.018);ctx.strokeStyle='#455a64';let drawing=false,last=null;function point(e){const r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}canvas.onpointerdown=function(e){if(mode!=='trace')return;e.preventDefault();drawing=true;last=point(e);canvas.setPointerCapture?.(e.pointerId);ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(last.x,last.y);ctx.stroke();};canvas.onpointermove=function(e){if(!drawing)return;e.preventDefault();const q=point(e);ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(q.x,q.y);ctx.stroke();last=q;};canvas.onpointerup=canvas.onpointercancel=function(e){drawing=false;last=null;};}
+function clearTrace(){const canvas=$('practiceCanvas'),ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.clientWidth,canvas.clientHeight);}
+$('soundBtn').addEventListener('click',speakCurrent);
+function speakCurrent(){const item=CHARS[current];if(!item)return;if(!('speechSynthesis' in window)){ $('status').textContent='这个浏览器不支持朗读';$('status').className='status bad';return;}window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(item.char);u.lang='zh-CN';u.rate=.72;u.pitch=1;window.speechSynthesis.speak(u);}
+function autoSpeakCurrent(){const item=CHARS[current];if(!item||!('speechSynthesis' in window))return;try{window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(item.char);u.lang='zh-CN';u.rate=.72;u.pitch=1;window.speechSynthesis.speak(u);}catch(e){}}
+function renderMode(){
+  $('leftTitle').textContent=mode==='trace'?'描红':'自己写＋批改';
+  if(!CHARS.length){
+    $('practicePinyin').textContent='';
+    $('hint').textContent='请先在生字库勾选要练习的字';
+    $('status').textContent='';
+    $('status').className='status';
+    $('practiceCanvas').style.display='none';
+    $('practiceStage').classList.remove('trace-mode');
+    return;
+  }
+  if(current<0||current>=CHARS.length) current=0;
+  renderPracticeWordInfo();
+  $('hint').textContent=mode==='trace'?'沿着浅灰色笔画写；点击 🔊 可以听读音':'按正确笔顺写，写错会提示';
+  $('status').textContent='';$('status').className='status';
+  $('practiceCanvas').style.display=mode==='trace'?'block':'none';
+  $('practiceStage').classList.toggle('trace-mode',mode==='trace');
+  if(mode==='trace')makeTrace();
+  if(mode==='quiz')makeQuiz();
+}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));destroyWriters();renderMode();}));
+$('startBtn').addEventListener('click',()=>{if(mode==='trace'){if(writer){try{writer.cancelAnimation();}catch(e){}try{writer.animateCharacter();}catch(e){}}$('status').textContent='跟着灰色笔画，一笔一划慢慢描 🙂';$('status').className='status';}else{destroyWriters();makeQuiz();}});
+$('clearBtn').addEventListener('click',()=>{if(mode==='trace')clearTrace();else{destroyWriters();makeQuiz();}$('status').textContent='';$('status').className='status';});
+$('finishBtn').addEventListener('click',async()=>{if(CHARS[current]){await addDailyCompletion(CHARS[current].char);$('status').textContent='✓ 已打卡：'+CHARS[current].char+'；今天完成 '+((cloudReady?practiceMap()[dateKey()]||[]:[]).length||1)+' 个字';$('status').className='status ok';}});
+$('weakBtn').addEventListener('click',async()=>{
+  const item=CHARS[current]; if(!item)return;
+  const willBeWeak=!item.is_weak;
+  await toggleWeak(item,'jordan');
+  $('status').textContent=willBeWeak?('✓ 已标记「'+item.char+'」需要加强，收进了 ⭐ 列表'):('✓ 已取消「'+item.char+'」的标记');
+  $('status').className='status ok';
+});
+$('resetBtn').addEventListener('click',()=>{if(CHARS.length)selectChar(0);});
+document.querySelectorAll('.stage').forEach(el=>el.addEventListener('touchstart',e=>{if(mode==='quiz')e.preventDefault()},{passive:false}));
+$('addCharBtn').addEventListener('click',addOnlineCharacter);$('addGroupBtn').addEventListener('click',addGroup);$('renameGroupBtn').addEventListener('click',renameGroup);$('deleteGroupBtn').addEventListener('click',deleteGroup);$('addCharInput').addEventListener('keydown',e=>{if(e.key==='Enter')addOnlineCharacter();});$('searchInput').addEventListener('input',renderLibrary);$('groupSelect').addEventListener('change',renderLibrary);$('selectAllBtn').addEventListener('click',selectAllVisible);$('clearAllBtn').addEventListener('click',clearAll);$('practiceSelectedBtn').addEventListener('click',startSelectedPractice);$('practiceGroupBtn').addEventListener('click',practiceThisGroup);
+$('prevCharBtn').addEventListener('click',()=>{if(current>0)selectChar(current-1);});
+$('nextCharBtn').addEventListener('click',()=>{if(current<CHARS.length-1)selectChar(current+1);});
+$('saveDailyBtn').addEventListener('click',async()=>{
+  const val=$('dailyGroupSelect').value;
+  const groupId=val?Number(val):null;
+  const count=Math.max(1,Math.min(50,parseInt($('dailyCountInput').value,10)||10));
+  const ok=await saveAppState({daily_group_id:groupId,daily_count:count});
+  if(!ok){$('status').textContent='保存失败，请确认已在 Supabase 运行了升级脚本（app_state 表）';$('status').className='status bad';return;}
+  await applyDailyAutoPick(true);
+  renderLibrary();renderPracticeNav();destroyWriters();renderMode();
+  $('status').textContent='✓ 每日练习设置已保存';$('status').className='status ok';
+});
+$('reshuffleBtn').addEventListener('click',async()=>{
+  await applyDailyAutoPick(true);
+  renderLibrary();renderPracticeNav();destroyWriters();renderMode();
+  $('status').textContent='✓ 已换一批新的字';$('status').className='status ok';
+});
+
+// Start
+CHARS=[];loadCloudData();
+})();
+</script>
+</body>
+</html>
