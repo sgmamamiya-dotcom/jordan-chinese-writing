@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bryan's Daily News</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito+Sans:wght@400;700&display=swap">
+<link rel="stylesheet" href="../hub.css">
+<style>
+.paper{background:var(--card);border:3px solid var(--ink);border-top:12px solid var(--yellow);border-radius:22px;padding:28px 22px;text-align:center}
+.paper .np{font-size:56px;line-height:1}
+.paper p{color:var(--mute);margin:8px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html">← Home</a>
+  <h1>Bryan's Daily News</h1>
+  <p class="hello" id="today"></p>
+  <div class="paper">
+    <div class="np">📰</div>
+    <p>Today's edition is coming soon.</p>
+  </div>
+</div>
+<script>
+document.getElementById('today').textContent =
+  new Date().toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+</script>
+</body>
+</html>

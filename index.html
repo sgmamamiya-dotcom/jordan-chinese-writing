@@ -24,6 +24,16 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor
 canvas.gone{opacity:0;pointer-events:none}
 .tfoot{margin-top:12px;font-size:14px;color:var(--mute);min-height:22px}
 @media(prefers-reduced-motion:reduce){canvas{transition:none}}
+/* Bryan's daily newsletter */
+.news{display:flex;align-items:center;gap:16px;text-decoration:none;color:var(--ink);background:var(--card);border-radius:22px;
+  padding:16px 18px;margin-bottom:34px;border:3px solid var(--ink);border-left:12px solid var(--yellow)}
+.news:hover{background:#FFFBEE}
+.news .np{font-size:40px;line-height:1}
+.news .nt{flex:1;min-width:0}
+.news b{display:block;font-family:var(--display);font-weight:800;font-size:22px;line-height:1.15}
+.news .nt>span{color:var(--mute);font-size:15px}
+.news .read{font-weight:700;white-space:nowrap}
+@media(max-width:520px){.news .read{display:none}}
 </style>
 </head>
 <body>
@@ -39,6 +49,12 @@ canvas.gone{opacity:0;pointer-events:none}
     </div>
     <div class="tfoot" id="hint">Scratch the silver with your finger or mouse.</div>
   </section>
+
+  <a class="news" href="bryan/news.html">
+    <span class="np">📰</span>
+    <span class="nt"><b>Bryan's Daily News</b><span><span id="newsDate"></span> · Today's edition is coming soon</span></span>
+    <span class="read">Read →</span>
+  </a>
 
   <nav class="doors">
     <a class="door bryan" href="bryan/index.html">
@@ -60,6 +76,7 @@ canvas.gone{opacity:0;pointer-events:none}
 const now = new Date();
 document.getElementById('today').textContent =
   now.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long'}) + ' · 今天的小惊喜在下面';
+document.getElementById('newsDate').textContent = now.toLocaleDateString('en-GB', {day:'numeric', month:'short'});
 const f = FACTS[factIndexForToday()];
 document.getElementById('emoji').textContent = f.e;
 document.getElementById('fact').textContent = f.fact;
