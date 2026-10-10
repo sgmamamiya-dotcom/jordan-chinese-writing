@@ -12,7 +12,7 @@
   function fromKey(k) { var p = k.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
   function problem(err) {
     var msg = (err && (err.code + ' ' + err.message)) || '';
-    return /42P01|PGRST205|does not exist|schema cache/i.test(msg) ? 'setup' : 'offline';
+    return /42P01|PGRST20[45]|does not exist|schema cache|column/i.test(msg) ? 'setup' : 'offline';
   }
   function run(q) {
     if (!db) return Promise.reject({ message: 'offline' });
@@ -24,14 +24,14 @@
     fromKey: fromKey,
     problem: problem,
     list: function () {
-      return run(function (t) { return t.select('edition_date,headline,weather,story').order('edition_date', { ascending: false }).limit(120); });
+      return run(function (t) { return t.select('edition_date,headline,weather,story,content').order('edition_date', { ascending: false }).limit(120); });
     },
     get: function (key) {
-      return run(function (t) { return t.select('edition_date,headline,weather,story').eq('edition_date', key).maybeSingle(); });
+      return run(function (t) { return t.select('edition_date,headline,weather,story,content').eq('edition_date', key).maybeSingle(); });
     },
     save: function (ed) {
       return run(function (t) {
-        return t.upsert({ edition_date: ed.edition_date, headline: ed.headline, weather: ed.weather, story: ed.story, updated_at: new Date().toISOString() }, { onConflict: 'edition_date' });
+        return t.upsert({ edition_date: ed.edition_date, headline: ed.headline, weather: ed.weather, story: ed.story, content: ed.content || {}, updated_at: new Date().toISOString() }, { onConflict: 'edition_date' });
       });
     }
   };

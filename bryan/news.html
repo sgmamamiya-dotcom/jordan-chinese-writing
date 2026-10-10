@@ -5,194 +5,415 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Bryan's Daily News</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Baloo+2:wght@600;800&family=Nunito+Sans:wght@400;700&display=swap">
-<link rel="stylesheet" href="../hub.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Oswald:wght@500;700&display=swap">
 <style>
-.paper{background:#FFFDF6;color:#1f1b16;border:3px solid var(--ink);border-radius:18px;padding:22px 22px 26px;box-shadow:0 8px 0 var(--ink)}
-.mast{text-align:center;font-family:"UnifrakturMaguntia",serif;font-size:clamp(34px,7vw,56px);line-height:1;margin:2px 0 10px}
-.dateline{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:3px double #1f1b16;border-bottom:1px solid #1f1b16;
-  padding:6px 2px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
-.dateline .wx{font-size:22px;letter-spacing:0}
-.headline{color:#1f1b16;font-family:var(--display);font-weight:800;font-size:clamp(28px,5vw,40px);line-height:1.1;margin:18px 0 10px}
-.story p{margin:0 0 12px;font-size:18px;line-height:1.65}
-.story p:first-child::first-letter{font-family:var(--display);font-weight:800;font-size:3.1em;float:left;line-height:.9;margin:4px 8px 0 0;color:var(--purple)}
-.empty{text-align:center;padding:26px 6px 6px;color:var(--mute)}
-.empty .np{font-size:56px;line-height:1}
-.empty p{margin:8px 0 16px}
+:root{
+  --desk:#2b2620;--desk-ink:#e9dfc8;
+  --serif:"Libre Caslon Text","Songti SC","STSong","Noto Serif SC",Georgia,serif;
+  --display:"Libre Caslon Display","Songti SC","STSong","Noto Serif SC",Georgia,serif;
+  --fraktur:"UnifrakturMaguntia","Libre Caslon Display",serif;
+  --type:"Special Elite","Courier New","Songti SC",monospace;
+  --tabloid:"Oswald","Heiti SC","PingFang SC",Impact,sans-serif;
+  --ui:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.28 0 0 0 0 0.18 0 0 0 .13 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--desk);color:var(--desk-ink);font:16px/1.5 var(--ui);min-height:100vh}
+.wrap{max-width:980px;margin:0 auto;padding:18px 14px 120px}
+.back{display:inline-block;color:var(--desk-ink);text-decoration:none;font-weight:700;margin:0 0 12px;opacity:.85}
+.back:hover{opacity:1}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit}
+:focus-visible{outline:3px solid #f2b84b;outline-offset:2px}
 
-.btn{display:inline-flex;align-items:center;gap:8px;font:700 17px var(--body);min-height:48px;padding:0 20px;border-radius:999px;border:3px solid var(--ink);
-  background:var(--yellow);color:var(--ink);cursor:pointer;text-decoration:none}
-.btn.sec{background:var(--card)}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.btn:focus-visible,.wx-pick button:focus-visible,.ed input:focus-visible,.ed textarea:focus-visible,.past button:focus-visible{outline:4px solid var(--purple);outline-offset:3px}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+/* ---------- paper ---------- */
+.sheet{--paper:#EFE6CF;--ink:#2a241b;--rule:#2a241b;--accent:#2a241b;--hfont:var(--display);--bfont:var(--serif);
+  background:var(--grain),radial-gradient(ellipse at 50% 40%,transparent 55%,rgba(120,90,40,.16)),var(--paper);
+  color:var(--ink);padding:clamp(16px,3.5vw,34px);box-shadow:0 18px 40px #0008;margin:0 0 22px;position:relative}
+.sheet[data-paper=sepia]{--paper:#E0C99B;--ink:#3a2814;--rule:#3a2814;--accent:#3a2814;
+  background:var(--grain),radial-gradient(circle at 12% 18%,rgba(140,90,30,.18) 0 3%,transparent 9%),radial-gradient(circle at 86% 74%,rgba(140,90,30,.16) 0 2%,transparent 7%),radial-gradient(ellipse at 50% 45%,transparent 45%,rgba(110,70,20,.32)),var(--paper)}
+.sheet[data-paper=evening]{--paper:#DCDAD3;--ink:#141414;--rule:#141414;--accent:#141414}
+.sheet[data-paper=extra]{--accent:#A4231A}
+.sheet[data-type=typewriter]{--hfont:var(--type);--bfont:var(--type)}
+.sheet[data-type=tabloid]{--hfont:var(--tabloid)}
 
-/* editor */
-.ed{background:var(--card);border:3px solid var(--ink);border-radius:18px;padding:18px;margin-top:22px}
-.ed h2{font-family:var(--display);font-weight:800;font-size:26px;margin:0 0 12px}
-.ed label{display:block;font-weight:700;margin:14px 0 6px}
-.ed input[type=text],.ed input[type=date],.ed textarea{width:100%;font:18px/1.5 var(--body);color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:12px;padding:10px 12px}
-.ed input[type=date]{width:auto}
-.ed textarea{min-height:240px;resize:vertical}
-.count{color:var(--mute);font-size:14px;margin-top:4px}
-.wx-pick{display:flex;flex-wrap:wrap;gap:8px}
-.wx-pick button{font:700 15px var(--body);min-height:46px;padding:0 14px;border-radius:999px;border:3px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer}
-.wx-pick button[aria-pressed="true"]{background:var(--ink);color:#fff}
+/* masthead */
+.ears{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px}
+.ear{border:1px solid var(--rule);padding:6px 8px;font:italic 13px/1.3 var(--serif);text-align:center;max-width:150px}
+.ear.r{justify-self:end}
+.ear b{display:block;font-style:normal;letter-spacing:.08em;text-transform:uppercase;font-size:11px}
+.ear .wx{font-size:22px;font-style:normal}
+.mast{font-family:var(--fraktur);font-weight:400;font-size:clamp(34px,6.3vw,74px);line-height:1;text-align:center;margin:0;color:var(--ink)}
+.dateline{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;padding:5px 2px;
+  border-top:3px double var(--rule);border-bottom:3px double var(--rule);font:700 12px/1.4 var(--serif);letter-spacing:.12em;text-transform:uppercase}
+.extra-banner{display:none;text-align:center;font:700 clamp(26px,6vw,46px)/1 var(--tabloid);letter-spacing:.2em;color:var(--accent);margin:4px 0 12px}
+.sheet[data-paper=extra] .extra-banner{display:block}
+
+/* running head of each page */
+.phead{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--rule);padding-bottom:4px;margin-bottom:16px;
+  font:700 12px/1.3 var(--serif);letter-spacing:.14em;text-transform:uppercase}
+.phead .sec{font:400 22px/1 var(--hfont);letter-spacing:.04em;text-transform:none;color:var(--accent)}
+.sheet[data-type=tabloid] .phead .sec{text-transform:uppercase;font-weight:700}
+.pfoot{text-align:center;margin-top:18px;font:italic 13px var(--serif);opacity:.8}
+
+/* stories */
+.cols{column-count:var(--cols,3);column-gap:26px;column-rule:1px solid color-mix(in srgb,var(--rule) 45%,transparent)}
+.story{margin:0 0 20px}
+.story h2{font:400 26px/1.08 var(--hfont);margin:0 0 6px;color:var(--accent);break-after:avoid;break-inside:avoid;overflow-wrap:anywhere}
+.sheet[data-type=tabloid] .story h2{font-weight:700;text-transform:uppercase;letter-spacing:.01em}
+.story .deck{font:italic 16px/1.35 var(--bfont);margin:0 0 6px;break-after:avoid}
+.story .by{font:700 11px/1.3 var(--serif);letter-spacing:.14em;text-transform:uppercase;margin:0 0 8px;break-after:avoid}
+.story .body p{margin:0 0 10px;font:16px/1.6 var(--bfont);text-align:justify;hyphens:auto;white-space:pre-line}
+.lead{border-bottom:1px solid var(--rule);padding-bottom:16px;margin-bottom:18px}
+.lead h2{font-size:clamp(34px,6vw,58px);text-align:center;line-height:1.02}
+.lead .deck{text-align:center;font-size:19px}
+.lead .by{text-align:center}
+.lead .body{column-count:2;column-gap:26px;column-rule:1px solid color-mix(in srgb,var(--rule) 45%,transparent)}
+.feature h2{font-size:clamp(40px,7vw,68px);line-height:1;text-align:left}
+.feature .deck{font-size:21px;text-align:left}
+.feature .by{text-align:left}
+.lead .body p:first-child::first-letter{float:left;font:400 3.6em/.82 var(--hfont);margin:6px 8px 0 0;color:var(--accent)}
+.story.box{border:3px double var(--rule);padding:10px 12px;break-inside:avoid}
+.story.box h2{font-size:18px;text-align:center;letter-spacing:.12em;text-transform:uppercase;border-bottom:1px solid var(--rule);padding-bottom:4px}
+.story.quote{text-align:center;break-inside:avoid;padding:6px 4px}
+.story.quote blockquote{margin:0;font:italic 24px/1.25 var(--display);color:var(--accent)}
+.sheet[data-type=typewriter] .story.quote blockquote{font-family:var(--type);font-style:normal}
+.story.quote blockquote::before{content:"“"}
+.story.quote blockquote::after{content:"”"}
+.story.quote .by{margin-top:8px}
+.blank{text-align:center;font:italic 16px var(--serif);opacity:.7;padding:20px 0}
+
+/* empty day */
+.noprint{text-align:center;padding:36px 10px 20px}
+.noprint p{font:italic 20px/1.4 var(--serif);margin:0 0 18px}
+
+/* ---------- controls (clearly not part of the paper) ---------- */
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 22px}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:0 18px;border-radius:999px;border:2px solid #f2b84b;
+  background:#f2b84b;color:#2b2620;font-weight:700;font-size:16px;cursor:pointer;text-decoration:none}
+.btn.ghost{background:transparent;color:var(--desk-ink);border-color:#8d8170}
+.btn.small{min-height:36px;padding:0 12px;font-size:14px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:5;background:#1d1a16ee;border-top:1px solid #4a4238;padding:10px 14px calc(10px + env(safe-area-inset-bottom))}
+.dock .in{max-width:980px;margin:0 auto;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.dock .note{color:#bdb19b;font-size:13px;margin-left:auto}
+
+/* edit mode: same paper, inputs styled like print */
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:#2b2620;color:var(--desk-ink);border-radius:10px;padding:8px 10px;margin:0 0 16px;font:14px var(--ui)}
+.tools label{display:flex;align-items:center;gap:6px}
+.tools select,.tools input{background:#3a332b;color:var(--desk-ink);border:1px solid #6d6253;border-radius:8px;padding:6px 8px;min-height:36px}
+.tools input{width:11em}
+.tools .sp{flex:1}
+.ibtn{min-width:36px;min-height:36px;border-radius:8px;border:1px solid #6d6253;background:#3a332b;color:var(--desk-ink);cursor:pointer}
+.ibtn:disabled{opacity:.35;cursor:not-allowed}
+.sedit{border:1px dashed color-mix(in srgb,var(--rule) 60%,transparent);padding:10px;margin:0 0 14px}
+.sedit .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px;font:13px var(--ui)}
+.sedit .row select{background:transparent;color:var(--ink);border:1px solid var(--rule);border-radius:6px;padding:4px 6px;min-height:34px}
+.sedit .row .sp{flex:1}
+.sedit .ibtn{background:transparent;color:var(--ink);border-color:var(--rule)}
+.f{display:block;width:100%;background:rgba(255,255,255,.35);color:var(--ink);border:0;border-bottom:1px solid color-mix(in srgb,var(--rule) 40%,transparent);padding:6px 4px;margin:0 0 6px}
+.f::placeholder{color:color-mix(in srgb,var(--ink) 45%,transparent)}
+.f.h{font:400 28px/1.15 var(--hfont);color:var(--accent)}
+.sheet[data-type=tabloid] .f.h{font-weight:700;text-transform:uppercase}
+.f.d{font:italic 17px/1.35 var(--bfont)}
+.f.b{font:700 12px var(--serif);letter-spacing:.12em;text-transform:uppercase}
+.f.t{font:16px/1.6 var(--bfont);min-height:150px;resize:vertical}
+.wxpick{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-top:4px}
+.wxpick button{font-size:18px;min-width:36px;min-height:36px;border:1px solid var(--rule);background:transparent;border-radius:6px;cursor:pointer;padding:0}
+.wxpick button[aria-pressed=true]{background:var(--ink)}
 
 /* archive */
-.past{margin-top:30px}
-.past h2{font-family:var(--display);font-weight:800;font-size:24px;margin:0 0 10px}
-.past ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-.past button{width:100%;text-align:left;display:flex;gap:12px;align-items:baseline;font:16px var(--body);color:var(--ink);background:var(--card);
-  border:2px solid var(--ink);border-radius:12px;padding:10px 14px;cursor:pointer}
-.past button[aria-current="true"]{background:#FFF4CF}
-.past .d{font-weight:700;white-space:nowrap;color:var(--mute);min-width:6.5em}
-.past .h{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.status{margin-top:26px;color:var(--mute);font-size:15px}
+.past h2{font:400 26px var(--display);margin:30px 0 10px;color:var(--desk-ink)}
+.past ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+.past button{width:100%;display:flex;gap:12px;align-items:baseline;text-align:left;background:#3a332b;color:var(--desk-ink);border:1px solid #5a5045;border-radius:10px;padding:10px 14px;cursor:pointer}
+.past button[aria-current=true]{border-color:#f2b84b}
+.past .d{font-weight:700;opacity:.75;min-width:7em;white-space:nowrap}
+.past .h{font:18px var(--display);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.status{color:#bdb19b;font-size:14px;margin-top:24px}
+
+@media(max-width:820px){.cols{--cols:2!important}}
+@media(max-width:560px){.cols,.lead .body{column-count:1!important}.ears{grid-template-columns:1fr}.ear:not(.edit){display:none}.ear{max-width:none}.tools input{width:100%}}
+@media print{
+  body{background:#fff}.wrap{max-width:none;padding:0}.back,.bar,.dock,.past,.status,.tools{display:none!important}
+  .sheet{box-shadow:none;margin:0;break-after:page}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
   <a class="back" href="../index.html">← Home</a>
-
-  <article class="paper" aria-live="polite">
-    <div class="mast">Bryan's Daily News</div>
-    <div class="dateline"><span id="dateline"></span><span class="wx" id="wx"></span></div>
-    <div id="edition"></div>
-  </article>
-  <div class="actions" id="actions"></div>
-
-  <form class="ed" id="editor" hidden>
-    <h2>Write an edition</h2>
-    <label for="fDate">Date</label>
-    <input type="date" id="fDate" required>
-    <label>Weather</label>
-    <div class="wx-pick" id="wxPick" role="group" aria-label="Weather"></div>
-    <label for="fHead">Headline</label>
-    <input type="text" id="fHead" maxlength="200" placeholder="What's the big news today?" required>
-    <label for="fStory">Story</label>
-    <textarea id="fStory" maxlength="10000" placeholder="Tell the story. Leave an empty line between paragraphs."></textarea>
-    <div class="count" id="count"></div>
-    <div class="actions">
-      <button class="btn" type="submit" id="publish">📰 Publish</button>
-      <button class="btn sec" type="button" id="cancel">Cancel</button>
-    </div>
-  </form>
-
-  <section class="past" id="past" hidden>
-    <h2>Past editions</h2>
-    <ul id="pastList"></ul>
-  </section>
-
+  <div class="bar" id="bar"></div>
+  <div id="paper"></div>
+  <section class="past" id="past" hidden><h2>Past editions</h2><ul id="pastList"></ul></section>
   <p class="status" id="status">Loading…</p>
 </div>
+<div class="dock" id="dock" hidden><div class="in">
+  <button class="btn" id="addPage" type="button">＋ Add page</button>
+  <button class="btn" id="save" type="button">💾 Save &amp; publish</button>
+  <button class="btn ghost" id="cancel" type="button">Cancel</button>
+  <span class="note">Your writing is kept on this device while you work.</span>
+</div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../newsletter.js"></script>
 <script>
 (function () {
+  'use strict';
   var $ = function (id) { return document.getElementById(id); };
-  var WEATHER = [['☀️', 'Sunny'], ['⛅', 'Cloudy'], ['🌧️', 'Rainy'], ['⛈️', 'Stormy'], ['🌈', 'Rainbow']];
-  var LOCAL_KEY = 'news_unsaved_v1';   // editions written while online saving wasn't available
-  var DRAFT_KEY = 'news_draft_v1';     // what's in the editor, so nothing is lost if the page closes
+  var LAYOUTS = [['front', 'Front page'], ['feature', 'Feature'], ['three', 'Three columns'], ['two', 'Two columns']];
+  var PAPERS = [['newsprint', 'Newsprint'], ['sepia', 'Old sepia'], ['evening', 'Evening grey'], ['extra', 'EXTRA! red']];
+  var TYPES = [['classic', 'Classic serif'], ['typewriter', 'Typewriter'], ['tabloid', 'Bold tabloid']];
+  var KINDS = [['story', 'Story'], ['box', 'Notice box'], ['quote', 'Big quote']];
+  var WEATHER = ['☀️', '⛅', '🌧️', '⛈️', '🌈'];
+  var MAX_PAGES = 6, MAX_STORIES = 6;
+  var LOCAL_KEY = 'news_unsaved_v2', DRAFT_KEY = 'news_draft_v2';
   var STATUS = {
-    ok: 'Editions are saved online, so they show on every device.',
-    setup: "Online saving isn't set up yet, so editions are only kept on this device.",
-    offline: "Can't reach the internet right now. Editions are kept on this device and will save online when it's back."
+    ok: 'Papers are saved online, so they show on every device.',
+    setup: 'Online saving needs a one-time setup in Supabase, so for now papers are only kept on this device.',
+    offline: "Can't reach the internet right now. Papers are kept on this device and will save online when it's back."
   };
-  var today = News.dateKey();
-  var editions = {};   // date -> edition
-  var showing = today;
-  var weather = '';
 
-  function readJSON(k) { try { return JSON.parse(localStorage.getItem(k) || '{}') || {}; } catch (e) { return {}; } }
-  function writeJSON(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
-  var unsaved = readJSON(LOCAL_KEY);
+  var today = News.dateKey();
+  var editions = {}, showing = today, work = null;   // work = the paper being edited
+  function readJSON(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
+  function writeJSON(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  var unsaved = readJSON(LOCAL_KEY) || {};
+  function uid() { return Math.random().toString(36).slice(2, 9); }
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  function btn(cls, text, fn, label) { var b = el('button', cls, text); b.type = 'button'; b.onclick = fn; if (label) b.setAttribute('aria-label', label); return b; }
   function longDate(k) { return News.fromKey(k).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); }
   function shortDate(k) { return News.fromKey(k).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }); }
   function setStatus(s) { $('status').textContent = STATUS[s]; }
+
+  /* ---------- data ---------- */
+  function newStory() { return { id: uid(), kind: 'story', headline: '', deck: '', byline: 'By Bryan', body: '' }; }
+  function newPage(n) {
+    return { id: uid(), section: n === 0 ? 'Front Page' : 'Page ' + (n + 1), layout: n === 0 ? 'front' : 'three', paper: 'newsprint', type: 'classic', stories: [newStory()] };
+  }
+  // Editions from the first version of this page (one headline + story) become a front page.
+  function normalize(ed) {
+    if (!ed) return null;
+    var c = ed.content && Array.isArray(ed.content.pages) && ed.content.pages.length ? ed.content : null;
+    if (!c) {
+      var p = newPage(0);
+      p.stories[0].headline = ed.headline || ''; p.stories[0].body = ed.story || '';
+      c = { pages: [p] };
+    }
+    return { edition_date: ed.edition_date, weather: ed.weather || '', content: c };
+  }
   function all() { var m = {}; Object.keys(editions).forEach(function (k) { m[k] = editions[k]; }); Object.keys(unsaved).forEach(function (k) { m[k] = unsaved[k]; }); return m; }
+  function edNumber(k) { return Object.keys(all()).sort().indexOf(k) + 1; }
+  function hasText(s) { return !!((s.headline || '').trim() || (s.body || '').trim() || (s.deck || '').trim()); }
+
+  /* ---------- masthead ---------- */
+  function masthead(ed, editing) {
+    var frag = document.createDocumentFragment();
+    var ears = el('div', 'ears');
+    var left = el('div', 'ear' + (editing ? ' edit' : ''));
+    left.appendChild(el('b', null, "Today's weather"));
+    if (editing) {
+      var pick = el('div', 'wxpick');
+      WEATHER.forEach(function (w) {
+        var b = btn(null, w, function () { work.weather = work.weather === w ? '' : w; draft(); paint(); }, 'Weather ' + w);
+        b.setAttribute('aria-pressed', work.weather === w ? 'true' : 'false'); pick.appendChild(b);
+      });
+      left.appendChild(pick);
+    } else left.appendChild(el('span', 'wx', (ed && ed.weather) || '—'));
+    ears.appendChild(left);
+    ears.appendChild(el('h1', 'mast', "Bryan's Daily News"));
+    var right = el('div', 'ear r'); right.appendChild(el('b', null, 'Price')); right.appendChild(document.createTextNode('One smile'));
+    ears.appendChild(right);
+    frag.appendChild(ears);
+    var n = ed ? edNumber(ed.edition_date) : 0;
+    var dl = el('div', 'dateline');
+    dl.appendChild(el('span', null, 'Vol. I' + (n ? ' · No. ' + n : '')));
+    dl.appendChild(el('span', null, longDate(showing)));
+    dl.appendChild(el('span', null, 'Family edition'));
+    frag.appendChild(dl);
+    return frag;
+  }
 
   /* ---------- reading ---------- */
-  function render() {
-    var eds = all(), ed = eds[showing];
-    $('dateline').textContent = longDate(showing);
-    $('wx').textContent = ed && ed.weather ? ed.weather : '';
-    var box = $('edition'); box.textContent = '';
-    var actions = $('actions'); actions.textContent = '';
-    if (ed) {
-      box.appendChild(el('h1', 'headline', ed.headline));
-      var story = el('div', 'story');
-      (ed.story || '').split(/\n\s*\n/).map(function (p) { return p.trim(); }).filter(Boolean)
-        .forEach(function (p) { story.appendChild(el('p', null, p)); });
-      box.appendChild(story);
-      var edit = el('button', 'btn sec', '✏️ Edit this edition'); edit.type = 'button'; edit.onclick = function () { openEditor(showing); };
-      actions.appendChild(edit);
-    } else {
-      var empty = el('div', 'empty');
-      empty.appendChild(el('div', 'np', '📰'));
-      empty.appendChild(el('p', null, showing === today ? "Today's edition hasn't been written yet." : 'No edition for this day.'));
-      var write = el('button', 'btn', showing === today ? "✏️ Write today's edition" : '✏️ Write this edition'); write.type = 'button';
-      write.onclick = function () { openEditor(showing); };
-      empty.appendChild(write);
-      box.appendChild(empty);
+  function storyEl(s, cls) {
+    var a = el('article', 'story' + (s.kind !== 'story' ? ' ' + s.kind : '') + (cls ? ' ' + cls : ''));
+    if (s.kind === 'quote') {
+      a.appendChild(el('blockquote', null, s.body.trim() || s.headline.trim()));
+      if (s.byline.trim()) a.appendChild(el('p', 'by', '— ' + s.byline.replace(/^by\s+/i, '')));
+      return a;
     }
-    if (showing !== today) {
-      var back = el('button', 'btn sec', '← Today'); back.type = 'button'; back.onclick = function () { show(today); };
-      actions.appendChild(back);
-    }
-    renderPast(eds);
+    if (s.headline.trim()) a.appendChild(el('h2', null, s.headline));
+    if (s.deck.trim()) a.appendChild(el('p', 'deck', s.deck));
+    if (s.kind === 'story' && s.byline.trim()) a.appendChild(el('p', 'by', s.byline));
+    var body = el('div', 'body');
+    s.body.split(/\n\s*\n/).map(function (p) { return p.trim(); }).filter(Boolean).forEach(function (p) { body.appendChild(el('p', null, p)); });
+    a.appendChild(body);
+    return a;
   }
-  function renderPast(eds) {
+  function sheet(page) { var sh = el('section', 'sheet'); sh.dataset.paper = page.paper; sh.dataset.type = page.type; return sh; }
+  function pageHead(page, i) {
+    var frag = document.createDocumentFragment();
+    frag.appendChild(el('div', 'extra-banner', 'EXTRA! EXTRA!'));
+    var head = el('div', 'phead');
+    head.appendChild(el('span', 'sec', page.section || ''));
+    head.appendChild(el('span', null, 'Page ' + (i + 1)));
+    if (i === 0) head.style.marginTop = '14px';
+    frag.appendChild(head);
+    return frag;
+  }
+  function readPage(ed, page, i) {
+    var sh = sheet(page);
+    if (i === 0) sh.appendChild(masthead(ed, false));
+    sh.appendChild(pageHead(page, i));
+    var stories = page.stories.filter(hasText);
+    if (!stories.length) sh.appendChild(el('p', 'blank', 'This page is still blank.'));
+    var rest = stories;
+    if ((page.layout === 'front' || page.layout === 'feature') && stories.length && stories[0].kind === 'story') {
+      sh.appendChild(storyEl(stories[0], page.layout === 'front' ? 'lead' : 'lead feature'));
+      rest = stories.slice(1);
+    }
+    if (rest.length) {
+      var cols = el('div', 'cols');
+      cols.style.setProperty('--cols', page.layout === 'three' || page.layout === 'front' ? 3 : 2);
+      rest.forEach(function (s) { cols.appendChild(storyEl(s)); });
+      sh.appendChild(cols);
+    }
+    sh.appendChild(el('div', 'pfoot', '— ' + (i + 1) + ' —'));
+    return sh;
+  }
+
+  /* ---------- editing ---------- */
+  function select(options, value, onchange, label) {
+    var s = el('select'); s.setAttribute('aria-label', label);
+    options.forEach(function (o) { var op = el('option', null, o[1]); op.value = o[0]; if (o[0] === value) op.selected = true; s.appendChild(op); });
+    s.onchange = function () { onchange(s.value); };
+    return s;
+  }
+  function move(list, i, d) { var j = i + d; if (j < 0 || j >= list.length) return; var t = list[i]; list[i] = list[j]; list[j] = t; }
+  function field(tag, cls, value, ph, max, oninput) {
+    var f = el(tag, 'f ' + cls); f.value = value; f.placeholder = ph; f.maxLength = max;
+    f.setAttribute('aria-label', ph);
+    f.addEventListener('input', function () { oninput(f.value); draft(); });
+    return f;
+  }
+  function editPage(page, i) {
+    var pages = work.content.pages;
+    var sh = sheet(page);
+    if (i === 0) sh.appendChild(masthead(work, true));
+    sh.appendChild(pageHead(page, i));
+    var tools = el('div', 'tools');
+    var sec = el('input'); sec.value = page.section; sec.maxLength = 40; sec.placeholder = 'Section name'; sec.setAttribute('aria-label', 'Section name');
+    sec.addEventListener('input', function () { page.section = sec.value; var hs = sh.querySelector('.phead .sec'); if (hs) hs.textContent = sec.value; draft(); });
+    var l1 = el('label', null, 'Section'); l1.appendChild(sec); tools.appendChild(l1);
+    tools.appendChild(select(LAYOUTS, page.layout, function (v) { page.layout = v; draft(); }, 'Layout'));
+    tools.appendChild(select(PAPERS, page.paper, function (v) { page.paper = v; draft(); paint(); }, 'Paper'));
+    tools.appendChild(select(TYPES, page.type, function (v) { page.type = v; draft(); paint(); }, 'Typeface'));
+    tools.appendChild(el('span', 'sp'));
+    var up = btn('ibtn', '↑', function () { move(pages, i, -1); draft(); paint(); }, 'Move page up'); up.disabled = i === 0; tools.appendChild(up);
+    var dn = btn('ibtn', '↓', function () { move(pages, i, 1); draft(); paint(); }, 'Move page down'); dn.disabled = i === pages.length - 1; tools.appendChild(dn);
+    tools.appendChild(btn('ibtn', '🗑', function () {
+      if (page.stories.some(hasText) && !confirm('Delete page ' + (i + 1) + ' and its stories?')) return;
+      pages.splice(i, 1); if (!pages.length) pages.push(newPage(0)); draft(); paint();
+    }, 'Delete page'));
+    sh.appendChild(tools);
+
+    page.stories.forEach(function (s, j) {
+      var box = el('div', 'sedit');
+      var row = el('div', 'row');
+      row.appendChild(el('span', null, 'Story ' + (j + 1)));
+      row.appendChild(select(KINDS, s.kind, function (v) { s.kind = v; draft(); paint(); }, 'Story type'));
+      row.appendChild(el('span', 'sp'));
+      var su = btn('ibtn', '↑', function () { move(page.stories, j, -1); draft(); paint(); }, 'Move story up'); su.disabled = j === 0; row.appendChild(su);
+      var sd = btn('ibtn', '↓', function () { move(page.stories, j, 1); draft(); paint(); }, 'Move story down'); sd.disabled = j === page.stories.length - 1; row.appendChild(sd);
+      row.appendChild(btn('ibtn', '🗑', function () {
+        if (hasText(s) && !confirm('Delete this story?')) return;
+        page.stories.splice(j, 1); draft(); paint();
+      }, 'Delete story'));
+      box.appendChild(row);
+      if (s.kind !== 'quote') box.appendChild(field('input', 'h', s.headline, s.kind === 'box' ? 'Box title, e.g. NOTICE' : 'Headline', 120, function (v) { s.headline = v; }));
+      if (s.kind === 'story') box.appendChild(field('input', 'd', s.deck, 'Smaller line under the headline (optional)', 160, function (v) { s.deck = v; }));
+      box.appendChild(field('input', 'b', s.byline, s.kind === 'quote' ? 'Who said it?' : 'By …', 60, function (v) { s.byline = v; }));
+      box.appendChild(field('textarea', 't', s.body, s.kind === 'quote' ? 'The quote' : 'Write the news here. Leave an empty line between paragraphs.', 4000, function (v) { s.body = v; }));
+      sh.appendChild(box);
+    });
+    var add = btn('btn small', '＋ Add story', function () { page.stories.push(newStory()); draft(); paint(); });
+    add.disabled = page.stories.length >= MAX_STORIES;
+    sh.appendChild(add);
+    return sh;
+  }
+
+  /* ---------- paint ---------- */
+  function paint() {
+    var y = window.scrollY;
+    var paper = $('paper'); paper.textContent = '';
+    var bar = $('bar'); bar.textContent = '';
+    var eds = all(), ed = normalize(eds[showing]);
+    $('dock').hidden = !work;
+    if (work) {
+      work.content.pages.forEach(function (p, i) { paper.appendChild(editPage(p, i)); });
+      $('addPage').disabled = work.content.pages.length >= MAX_PAGES;
+    } else if (ed) {
+      ed.content.pages.forEach(function (p, i) { paper.appendChild(readPage(ed, p, i)); });
+      bar.appendChild(btn('btn', '✏️ Edit this paper', startEdit));
+      bar.appendChild(btn('btn ghost', '🖨 Print', function () { window.print(); }));
+    } else {
+      var sh = sheet({ paper: 'newsprint', type: 'classic' });
+      sh.appendChild(masthead(null, false));
+      var e = el('div', 'noprint');
+      e.appendChild(el('p', null, showing === today ? "Today's paper hasn't been written yet." : 'No paper was printed on this day.'));
+      e.appendChild(btn('btn', showing === today ? "✏️ Start today's paper" : '✏️ Write this paper', startEdit));
+      sh.appendChild(e);
+      paper.appendChild(sh);
+    }
+    if (!work && showing !== today) bar.appendChild(btn('btn ghost', '← Today', function () { show(today); }));
+    paintPast(eds);
+    window.scrollTo(0, y);
+  }
+  function paintPast(eds) {
     var keys = Object.keys(eds).sort().reverse();
-    $('past').hidden = !keys.length;
+    $('past').hidden = !keys.length || !!work;
     var ul = $('pastList'); ul.textContent = '';
     keys.forEach(function (k) {
-      var li = el('li'), b = el('button'); b.type = 'button';
+      var li = el('li'), b = btn(null, '', function () { show(k); });
       b.appendChild(el('span', 'd', shortDate(k)));
-      b.appendChild(el('span', 'h', (eds[k].weather ? eds[k].weather + ' ' : '') + eds[k].headline));
+      b.appendChild(el('span', 'h', (eds[k].weather ? eds[k].weather + ' ' : '') + (eds[k].headline || 'Untitled')));
       if (k === showing) b.setAttribute('aria-current', 'true');
-      b.onclick = function () { show(k); };
       li.appendChild(b); ul.appendChild(li);
     });
   }
-  function show(k) { showing = k; render(); window.scrollTo(0, 0); }
+  function show(k) { showing = k; work = null; paint(); window.scrollTo(0, 0); }
 
-  /* ---------- writing ---------- */
-  WEATHER.forEach(function (w) {
-    var b = el('button', null, w[0] + ' ' + w[1]); b.type = 'button'; b.dataset.wx = w[0];
-    b.onclick = function () { weather = weather === w[0] ? '' : w[0]; syncWeather(); saveDraft(); };
-    $('wxPick').appendChild(b);
-  });
-  function syncWeather() {
-    document.querySelectorAll('#wxPick button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.wx === weather ? 'true' : 'false'); });
+  /* ---------- edit lifecycle ---------- */
+  function startEdit() {
+    var ed = normalize(all()[showing]);
+    work = ed ? JSON.parse(JSON.stringify(ed)) : { edition_date: showing, weather: '', content: { pages: [newPage(0)] } };
+    work.content.pages.forEach(function (p) { if (!p.stories.length) p.stories.push(newStory()); });
+    draft(); paint(); window.scrollTo(0, 0);
   }
-  function words(t) { var cjk = (t.match(/[㐀-鿿]/g) || []).length; var latin = (t.replace(/[㐀-鿿]/g, ' ').match(/[A-Za-z0-9'’-]+/g) || []).length; return cjk + latin; }
-  function syncCount() { var n = words($('fStory').value); $('count').textContent = n + (n === 1 ? ' word' : ' words'); }
-  function openEditor(k) {
-    var draft = readJSON(DRAFT_KEY), ed = all()[k];
-    var src = draft.edition_date === k ? draft : (ed || { edition_date: k, headline: '', weather: '', story: '' });
-    $('fDate').value = k; $('fDate').max = today;
-    $('fHead').value = src.headline || ''; $('fStory').value = src.story || ''; weather = src.weather || '';
-    syncWeather(); syncCount();
-    $('editor').hidden = false; $('fHead').focus();
-    $('editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-  function current() { return { edition_date: $('fDate').value, headline: $('fHead').value.trim(), weather: weather, story: $('fStory').value.trim() }; }
-  function saveDraft() { writeJSON(DRAFT_KEY, current()); }
-  ['fHead', 'fStory', 'fDate'].forEach(function (id) { $(id).addEventListener('input', function () { if (id === 'fStory') syncCount(); saveDraft(); }); });
-  $('cancel').onclick = function () { writeJSON(DRAFT_KEY, {}); $('editor').hidden = true; };
-  $('editor').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var ed = current();
-    if (!ed.edition_date || !ed.headline) return;
-    $('publish').disabled = true;
+  function draft() { writeJSON(DRAFT_KEY, work); }
+  $('addPage').onclick = function () {
+    if (work.content.pages.length >= MAX_PAGES) return;
+    work.content.pages.push(newPage(work.content.pages.length)); draft(); paint();
+    var sheets = document.querySelectorAll('.sheet'); sheets[sheets.length - 1].scrollIntoView({ behavior: 'smooth' });
+  };
+  $('cancel').onclick = function () {
+    if (!confirm("Stop editing? Changes you haven't saved will be lost.")) return;
+    work = null; writeJSON(DRAFT_KEY, null); paint();
+  };
+  $('save').onclick = function () {
+    var pages = work.content.pages.map(function (p) {
+      return { id: p.id, section: p.section.trim(), layout: p.layout, paper: p.paper, type: p.type,
+        stories: p.stories.filter(hasText).map(function (s) { return { id: s.id, kind: s.kind, headline: s.headline.trim(), deck: s.deck.trim(), byline: s.byline.trim(), body: s.body.trim() }; }) };
+    });
+    var first = null;
+    pages.forEach(function (p) { p.stories.forEach(function (s) { if (!first && s.kind !== 'quote' && s.headline) first = s.headline; }); });
+    var text = pages.map(function (p) { return p.stories.map(function (s) { return [s.headline, s.body].filter(Boolean).join('\n'); }).join('\n\n'); }).join('\n\n');
+    var ed = { edition_date: work.edition_date, weather: work.weather, headline: (first || 'Untitled').slice(0, 200), story: text.slice(0, 9000), content: { pages: pages } };
     unsaved[ed.edition_date] = ed; writeJSON(LOCAL_KEY, unsaved);
-    writeJSON(DRAFT_KEY, {});
-    $('editor').hidden = true; show(ed.edition_date);
-    pushUnsaved().then(function () { $('publish').disabled = false; });
-  });
+    writeJSON(DRAFT_KEY, null);
+    show(ed.edition_date);
+    pushUnsaved();
+  };
 
   /* ---------- online saving ---------- */
   function pushUnsaved() {
@@ -206,25 +427,29 @@
           if (unsaved[k] === ed) { delete unsaved[k]; writeJSON(LOCAL_KEY, unsaved); }
         });
       });
-    }, Promise.resolve()).then(function () { setStatus('ok'); render(); })
-      .catch(function (err) { setStatus(News.problem(err)); render(); });
+    }, Promise.resolve()).then(function () { setStatus('ok'); if (!work) paint(); })
+      .catch(function (err) { setStatus(News.problem(err)); if (!work) paint(); });
   }
   function load() {
     return News.list().then(function (rows) {
       editions = {};
       rows.forEach(function (r) { editions[r.edition_date] = r; });
-      setStatus('ok'); render();
+      setStatus('ok');
+      if (!work) paint(); else paintPast(all());
       return pushUnsaved();
-    }).catch(function (err) { setStatus(News.problem(err)); render(); });
+    }).catch(function (err) { setStatus(News.problem(err)); if (!work) paint(); });
   }
 
-  render();
+  // Carry over editions written with the first version of this page.
+  var old = readJSON('news_unsaved_v1');
+  if (old) { Object.keys(old).forEach(function (k) { if (!unsaved[k]) unsaved[k] = old[k]; }); writeJSON(LOCAL_KEY, unsaved); writeJSON('news_unsaved_v1', null); }
+  // Bring back a paper that was being edited when the page closed.
+  var d = readJSON(DRAFT_KEY);
+  if (d && d.content && Array.isArray(d.content.pages) && d.content.pages.length) { work = d; showing = d.edition_date; }
+  paint();
   load();
-  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && $('editor').hidden) load(); });
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && !work) load(); });
   window.addEventListener('online', load);
-  // A draft left unfinished: reopen the editor with it.
-  var draft = readJSON(DRAFT_KEY);
-  if (draft.edition_date && (draft.headline || draft.story)) openEditor(draft.edition_date);
 })();
 </script>
 </body>
