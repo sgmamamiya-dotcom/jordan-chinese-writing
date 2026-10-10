@@ -64,8 +64,9 @@
   <p class="foot" id="foot"></p>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/* To update: edit UPDATED, GROUPS and TASKS below. Ticks are saved on each device, not shared. */
+/* To update: edit UPDATED, GROUPS and TASKS below. Ticks are saved online (Supabase table todo_checks, see supabase/todo_checks.sql) with a copy on each device. */
 var UPDATED = 'Sat 10 Oct';
 
 var GROUPS = [
@@ -147,11 +148,18 @@ var TASKS = [
 
 (function () {
   var NAMES = { bryan: 'Bryan', jordan: 'Jordan' };
-  var KEY = 'todo_checked_v1';
-  var checked = {};
+  var KEY = 'todo_checked_v1';      // copy of the ticks on this device
+  var PENDING_KEY = 'todo_pending_v1';  // changes not yet saved online
+  // Same Supabase project and publishable key as the 中文练字 page (write.html).
+  var CLOUD_URL = 'https://uscpgatqeeqejbwnvyoh.supabase.co';
+  var CLOUD_KEY = 'sb_publishable_Tc5qBurC5SnTyNjB2jtA2A_jFs9T3og';
+  var checked = {}, pending = {}, cloud = 'connecting';
   var kid = 'all';
 
   try { checked = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { checked = {}; }
+  try { pending = JSON.parse(localStorage.getItem(PENDING_KEY) || '{}') || {}; } catch (e) { pending = {}; }
+  var db = null;
+  try { db = window.supabase.createClient(CLOUD_URL, CLOUD_KEY); } catch (e) { db = null; }
   try {
     var q = new URLSearchParams(location.search).get('kid');
     if (q === 'bryan' || q === 'jordan') kid = q;
@@ -167,12 +175,57 @@ var TASKS = [
     if (text != null) n.textContent = text;
     return n;
   }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(checked)); } catch (e) {} }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(checked)); localStorage.setItem(PENDING_KEY, JSON.stringify(pending)); } catch (e) {}
+  }
+
+  var STATUS = {
+    connecting: 'Connecting…',
+    ok: 'Ticks are saved online, so they show on every device.',
+    offline: "Can't reach the internet right now. Ticks are kept on this device and will save online when it's back.",
+    setup: "Online saving isn't set up yet, so ticks are only kept on this device."
+  };
+  function setCloud(state) {
+    cloud = state;
+    document.getElementById('foot').textContent = STATUS[state] + ' List updated ' + UPDATED + '.';
+  }
+  function cloudError(err) {
+    var msg = (err && (err.code + ' ' + err.message)) || '';
+    setCloud(/42P01|PGRST205|does not exist|schema cache/i.test(msg) ? 'setup' : 'offline');
+  }
+  // Save changes made on this device.
+  function push() {
+    if (!db) { setCloud('offline'); return; }
+    var rows = Object.keys(pending).map(function (id) { return { task_id: id, done: pending[id], updated_at: new Date().toISOString() }; });
+    if (!rows.length) return;
+    db.from('todo_checks').upsert(rows, { onConflict: 'task_id' }).then(function (res) {
+      if (res.error) throw res.error;
+      rows.forEach(function (r) { if (pending[r.task_id] === r.done) delete pending[r.task_id]; });
+      save(); setCloud('ok');
+    }).catch(cloudError);
+  }
+  // Load ticks made on any device; changes not yet saved from here win.
+  function pull() {
+    if (!db) { setCloud('offline'); return; }
+    db.from('todo_checks').select('task_id,done').then(function (res) {
+      if (res.error) throw res.error;
+      var online = {};
+      res.data.forEach(function (r) { online[r.task_id] = r.done; });
+      // Ticks made on this device before online saving existed.
+      Object.keys(checked).forEach(function (id) { if (!(id in online) && !(id in pending)) pending[id] = true; });
+      var next = {};
+      Object.keys(online).forEach(function (id) { if (online[id]) next[id] = true; });
+      Object.keys(pending).forEach(function (id) { if (pending[id]) next[id] = true; else delete next[id]; });
+      checked = next; save(); render(); setCloud('ok');
+      push();
+    }).catch(cloudError);
+  }
   function shown(t) { return kid === 'all' || t.kid === kid; }
 
   function toggle(id) {
     if (checked[id]) delete checked[id]; else checked[id] = true;
-    save(); render();
+    pending[id] = !!checked[id];
+    save(); render(); push();
   }
 
   function makeTask(t) {
@@ -245,9 +298,12 @@ var TASKS = [
   }
 
   document.getElementById('hello').textContent = 'Tap a box when you finish a task.';
-  document.getElementById('foot').textContent = 'Your ticks are saved on this device. List updated ' + UPDATED + '.';
+  setCloud('connecting');
   sync();
   render();
+  pull();
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') pull(); });
+  window.addEventListener('online', pull);
 })();
 </script>
 </body>
