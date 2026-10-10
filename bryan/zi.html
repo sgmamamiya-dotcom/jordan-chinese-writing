@@ -211,6 +211,7 @@ function home() {
   const next = days.findIndex((_, i) => !isDone(i));
   const learned = days.flatMap((d, i) => isDone(i) ? d : []);
   render(`
+    <a class="back" href="index.html" style="text-decoration:none;display:inline-block">‹ Bryan</a>
     <h1>必考字练习</h1>
     <p class="sub">已收录 ${CH.length} 个字，每组最多${DAYSIZE}个字。已完成 ${doneN}/${days.length} 组</p>
     <div class="days">${days.map((d, i) => {

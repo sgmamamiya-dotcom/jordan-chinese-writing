@@ -42,7 +42,7 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="index.html">← Home</a>
+  <a class="back" id="back" href="index.html">← Home</a>
   <h1>This week's to-do</h1>
   <p class="hello" id="hello"></p>
 
@@ -155,6 +155,10 @@ var TASKS = [
   try {
     var q = new URLSearchParams(location.search).get('kid');
     if (q === 'bryan' || q === 'jordan') kid = q;
+    // Opened from a child's page: go back there instead of Home.
+    var back = document.getElementById('back');
+    if (q === 'bryan') { back.href = 'bryan/index.html'; back.textContent = '← Bryan'; }
+    if (q === 'jordan') { back.href = 'jordan.html'; back.textContent = '← Jordan'; }
   } catch (e) {}
 
   function el(tag, cls, text) {
