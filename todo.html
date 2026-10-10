@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>This Week's To-do</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito+Sans:wght@400;700&display=swap">
+<link rel="stylesheet" href="hub.css">
+<style>
+.banner{background:var(--yellow);border:3px solid var(--ink);border-radius:18px;padding:12px 16px;font-weight:700;margin:0 0 18px}
+.kids{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}
+.kids button{font:700 17px var(--body);min-height:48px;padding:0 22px;border-radius:999px;border:3px solid var(--ink);background:var(--card);color:var(--ink);cursor:pointer}
+.kids button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.progress{display:flex;align-items:center;gap:14px;margin:0 0 6px}
+.progress .count{font-family:var(--display);font-weight:800;font-size:24px;white-space:nowrap}
+.bar{flex:1;height:16px;border-radius:999px;border:3px solid var(--ink);background:#fff;overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--mint);transition:width .25s}
+.day{margin-top:28px}
+.day h2{font-family:var(--display);font-weight:800;font-size:27px;line-height:1.15;margin:0}
+.day .sub{color:var(--mute);margin:2px 0 12px;font-size:16px}
+.list{display:flex;flex-direction:column;gap:14px}
+.task{display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;background:var(--card);border:3px solid var(--ink);border-radius:20px;padding:14px 16px;box-shadow:0 6px 0 var(--ink);cursor:pointer}
+.box{width:44px;height:44px;padding:0;border-radius:14px;border:3px solid var(--ink);background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--ink)}
+.box svg{width:26px;height:26px;opacity:0}
+.task.done .box{background:var(--mint)}
+.task.done .box svg{opacity:1}
+.task.done .t{text-decoration:line-through;color:var(--mute)}
+.task.done .note{opacity:.7}
+.meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-bottom:4px}
+.who{font-weight:700;font-size:14px;padding:1px 12px;border-radius:999px;border:2px solid var(--ink)}
+.who.bryan{background:var(--purple);border-color:var(--purple);color:#fff}
+.who.jordan{background:var(--mint);border-color:var(--mint);color:var(--ink)}
+.subj{font-weight:700;font-size:15px;color:var(--mute)}
+.t{font-family:var(--display);font-weight:800;font-size:23px;line-height:1.2;overflow-wrap:anywhere}
+.note{margin:4px 0 0;color:var(--mute);font-size:16px}
+.go{display:inline-block;margin-top:8px;font-weight:700;color:var(--purple)}
+.empty{margin-top:28px;padding:22px;border:3px dashed var(--ink);border-radius:20px;text-align:center;color:var(--mute)}
+.foot{margin-top:36px;color:var(--mute);font-size:15px}
+@media(prefers-reduced-motion:reduce){.bar span{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Home</a>
+  <h1>This week's to-do</h1>
+  <p class="hello" id="hello"></p>
+
+  <div class="banner">Mon–Wed (12–14 Oct) are home days. Start your school work early and finish it early.</div>
+
+  <div class="kids" role="group" aria-label="Show tasks for">
+    <button type="button" data-kid="all" aria-pressed="true">Both</button>
+    <button type="button" data-kid="bryan" aria-pressed="false">Bryan</button>
+    <button type="button" data-kid="jordan" aria-pressed="false">Jordan</button>
+  </div>
+
+  <div class="progress" aria-live="polite">
+    <span class="count" id="count"></span>
+    <div class="bar" aria-hidden="true"><span id="fill"></span></div>
+  </div>
+
+  <div id="board"></div>
+
+  <p class="foot" id="foot"></p>
+</div>
+
+<script>
+/* To update: edit UPDATED, GROUPS and TASKS below. Ticks are saved on each device, not shared. */
+var UPDATED = 'Sat 10 Oct';
+
+var GROUPS = [
+  { id: 'sun',  title: 'Sunday 11 Oct',     sub: 'Get ready' },
+  { id: 'mon',  title: 'Monday 12 Oct',     sub: 'Home day' },
+  { id: 'tue',  title: 'Tuesday 13 Oct',    sub: 'Home day' },
+  { id: 'wed',  title: 'Wednesday 14 Oct',  sub: 'Home day' },
+  { id: 'week', title: 'Home learning week', sub: 'No exact day from the teacher. Finish as early as you can.' }
+];
+
+var TASKS = [
+  { id: 'b-prep', kid: 'bryan', group: 'sun', subject: 'Math',
+    title: 'Find your Math file and practice papers',
+    note: 'Look at the cover page of each paper to see how long it takes. PP3A and PP3B came last week. More papers come home by the end of this week.' },
+  { id: 'j-login', kid: 'jordan', group: 'sun', subject: 'Chinese',
+    title: 'Try logging in to ezhishi.net',
+    note: 'Make sure it works before next week.',
+    link: 'https://ezhishi.net', linkText: 'Open ezhishi.net →' },
+
+  { id: 'b-pp2b', kid: 'bryan', group: 'mon', subject: 'Math',
+    title: 'Finish PP2B (2024 Paper 2)',
+    note: 'Time yourself with the duration on the cover page. Do it on your own.' },
+
+  { id: 'b-pp1a', kid: 'bryan', group: 'tue', subject: 'Math', time: 'Morning',
+    title: 'Finish PP1A (2025 Paper 1)',
+    note: 'Time yourself with the duration on the cover page. Do it on your own.' },
+  { id: 'b-pp1b', kid: 'bryan', group: 'tue', subject: 'Math', time: 'Afternoon',
+    title: 'Finish PP1B (2025 Paper 2)',
+    note: 'Time yourself with the duration on the cover page. Do it on your own.' },
+
+  { id: 'b-sls-check', kid: 'bryan', group: 'wed', subject: 'Math',
+    title: 'Check your answers on SLS',
+    note: 'Ms Chua will use your answer-checking to pick questions for class discussion.' },
+  { id: 'b-sls-irs', kid: 'bryan', group: 'wed', subject: 'Math',
+    title: 'Do the IRS Unit 5 module on SLS' },
+
+  { id: 'j-xpy', kid: 'jordan', group: 'week', subject: 'Chinese',
+    title: '新朋友' },
+  { id: 'j-ezhishi', kid: 'jordan', group: 'week', subject: 'Chinese',
+    title: 'ezhishi.net',
+    note: 'A learning website. Your teacher put assignments inside for you.',
+    link: 'https://ezhishi.net', linkText: 'Open ezhishi.net →' }
+];
+
+(function () {
+  var NAMES = { bryan: 'Bryan', jordan: 'Jordan' };
+  var KEY = 'todo_checked_v1';
+  var checked = {};
+  var kid = 'all';
+
+  try { checked = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { checked = {}; }
+  try {
+    var q = new URLSearchParams(location.search).get('kid');
+    if (q === 'bryan' || q === 'jordan') kid = q;
+  } catch (e) {}
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(checked)); } catch (e) {} }
+  function shown(t) { return kid === 'all' || t.kid === kid; }
+
+  function toggle(id) {
+    if (checked[id]) delete checked[id]; else checked[id] = true;
+    save(); render();
+  }
+
+  function makeTask(t) {
+    var done = !!checked[t.id];
+    var row = el('div', 'task' + (done ? ' done' : ''));
+    row.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('a')) return;
+      toggle(t.id);
+    });
+
+    var box = el('button', 'box');
+    box.type = 'button';
+    box.setAttribute('role', 'checkbox');
+    box.setAttribute('aria-checked', done ? 'true' : 'false');
+    box.setAttribute('aria-label', t.title);
+    box.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg>';
+    box.addEventListener('click', function (e) { e.stopPropagation(); toggle(t.id); });
+    row.appendChild(box);
+
+    var body = el('div');
+    var meta = el('div', 'meta');
+    meta.appendChild(el('span', 'who ' + t.kid, NAMES[t.kid]));
+    meta.appendChild(el('span', 'subj', [t.subject, t.time].filter(Boolean).join(' · ')));
+    body.appendChild(meta);
+    body.appendChild(el('div', 't', t.title));
+    if (t.note) body.appendChild(el('p', 'note', t.note));
+    if (t.link) {
+      var a = el('a', 'go', t.linkText || t.link);
+      a.href = t.link; a.target = '_blank'; a.rel = 'noopener';
+      body.appendChild(a);
+    }
+    row.appendChild(body);
+    return row;
+  }
+
+  function render() {
+    var board = document.getElementById('board');
+    board.textContent = '';
+    var visible = TASKS.filter(shown);
+    var done = visible.filter(function (t) { return checked[t.id]; }).length;
+
+    document.getElementById('count').textContent =
+      visible.length && done === visible.length ? 'All done! 🎉' : done + ' of ' + visible.length + ' done';
+    document.getElementById('fill').style.width = visible.length ? Math.round(done / visible.length * 100) + '%' : '0';
+
+    if (!visible.length) {
+      board.appendChild(el('div', 'empty', 'Nothing here yet.'));
+      return;
+    }
+    GROUPS.forEach(function (g) {
+      var list = visible.filter(function (t) { return t.group === g.id; });
+      if (!list.length) return;
+      var sec = el('section', 'day');
+      sec.appendChild(el('h2', null, g.title));
+      sec.appendChild(el('p', 'sub', g.sub));
+      var wrap = el('div', 'list');
+      list.forEach(function (t) { wrap.appendChild(makeTask(t)); });
+      sec.appendChild(wrap);
+      board.appendChild(sec);
+    });
+  }
+
+  document.querySelectorAll('.kids button').forEach(function (b) {
+    b.addEventListener('click', function () { kid = b.getAttribute('data-kid'); sync(); render(); });
+  });
+  function sync() {
+    document.querySelectorAll('.kids button').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.getAttribute('data-kid') === kid ? 'true' : 'false');
+    });
+  }
+
+  document.getElementById('hello').textContent = 'Tap a box when you finish a task.';
+  document.getElementById('foot').textContent = 'Your ticks are saved on this device. List updated ' + UPDATED + '.';
+  sync();
+  render();
+})();
+</script>
+</body>
+</html>

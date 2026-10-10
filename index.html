@@ -33,6 +33,8 @@ canvas.gone{opacity:0;pointer-events:none}
 .news b{display:block;font-family:var(--display);font-weight:800;font-size:22px;line-height:1.15}
 .news .nt>span{color:var(--mute);font-size:15px}
 .news .read{font-weight:700;white-space:nowrap}
+.news.todo{border-left-color:var(--mint)}
+.news.todo:hover{background:#EBFAF7}
 @media(max-width:520px){.news .read{display:none}}
 </style>
 </head>
@@ -54,6 +56,12 @@ canvas.gone{opacity:0;pointer-events:none}
     <span class="np">📰</span>
     <span class="nt"><b>Bryan's Daily News</b><span><span id="newsDate"></span> · Today's edition is coming soon</span></span>
     <span class="read">Read →</span>
+  </a>
+
+  <a class="news todo" href="todo.html">
+    <span class="np">📋</span>
+    <span class="nt"><b>This week's to-do</b><span>Mon–Wed are home days · see what to finish</span></span>
+    <span class="read">Open →</span>
   </a>
 
   <nav class="doors">
