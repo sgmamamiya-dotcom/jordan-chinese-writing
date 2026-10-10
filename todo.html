@@ -69,6 +69,7 @@
 var UPDATED = 'Sat 10 Oct';
 
 var GROUPS = [
+  { id: 'rev',  title: 'This weekend to Wed 14 Oct', sub: 'English Paper 2 revision. Plan your own time for these.' },
   { id: 'sun',  title: 'Sunday 11 Oct',     sub: 'Get ready' },
   { id: 'mon',  title: 'Monday 12 Oct',     sub: 'Home day' },
   { id: 'tue',  title: 'Tuesday 13 Oct',    sub: 'Home day' },
@@ -77,6 +78,28 @@ var GROUPS = [
 ];
 
 var TASKS = [
+  { id: 'b-en-verbs', kid: 'bryan', group: 'rev', subject: 'English',
+    title: 'Watch the verbs videos, Lessons 1 to 5',
+    note: "They're on your English teacher's Google Classroom. Catch up on any you missed." },
+  { id: 'b-en-irregular', kid: 'bryan', group: 'rev', subject: 'English',
+    title: 'Memorise the irregular verbs list',
+    note: 'Chant it again and again until you know it by heart.' },
+  { id: 'b-en-spell', kid: 'bryan', group: 'rev', subject: 'English',
+    title: 'Learn the words on the blue Spelling List' },
+  { id: 'b-en-spellgame', kid: 'bryan', group: 'rev', subject: 'English',
+    title: 'Spelling Game Challenge',
+    note: 'Start at P4. Play as many rounds as you like, because the words change each round. Move up a level once you clear all the P4 words.',
+    link: 'https://tinyurl.com/MCspell', linkText: 'Open the spelling game →' },
+  { id: 'b-en-spell-extra', kid: 'bryan', group: 'rev', subject: 'English',
+    title: 'Add the words you got wrong to your Spelling List',
+    note: "Flip through your Spelling and Editing Practices. Write every word you couldn't spell on foolscap paper and staple it behind the blue Spelling List." },
+  { id: 'b-en-wa2', kid: 'bryan', group: 'rev', subject: 'English',
+    title: 'Revise the WA2 papers in your red file',
+    note: 'Go over the strategies for Tense Sequence, Cloze Passage, Comprehension, Grammar Drills and Synthesis & Transformation. Then look through all the WA2 practice and exam papers for the mistakes you made.' },
+  { id: 'b-en-notes', kid: 'bryan', group: 'rev', subject: 'English',
+    title: 'Make revision notes from your mistakes',
+    note: "Write them on foolscap paper and staple the pages together, or start a revision exercise book. This helps you not make the same mistakes again." },
+
   { id: 'b-prep', kid: 'bryan', group: 'sun', subject: 'Math',
     title: 'Find your Math file and practice papers',
     note: 'Look at the cover page of each paper to see how long it takes. PP3A and PP3B came last week. More papers come home by the end of this week.' },
@@ -88,6 +111,9 @@ var TASKS = [
   { id: 'b-pp2b', kid: 'bryan', group: 'mon', subject: 'Math',
     title: 'Finish PP2B (2024 Paper 2)',
     note: 'Time yourself with the duration on the cover page. Do it on your own.' },
+  { id: 'b-en-pa', kid: 'bryan', group: 'mon', subject: 'English',
+    title: 'English Practice A (1 hour only)',
+    note: "Do Sections A to F only. Skip Section G (Comprehension). Section B: look up the options in a dictionary and write down what they mean. S&T Q4: answer it using logic. The 'if (condition)' structure doesn't work for this one." },
 
   { id: 'b-pp1a', kid: 'bryan', group: 'tue', subject: 'Math', time: 'Morning',
     title: 'Finish PP1A (2025 Paper 1)',
@@ -95,12 +121,21 @@ var TASKS = [
   { id: 'b-pp1b', kid: 'bryan', group: 'tue', subject: 'Math', time: 'Afternoon',
     title: 'Finish PP1B (2025 Paper 2)',
     note: 'Time yourself with the duration on the cover page. Do it on your own.' },
+  { id: 'b-en-pb', kid: 'bryan', group: 'tue', subject: 'English',
+    title: 'English Practice B (1 hour only)',
+    note: "Do Sections A to F only. Skip Section G (Comprehension). Section B: look up the options in a dictionary and write down what they mean. Use the strategies from class for each section so you get them right. S&T 'whose' question: give it a try, or leave it blank if you don't know how." },
 
   { id: 'b-sls-check', kid: 'bryan', group: 'wed', subject: 'Math',
     title: 'Check your answers on SLS',
     note: 'Ms Chua will use your answer-checking to pick questions for class discussion.' },
   { id: 'b-sls-irs', kid: 'bryan', group: 'wed', subject: 'Math',
     title: 'Do the IRS Unit 5 module on SLS' },
+  { id: 'b-en-cloze', kid: 'bryan', group: 'wed', subject: 'English',
+    title: 'Cloze Comprehension: Mona Lisa and Eliezer Wiesel',
+    note: 'Use the strategies from class: collocation and context clues.' },
+  { id: 'b-en-mark', kid: 'bryan', group: 'wed', subject: 'English',
+    title: 'Mark English Practice A and B yourself',
+    note: 'Mark in pencil and write your corrections in green. For S&T, write the whole sentence out again. Your teacher will post the answers on the class blog next Wednesday.' },
 
   { id: 'j-xpy', kid: 'jordan', group: 'week', subject: 'Chinese',
     title: '新朋友' },
