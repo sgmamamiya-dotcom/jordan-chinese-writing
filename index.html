@@ -54,7 +54,7 @@ canvas.gone{opacity:0;pointer-events:none}
 
   <a class="news" href="bryan/news.html">
     <span class="np">📰</span>
-    <span class="nt"><b>Bryan's Daily News</b><span><span id="newsDate"></span> · Today's edition is coming soon</span></span>
+    <span class="nt"><b>Bryan's Daily News</b><span><span id="newsDate"></span> · <span id="newsLine">Read and write the daily edition</span></span></span>
     <span class="read">Read →</span>
   </a>
 
@@ -80,11 +80,21 @@ canvas.gone{opacity:0;pointer-events:none}
   </nav>
 </div>
 <script src="facts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="newsletter.js"></script>
 <script>
 const now = new Date();
 document.getElementById('today').textContent =
   now.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long'}) + ' · 今天的小惊喜在下面';
 document.getElementById('newsDate').textContent = now.toLocaleDateString('en-GB', {day:'numeric', month:'short'});
+// Show today's headline once Bryan has written it.
+try {
+  News.get(News.dateKey()).then(function (ed) {
+    document.getElementById('newsLine').textContent = ed && ed.headline
+      ? (ed.weather ? ed.weather + ' ' : '') + ed.headline
+      : "Today's edition isn't written yet";
+  }).catch(function () {});
+} catch (e) {}
 const f = FACTS[factIndexForToday()];
 document.getElementById('emoji').textContent = f.e;
 document.getElementById('fact').textContent = f.fact;

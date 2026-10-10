@@ -5,27 +5,227 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Bryan's Daily News</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito+Sans:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Baloo+2:wght@600;800&family=Nunito+Sans:wght@400;700&display=swap">
 <link rel="stylesheet" href="../hub.css">
 <style>
-.paper{background:var(--card);border:3px solid var(--ink);border-top:12px solid var(--yellow);border-radius:22px;padding:28px 22px;text-align:center}
-.paper .np{font-size:56px;line-height:1}
-.paper p{color:var(--mute);margin:8px 0 0}
+.paper{background:#FFFDF6;color:#1f1b16;border:3px solid var(--ink);border-radius:18px;padding:22px 22px 26px;box-shadow:0 8px 0 var(--ink)}
+.mast{text-align:center;font-family:"UnifrakturMaguntia",serif;font-size:clamp(34px,7vw,56px);line-height:1;margin:2px 0 10px}
+.dateline{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:3px double #1f1b16;border-bottom:1px solid #1f1b16;
+  padding:6px 2px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.dateline .wx{font-size:22px;letter-spacing:0}
+.headline{color:#1f1b16;font-family:var(--display);font-weight:800;font-size:clamp(28px,5vw,40px);line-height:1.1;margin:18px 0 10px}
+.story p{margin:0 0 12px;font-size:18px;line-height:1.65}
+.story p:first-child::first-letter{font-family:var(--display);font-weight:800;font-size:3.1em;float:left;line-height:.9;margin:4px 8px 0 0;color:var(--purple)}
+.empty{text-align:center;padding:26px 6px 6px;color:var(--mute)}
+.empty .np{font-size:56px;line-height:1}
+.empty p{margin:8px 0 16px}
+
+.btn{display:inline-flex;align-items:center;gap:8px;font:700 17px var(--body);min-height:48px;padding:0 20px;border-radius:999px;border:3px solid var(--ink);
+  background:var(--yellow);color:var(--ink);cursor:pointer;text-decoration:none}
+.btn.sec{background:var(--card)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn:focus-visible,.wx-pick button:focus-visible,.ed input:focus-visible,.ed textarea:focus-visible,.past button:focus-visible{outline:4px solid var(--purple);outline-offset:3px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+/* editor */
+.ed{background:var(--card);border:3px solid var(--ink);border-radius:18px;padding:18px;margin-top:22px}
+.ed h2{font-family:var(--display);font-weight:800;font-size:26px;margin:0 0 12px}
+.ed label{display:block;font-weight:700;margin:14px 0 6px}
+.ed input[type=text],.ed input[type=date],.ed textarea{width:100%;font:18px/1.5 var(--body);color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:12px;padding:10px 12px}
+.ed input[type=date]{width:auto}
+.ed textarea{min-height:240px;resize:vertical}
+.count{color:var(--mute);font-size:14px;margin-top:4px}
+.wx-pick{display:flex;flex-wrap:wrap;gap:8px}
+.wx-pick button{font:700 15px var(--body);min-height:46px;padding:0 14px;border-radius:999px;border:3px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer}
+.wx-pick button[aria-pressed="true"]{background:var(--ink);color:#fff}
+
+/* archive */
+.past{margin-top:30px}
+.past h2{font-family:var(--display);font-weight:800;font-size:24px;margin:0 0 10px}
+.past ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.past button{width:100%;text-align:left;display:flex;gap:12px;align-items:baseline;font:16px var(--body);color:var(--ink);background:var(--card);
+  border:2px solid var(--ink);border-radius:12px;padding:10px 14px;cursor:pointer}
+.past button[aria-current="true"]{background:#FFF4CF}
+.past .d{font-weight:700;white-space:nowrap;color:var(--mute);min-width:6.5em}
+.past .h{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.status{margin-top:26px;color:var(--mute);font-size:15px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <a class="back" href="../index.html">← Home</a>
-  <h1>Bryan's Daily News</h1>
-  <p class="hello" id="today"></p>
-  <div class="paper">
-    <div class="np">📰</div>
-    <p>Today's edition is coming soon.</p>
-  </div>
+
+  <article class="paper" aria-live="polite">
+    <div class="mast">Bryan's Daily News</div>
+    <div class="dateline"><span id="dateline"></span><span class="wx" id="wx"></span></div>
+    <div id="edition"></div>
+  </article>
+  <div class="actions" id="actions"></div>
+
+  <form class="ed" id="editor" hidden>
+    <h2>Write an edition</h2>
+    <label for="fDate">Date</label>
+    <input type="date" id="fDate" required>
+    <label>Weather</label>
+    <div class="wx-pick" id="wxPick" role="group" aria-label="Weather"></div>
+    <label for="fHead">Headline</label>
+    <input type="text" id="fHead" maxlength="200" placeholder="What's the big news today?" required>
+    <label for="fStory">Story</label>
+    <textarea id="fStory" maxlength="10000" placeholder="Tell the story. Leave an empty line between paragraphs."></textarea>
+    <div class="count" id="count"></div>
+    <div class="actions">
+      <button class="btn" type="submit" id="publish">📰 Publish</button>
+      <button class="btn sec" type="button" id="cancel">Cancel</button>
+    </div>
+  </form>
+
+  <section class="past" id="past" hidden>
+    <h2>Past editions</h2>
+    <ul id="pastList"></ul>
+  </section>
+
+  <p class="status" id="status">Loading…</p>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../newsletter.js"></script>
 <script>
-document.getElementById('today').textContent =
-  new Date().toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var WEATHER = [['☀️', 'Sunny'], ['⛅', 'Cloudy'], ['🌧️', 'Rainy'], ['⛈️', 'Stormy'], ['🌈', 'Rainbow']];
+  var LOCAL_KEY = 'news_unsaved_v1';   // editions written while online saving wasn't available
+  var DRAFT_KEY = 'news_draft_v1';     // what's in the editor, so nothing is lost if the page closes
+  var STATUS = {
+    ok: 'Editions are saved online, so they show on every device.',
+    setup: "Online saving isn't set up yet, so editions are only kept on this device.",
+    offline: "Can't reach the internet right now. Editions are kept on this device and will save online when it's back."
+  };
+  var today = News.dateKey();
+  var editions = {};   // date -> edition
+  var showing = today;
+  var weather = '';
+
+  function readJSON(k) { try { return JSON.parse(localStorage.getItem(k) || '{}') || {}; } catch (e) { return {}; } }
+  function writeJSON(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  var unsaved = readJSON(LOCAL_KEY);
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  function longDate(k) { return News.fromKey(k).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); }
+  function shortDate(k) { return News.fromKey(k).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }); }
+  function setStatus(s) { $('status').textContent = STATUS[s]; }
+  function all() { var m = {}; Object.keys(editions).forEach(function (k) { m[k] = editions[k]; }); Object.keys(unsaved).forEach(function (k) { m[k] = unsaved[k]; }); return m; }
+
+  /* ---------- reading ---------- */
+  function render() {
+    var eds = all(), ed = eds[showing];
+    $('dateline').textContent = longDate(showing);
+    $('wx').textContent = ed && ed.weather ? ed.weather : '';
+    var box = $('edition'); box.textContent = '';
+    var actions = $('actions'); actions.textContent = '';
+    if (ed) {
+      box.appendChild(el('h1', 'headline', ed.headline));
+      var story = el('div', 'story');
+      (ed.story || '').split(/\n\s*\n/).map(function (p) { return p.trim(); }).filter(Boolean)
+        .forEach(function (p) { story.appendChild(el('p', null, p)); });
+      box.appendChild(story);
+      var edit = el('button', 'btn sec', '✏️ Edit this edition'); edit.type = 'button'; edit.onclick = function () { openEditor(showing); };
+      actions.appendChild(edit);
+    } else {
+      var empty = el('div', 'empty');
+      empty.appendChild(el('div', 'np', '📰'));
+      empty.appendChild(el('p', null, showing === today ? "Today's edition hasn't been written yet." : 'No edition for this day.'));
+      var write = el('button', 'btn', showing === today ? "✏️ Write today's edition" : '✏️ Write this edition'); write.type = 'button';
+      write.onclick = function () { openEditor(showing); };
+      empty.appendChild(write);
+      box.appendChild(empty);
+    }
+    if (showing !== today) {
+      var back = el('button', 'btn sec', '← Today'); back.type = 'button'; back.onclick = function () { show(today); };
+      actions.appendChild(back);
+    }
+    renderPast(eds);
+  }
+  function renderPast(eds) {
+    var keys = Object.keys(eds).sort().reverse();
+    $('past').hidden = !keys.length;
+    var ul = $('pastList'); ul.textContent = '';
+    keys.forEach(function (k) {
+      var li = el('li'), b = el('button'); b.type = 'button';
+      b.appendChild(el('span', 'd', shortDate(k)));
+      b.appendChild(el('span', 'h', (eds[k].weather ? eds[k].weather + ' ' : '') + eds[k].headline));
+      if (k === showing) b.setAttribute('aria-current', 'true');
+      b.onclick = function () { show(k); };
+      li.appendChild(b); ul.appendChild(li);
+    });
+  }
+  function show(k) { showing = k; render(); window.scrollTo(0, 0); }
+
+  /* ---------- writing ---------- */
+  WEATHER.forEach(function (w) {
+    var b = el('button', null, w[0] + ' ' + w[1]); b.type = 'button'; b.dataset.wx = w[0];
+    b.onclick = function () { weather = weather === w[0] ? '' : w[0]; syncWeather(); saveDraft(); };
+    $('wxPick').appendChild(b);
+  });
+  function syncWeather() {
+    document.querySelectorAll('#wxPick button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.wx === weather ? 'true' : 'false'); });
+  }
+  function words(t) { var cjk = (t.match(/[㐀-鿿]/g) || []).length; var latin = (t.replace(/[㐀-鿿]/g, ' ').match(/[A-Za-z0-9'’-]+/g) || []).length; return cjk + latin; }
+  function syncCount() { var n = words($('fStory').value); $('count').textContent = n + (n === 1 ? ' word' : ' words'); }
+  function openEditor(k) {
+    var draft = readJSON(DRAFT_KEY), ed = all()[k];
+    var src = draft.edition_date === k ? draft : (ed || { edition_date: k, headline: '', weather: '', story: '' });
+    $('fDate').value = k; $('fDate').max = today;
+    $('fHead').value = src.headline || ''; $('fStory').value = src.story || ''; weather = src.weather || '';
+    syncWeather(); syncCount();
+    $('editor').hidden = false; $('fHead').focus();
+    $('editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function current() { return { edition_date: $('fDate').value, headline: $('fHead').value.trim(), weather: weather, story: $('fStory').value.trim() }; }
+  function saveDraft() { writeJSON(DRAFT_KEY, current()); }
+  ['fHead', 'fStory', 'fDate'].forEach(function (id) { $(id).addEventListener('input', function () { if (id === 'fStory') syncCount(); saveDraft(); }); });
+  $('cancel').onclick = function () { writeJSON(DRAFT_KEY, {}); $('editor').hidden = true; };
+  $('editor').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var ed = current();
+    if (!ed.edition_date || !ed.headline) return;
+    $('publish').disabled = true;
+    unsaved[ed.edition_date] = ed; writeJSON(LOCAL_KEY, unsaved);
+    writeJSON(DRAFT_KEY, {});
+    $('editor').hidden = true; show(ed.edition_date);
+    pushUnsaved().then(function () { $('publish').disabled = false; });
+  });
+
+  /* ---------- online saving ---------- */
+  function pushUnsaved() {
+    var keys = Object.keys(unsaved);
+    if (!keys.length) return Promise.resolve();
+    return keys.reduce(function (p, k) {
+      return p.then(function () {
+        var ed = unsaved[k];
+        return News.save(ed).then(function () {
+          editions[k] = ed;
+          if (unsaved[k] === ed) { delete unsaved[k]; writeJSON(LOCAL_KEY, unsaved); }
+        });
+      });
+    }, Promise.resolve()).then(function () { setStatus('ok'); render(); })
+      .catch(function (err) { setStatus(News.problem(err)); render(); });
+  }
+  function load() {
+    return News.list().then(function (rows) {
+      editions = {};
+      rows.forEach(function (r) { editions[r.edition_date] = r; });
+      setStatus('ok'); render();
+      return pushUnsaved();
+    }).catch(function (err) { setStatus(News.problem(err)); render(); });
+  }
+
+  render();
+  load();
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && $('editor').hidden) load(); });
+  window.addEventListener('online', load);
+  // A draft left unfinished: reopen the editor with it.
+  var draft = readJSON(DRAFT_KEY);
+  if (draft.edition_date && (draft.headline || draft.story)) openEditor(draft.edition_date);
+})();
 </script>
 </body>
 </html>
