@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#3b2c20">
-<title>Jordan's 3× Minecraft Block Builder</title>
+<title>Jordan's 九九乘法 Block Builder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
 <style>
@@ -14,6 +14,7 @@
   --btn:#6f6f6f;--btn-hi:#a5a5a5;--btn-lo:#4a4a4a;--xp:#80ff20;--gold:#ffff55;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0}
 body{min-height:100vh;font-family:var(--px);word-spacing:-.55em;color:#fff;background:#3b2c20;image-rendering:pixelated;
   background-size:64px 64px;-webkit-tap-highlight-color:transparent}
@@ -57,7 +58,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .toast span{font-size:12px;text-shadow:2px 2px 0 #000}
 
 /* hotbar */
-.hotbar{display:grid;grid-template-columns:repeat(10,1fr);gap:0;margin:12px auto 0;max-width:520px;border:3px solid #000;background:#000}
+.hotbar{display:grid;grid-template-columns:repeat(9,1fr);gap:0;margin:12px auto 0;max-width:520px;border:3px solid #000;background:#000}
 .slot{aspect-ratio:1;background:#8b8b8b;box-shadow:inset 3px 3px 0 #373737,inset -3px -3px 0 #fff;display:grid;place-items:center;position:relative}
 .slot canvas{width:62%;height:62%;image-rendering:pixelated}
 .slot.sel{box-shadow:inset 0 0 0 3px #fff,inset 0 0 0 5px #000}
@@ -70,7 +71,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .xp .lvl{position:absolute;left:50%;top:-20px;transform:translateX(-50%);color:var(--xp);font-size:14px;
   text-shadow:2px 0 0 #000,-2px 0 0 #000,0 2px 0 #000,0 -2px 0 #000}
 .track{height:14px;background:#2b2b2b;border:2px solid #000;position:relative;overflow:hidden}
-.track::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 2px),#000 calc(10% - 2px) 10%)}
+.track::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(11.111% - 2px),#000 calc(11.111% - 2px) 11.111%)}
 .bar{height:100%;width:0;background:linear-gradient(#b6ff5c,#5fd11b 60%,#3c9a0c);transition:width .4s steps(6)}
 .question{white-space:nowrap;word-spacing:-.6em;text-align:center;font-weight:400;font-size:clamp(28px,4.4vw,42px);margin:18px 0 16px;color:#373737;text-shadow:3px 3px 0 #fff8}
 .answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -82,6 +83,20 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .feedback.good{color:#1f6b10}
 .feedback.bad{color:#9c2f2f}
 .hint{text-align:center;font-size:12px;line-height:1.7;color:#555;margin:2px 0 0}
+.setup h2{margin:4px 0 14px;font-size:16px;font-weight:400;line-height:1.6;text-align:center;color:var(--text)}
+.pick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:330px;margin:0 auto}
+.pick .mcbtn{font-size:clamp(22px,3.4vw,30px);min-height:64px}
+.pick .mcbtn[aria-pressed="true"]{background:#3c8c2a;box-shadow:inset 2px 2px 0 #7fd36a,inset -2px -3px 0 #1f5715}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0 4px}
+.check{display:flex;align-items:center;justify-content:center;gap:10px;margin:12px 0 4px;font-size:13px;cursor:pointer}
+.check input{appearance:none;-webkit-appearance:none;width:26px;height:26px;margin:0;background:#8b8b8b;border:2px solid #000;
+  box-shadow:inset 2px 2px 0 #373737;cursor:pointer;display:grid;place-items:center}
+.check input:checked::after{content:"✓";color:#fff;font-size:16px;text-shadow:2px 2px 0 #3f3f3f}
+.check input:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.start{width:100%;font-size:16px!important;padding:14px!important;margin-top:12px}
+.start:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.again{margin-top:12px}
+.again .mcbtn{width:100%;font-size:14px;padding:12px}
 .actions{margin-top:14px}
 .actions .mcbtn{width:100%;font-size:15px;padding:14px}
 
@@ -95,14 +110,14 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
   <a class="mcbtn back" href="jordan.html">← Jordan</a>
   <div class="score">⭐ <span id="score">0</span> 分</div>
 </header>
-<div class="logo"><b>MATHCRAFT</b><span class="splash">3 的乘法！</span></div>
-<p class="tag shadow">答对三的乘法，帮 Steve 收集方块，建造自己的小屋！</p>
+<div class="logo"><b>MATHCRAFT</b><span class="splash">九九乘法！</span></div>
+<p class="tag shadow">选好要练的数，每答对一题，Steve 就盖一层小屋！</p>
 
 <section class="layout">
   <div>
     <div class="frame" id="frame">
       <canvas id="view" aria-label="像素风的 Minecraft 世界，Steve 正在建造小屋"></canvas>
-      <div class="caption">🏠 建造进度 <span id="count">0</span>/10</div>
+      <div class="caption">🏠 建造进度 <span id="count">0</span>/9</div>
       <div class="toast" id="toast" aria-live="polite"><canvas id="toastIcon" width="16" height="16"></canvas><div><b>进度达成！</b><span>Jordan 建好了小屋</span></div></div>
     </div>
     <div class="hotbar" id="hotbar" aria-hidden="true"></div>
@@ -110,14 +125,25 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 
   <div>
     <div class="panel">
-      <div class="topline"><span>第 <span id="num">1</span>/10 题</span><span>🏡 <span id="percent">0</span>%</span></div>
+      <div class="setup" id="setup">
+        <h2>选择要练习的数</h2>
+        <div class="pick" id="pick" role="group" aria-label="选择要练习的数"></div>
+        <div class="row"><button class="mcbtn" id="all">全选</button><button class="mcbtn" id="none">清空</button></div>
+        <label class="check"><input type="checkbox" id="shuffle">打乱顺序</label>
+        <button class="mcbtn start" id="start">⛏ 开始建造</button>
+        <p class="hint" id="pickHint"></p>
+      </div>
+      <div id="play" hidden>
+      <div class="topline"><span>第 <span id="num">1</span>/9 题</span><span>🏡 <span id="percent">0</span>%</span></div>
       <div class="xp"><span class="lvl" id="lvl">0</span><div class="track"><div class="bar" id="bar"></div></div></div>
-      <div class="question" id="question">3 × 1 = ?</div>
+      <div class="question" id="question"></div>
       <div class="answers" id="answers"></div>
       <div class="feedback" id="feedback" aria-live="polite"></div>
       <p class="hint" id="hint">选对答案，Steve 就会放下一块方块！</p>
+      <div class="again" id="again" hidden><button class="mcbtn" id="replay">↻ 同样的数再来一轮</button></div>
+      </div>
     </div>
-    <div class="actions"><button class="mcbtn" id="restart">↻ 重新挑战</button></div>
+    <div class="actions"><button class="mcbtn" id="restart">🔢 换数字</button></div>
   </div>
 </section>
 </main>
@@ -273,8 +299,7 @@ const STEPS = [
   { icon: 'doorBottom', blocks: [['doorBottom', 10, 9], ['doorTop', 10, 8]] },
   { icon: 'glass', blocks: [['glass', 9, 8], ['glass', 11, 8]] },
   { icon: 'planks', blocks: [['planks', 9, 7], ['planks', 10, 7], ['planks', 11, 7]] },
-  { icon: 'roof', blocks: [['roof', 7, 6], ['roof', 8, 6], ['roof', 9, 6], ['roof', 10, 6]] },
-  { icon: 'roof', blocks: [['roof', 11, 6], ['roof', 12, 6], ['roof', 13, 6]] },
+  { icon: 'roof', blocks: [['roof', 7, 6], ['roof', 8, 6], ['roof', 9, 6], ['roof', 10, 6], ['roof', 11, 6], ['roof', 12, 6], ['roof', 13, 6]] },
   { icon: 'roof', blocks: [['roof', 8, 5], ['roof', 9, 5], ['roof', 10, 5], ['roof', 11, 5], ['roof', 12, 5]] },
   { icon: 'torch', blocks: [['roof', 9, 4], ['roof', 10, 4], ['roof', 11, 4], ['cobble', 10, 3], ['torch', 7, 9], ['torch', 13, 9]] }
 ];
@@ -484,68 +509,129 @@ function iconCanvas(name) { const c = document.createElement('canvas'); c.width 
 $('toastIcon').getContext('2d').drawImage(TEX.doorTop, 0, 0);
 function syncHotbar() {
   slots.forEach((s, i) => {
-    s.classList.toggle('sel', i === Math.min(step, 9));
+    s.classList.toggle('sel', i === Math.min(step, ROUND - 1));
     if (i < step && !s.firstChild) s.appendChild(iconCanvas(STEPS[i].icon));
     if (i >= step) s.textContent = '';
   });
 }
 
-/* ---------- the quiz (same rules as before) ---------- */
-let step = 0, score = 0, locked = false;
-function choices(n) {
-  const s = new Set([3 * n]);
-  while (s.size < 4) { let v = Math.max(1, 3 * n + (Math.floor(Math.random() * 9) - 4) * 3); if (Math.random() < .24) v = 1 + Math.floor(Math.random() * 31); s.add(v); }
-  return [...s].sort(() => Math.random() - .5);
+/* ---------- the quiz: 九九乘法, numbers chosen by the player ---------- */
+const ROUND = STEPS.length;   // 9 questions, one build stage each
+const CN = '零一二三四五六七八九';
+// 口诀 for a × b, smaller number first: 三六十八, 二五一十, 一一得一
+function koujue(a, b) {
+  const x = Math.min(a, b), y = Math.max(a, b), p = x * y;
+  let r;
+  if (p < 10) r = '得' + CN[p];
+  else if (p === 10) r = '一十';
+  else { const t = Math.floor(p / 10), u = p % 10; r = (t === 1 ? '' : CN[t]) + '十' + (u ? CN[u] : ''); }
+  return CN[x] + CN[y] + r;
+}
+const shuffled = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+const PICK_KEY = 'tt_pick_v1';
+let picked = [3], mixOrder = false;
+try { const saved = JSON.parse(localStorage.getItem(PICK_KEY) || 'null'); if (saved && Array.isArray(saved.picked)) { picked = saved.picked.filter(n => n >= 1 && n <= 9); mixOrder = !!saved.mix; } } catch (e) {}
+function savePick() { try { localStorage.setItem(PICK_KEY, JSON.stringify({ picked, mix: mixOrder })); } catch (e) {} }
+
+const pickBtns = [];
+for (let n = 1; n <= 9; n++) {
+  const b = document.createElement('button'); b.className = 'mcbtn'; b.textContent = n;
+  b.onclick = () => { picked = picked.includes(n) ? picked.filter(x => x !== n) : [...picked, n].sort((a, b) => a - b); syncPick(); };
+  $('pick').appendChild(b); pickBtns.push(b);
+}
+$('all').onclick = () => { picked = [1, 2, 3, 4, 5, 6, 7, 8, 9]; syncPick(); };
+$('none').onclick = () => { picked = []; syncPick(); };
+$('shuffle').onchange = e => { mixOrder = e.target.checked; syncPick(); };
+function syncPick() {
+  pickBtns.forEach((b, i) => b.setAttribute('aria-pressed', picked.includes(i + 1) ? 'true' : 'false'));
+  $('shuffle').checked = mixOrder;
+  $('start').disabled = !picked.length;
+  $('pickHint').textContent = !picked.length ? '先选一个数吧！'
+    : picked.length === 1 ? (mixOrder ? `练 ${picked[0]} 的乘法，题目顺序打乱。` : `按口诀顺序练：${picked[0]} × 1 到 ${picked[0]} × 9。`)
+    : `从 ${picked.join('、')} 的乘法里出 9 道题。`;
+  savePick();
+}
+
+let step = 0, score = 0, locked = false, questions = [];
+function makeQuestions() {
+  const pool = [];
+  picked.forEach(a => { for (let b = 1; b <= 9; b++) pool.push([a, b]); });
+  let qs = shuffled(pool).slice(0, ROUND);
+  if (!mixOrder) qs.sort((p, q) => p[0] - q[0] || p[1] - q[1]);
+  return qs;
+}
+function choices(a, b) {
+  const ans = a * b, s = new Set([ans]);
+  shuffled([a * (b + 1), a * (b - 1), (a + 1) * b, (a - 1) * b, ans + 1, ans - 1, ans + 10, ans - 10])
+    .forEach(v => { if (s.size < 4 && v > 0 && v <= 90) s.add(v); });
+  while (s.size < 4) s.add(1 + Math.floor(Math.random() * 81));
+  return shuffled([...s]);
 }
 function setProgress() {
-  $('bar').style.width = step * 10 + '%'; $('percent').textContent = step * 10;
+  const pct = Math.round(step / ROUND * 100);
+  $('bar').style.width = pct + '%'; $('percent').textContent = pct;
   $('lvl').textContent = step; $('count').textContent = step; syncHotbar();
 }
 function feedback(text, kind) { const f = $('feedback'); f.textContent = text; f.className = 'feedback' + (kind ? ' ' + kind : ''); }
 function draw() {
   locked = false; setProgress();
-  if (step === 10) {
-    $('question').textContent = '🏆'; $('num').textContent = '10'; $('answers').innerHTML = '';
+  if (step === ROUND) {
+    $('question').textContent = '🏆'; $('num').textContent = ROUND; $('answers').innerHTML = '';
     feedback('任务完成！🎉 Jordan 和 Steve 建好了小屋！', 'good');
     $('hint').textContent = '天黑了，火把亮起来了。太棒了！';
+    $('again').hidden = false;
     return;
   }
-  const n = step + 1;
-  $('num').textContent = n; $('question').textContent = '3 × ' + n + ' = ?';
+  const [a, b] = questions[step];
+  $('num').textContent = step + 1; $('question').textContent = a + ' × ' + b + ' = ?';
   feedback(''); $('hint').textContent = '选对答案，Steve 就会放下一块方块！';
   $('answers').innerHTML = '';
-  choices(n).forEach(v => {
-    const b = document.createElement('button'); b.className = 'mcbtn answer'; b.textContent = v;
-    b.onclick = () => answer(v, b, n); $('answers').appendChild(b);
+  choices(a, b).forEach(v => {
+    const btn = document.createElement('button'); btn.className = 'mcbtn answer'; btn.textContent = v;
+    btn.onclick = () => answer(v, btn, a, b); $('answers').appendChild(btn);
   });
 }
-function answer(v, b, n) {
+function answer(v, btn, a, b) {
   if (locked) return;
-  if (v !== 3 * n) {
-    b.classList.add('no'); b.disabled = true;
-    feedback('再试一次！想一想：3 × ' + n + ' 是多少？', 'bad');
+  if (v !== a * b) {
+    btn.classList.add('no'); btn.disabled = true;
+    feedback('再试一次！想一想：' + a + ' × ' + b + ' 是多少？', 'bad');
     hurtT0 = performance.now();
     if (!reduceMotion) { const f = $('frame'); f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake'); }
     return;
   }
   locked = true; score += 10; $('score').textContent = score;
-  feedback('答对了！Steve 正在放方块！⛏️', 'good');
-  $('answers').querySelectorAll('button').forEach(x => x.disabled = true); b.classList.add('ok');
+  feedback('答对了！' + koujue(a, b) + ' ⛏️', 'good');
+  $('answers').querySelectorAll('button').forEach(x => x.disabled = true); btn.classList.add('ok');
   swingT0 = performance.now();
   setTimeout(() => {
     const now = performance.now();
     STEPS[step].blocks.forEach(([name, col, row], k) => { placed.push({ name, col, row, t0: now + k * 70 }); burst(col, row, name); });
     step++;
-    if (step === 10) { duskFrom = 0; duskTo = .85; duskT0 = now; setTimeout(() => $('toast').classList.add('show'), 900); setTimeout(() => $('toast').classList.remove('show'), 5200); }
+    if (step === ROUND) { duskFrom = 0; duskTo = .85; duskT0 = now; setTimeout(() => $('toast').classList.add('show'), 900); setTimeout(() => $('toast').classList.remove('show'), 5200); }
     $('hint').textContent = '方块放好了！继续回答下一题。'; setProgress();
-    setTimeout(draw, 650);
+    setTimeout(draw, 900);
   }, 230);
 }
-$('restart').onclick = () => {
+function resetWorld() {
   step = 0; score = 0; locked = false; placed = []; particles = [];
-  duskFrom = duskTo = 0; $('toast').classList.remove('show'); $('score').textContent = '0'; draw();
-};
-draw();
+  duskFrom = duskTo = 0; $('toast').classList.remove('show'); $('score').textContent = '0';
+}
+function startRound() {
+  resetWorld(); questions = makeQuestions();
+  $('setup').hidden = true; $('play').hidden = false; $('again').hidden = true; $('restart').hidden = false;
+  draw();
+}
+function showSetup() {
+  resetWorld(); setProgress();
+  $('setup').hidden = false; $('play').hidden = true; $('restart').hidden = true;
+  syncPick();
+}
+$('start').onclick = startRound;
+$('replay').onclick = startRound;
+$('restart').onclick = showSetup;
+showSetup();
 resize();
 requestAnimationFrame(frame);
 })();
