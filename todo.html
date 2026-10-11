@@ -66,17 +66,17 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/* To update: edit UPDATED, GROUPS and TASKS below. Ticks are saved online (Supabase table todo_checks, see supabase/todo_checks.sql) with a copy on each device. */
-var UPDATED = 'Sat 10 Oct';
+/* To update: edit UPDATED, GROUPS, TASKS and ROUTINE below. Ticks are saved online (Supabase table todo_checks, see supabase/todo_checks.sql) with a copy on each device. */
+var UPDATED = 'Sun 11 Oct';
 
 var GROUPS = [
-  { id: 'rev',  title: 'This weekend to Wed 14 Oct', sub: 'English Paper 2 revision. Plan your own time for these.' },
-  { id: 'sun',  title: 'Sunday 11 Oct',     sub: 'Get ready' },
-  { id: 'mon',  title: 'Monday 12 Oct',     sub: 'Home day' },
-  { id: 'tue',  title: 'Tuesday 13 Oct',    sub: 'Home day' },
-  { id: 'wed',  title: 'Wednesday 14 Oct',  sub: 'Home day' },
-  { id: 'week', title: 'Home learning week', sub: 'No exact day from the teacher. Finish as early as you can.' },
-  { id: 'thu',  title: 'Thursday 15 Oct',   sub: 'Back at school' }
+  { id: 'rev',  sort: '2026-10-10',  title: 'This weekend to Wed 14 Oct', sub: 'English Paper 2 revision. Plan your own time for these.' },
+  { id: 'sun',  date: '2026-10-11', title: 'Sunday 11 Oct',     sub: 'Get ready' },
+  { id: 'mon',  date: '2026-10-12', title: 'Monday 12 Oct',     sub: 'Home day' },
+  { id: 'tue',  date: '2026-10-13', title: 'Tuesday 13 Oct',    sub: 'Home day' },
+  { id: 'wed',  date: '2026-10-14', title: 'Wednesday 14 Oct',  sub: 'Home day' },
+  { id: 'week', sort: '2026-10-14~', title: 'Home learning week', sub: 'No exact day from the teacher. Finish as early as you can.' },
+  { id: 'thu',  date: '2026-10-15', title: 'Thursday 15 Oct',   sub: 'Back at school' }
 ];
 
 var TASKS = [
@@ -110,6 +110,9 @@ var TASKS = [
     note: 'Make sure it works before next week.',
     link: 'https://ezhishi.net', linkText: 'Open ezhishi.net →' },
 
+  { id: 'b-zh-l15-rev1', kid: 'bryan', group: 'mon', subject: 'Chinese',
+    title: '复习第15课听写/默写（1/3）',
+    note: '星期四考查。读一遍词语，自己默写一次，错的字再多写几遍。' },
   { id: 'b-pp2b', kid: 'bryan', group: 'mon', subject: 'Math',
     title: 'Finish PP2B (2024 Paper 2)',
     note: 'Time yourself with the duration on the cover page. Do it on your own.' },
@@ -117,6 +120,9 @@ var TASKS = [
     title: 'English Practice A (1 hour only)',
     note: "Do Sections A to F only. Skip Section G (Comprehension). Section B: look up the options in a dictionary and write down what they mean. S&T Q4: answer it using logic. The 'if (condition)' structure doesn't work for this one." },
 
+  { id: 'b-zh-l15-rev2', kid: 'bryan', group: 'tue', subject: 'Chinese',
+    title: '复习第15课听写/默写（2/3）',
+    note: '星期四考查。重点练昨天写错的字。' },
   { id: 'b-pp1a', kid: 'bryan', group: 'tue', subject: 'Math', time: 'Morning',
     title: 'Finish PP1A (2025 Paper 1)',
     note: 'Time yourself with the duration on the cover page. Do it on your own.' },
@@ -127,6 +133,9 @@ var TASKS = [
     title: 'English Practice B (1 hour only)',
     note: "Do Sections A to F only. Skip Section G (Comprehension). Section B: look up the options in a dictionary and write down what they mean. Use the strategies from class for each section so you get them right. S&T 'whose' question: give it a try, or leave it blank if you don't know how." },
 
+  { id: 'b-zh-l15-rev3', kid: 'bryan', group: 'wed', subject: 'Chinese',
+    title: '复习第15课听写/默写（3/3）',
+    note: '明天考查。完整默写一遍，检查有没有错。' },
   { id: 'b-sls-check', kid: 'bryan', group: 'wed', subject: 'Math',
     title: 'Check your answers on SLS',
     note: 'Ms Chua will use your answer-checking to pick questions for class discussion.' },
@@ -149,9 +158,6 @@ var TASKS = [
     title: 'My Animal Mini Book',
     note: 'Choose an animal you like (not a giraffe). Find some fun facts about it and write them in your four-page booklet. Keep each fact short and easy to read. You can draw or add a picture of your animal too. Do it over the weekend and Mon–Wed.' },
 
-  { id: 'b-zh-l15-dictation', kid: 'bryan', group: 'week', subject: 'Chinese',
-    title: '复习第15课听写/默写',
-    note: '10月15日（星期四）考查。' },
   { id: 'b-zh-l15-test', kid: 'bryan', group: 'thu', subject: 'Chinese',
     title: '第15课听写/默写考查',
     note: '今天在学校考查。早上出门前再看一遍第15课的词语。' },
@@ -162,6 +168,22 @@ var TASKS = [
   { id: 'b-sci-pp2', kid: 'bryan', group: 'week', subject: 'Science',
     title: 'Science Practice Paper 2',
     note: 'Do it like a real exam: 1 hour 45 minutes, shade the OAS answer sheet, and no Science notes or books. This helps you get ready for the Science EYE.' }
+];
+
+/* Weekly routine: shown automatically on the right days for the next 7 days.
+   day: 0 = Sunday, 1 = Monday ... 6 = Saturday. Each day gets its own tick. */
+var ROUTINE = [
+  { id: 'r-lingo-class', kid: 'bryan', day: 2, subject: 'LingoAce', title: 'LingoAce 上课' },
+  { id: 'r-liu-start', kid: 'bryan', day: 3, subject: '刘老师', title: '开始做刘老师的作业',
+    note: '星期六上刘老师的课。今天开始做，不要留到最后一天。' },
+  { id: 'r-debate-prep', kid: 'bryan', day: 4, subject: 'Debate', title: '准备 Debate',
+    note: '明天（星期五）上 Debate 课。' },
+  { id: 'r-debate-class', kid: 'bryan', day: 5, subject: 'Debate', title: 'Debate 课' },
+  { id: 'r-liu-finish', kid: 'bryan', day: 5, subject: '刘老师', title: '完成刘老师的作业',
+    note: '明天上课，今天检查一遍，放进书包。' },
+  { id: 'r-liu-class', kid: 'bryan', day: 6, subject: '刘老师', title: '刘老师的课' },
+  { id: 'r-lingo-hw', kid: 'bryan', day: 0, subject: 'LingoAce', title: '做 LingoAce 作业',
+    note: '打印出来做，量不多。星期二上课前完成。' }
 ];
 
 (function () {
@@ -240,6 +262,29 @@ var TASKS = [
   }
   function shown(t) { return kid === 'all' || t.kid === kid; }
 
+  var DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function dayKey(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  var groups = GROUPS.slice(), tasks = TASKS.slice();
+  (function addRoutine() {
+    var now = new Date();
+    for (var i = 0; i < 7; i++) {
+      var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i), key = dayKey(d);
+      var todays = ROUTINE.filter(function (r) { return r.day === d.getDay(); });
+      if (!todays.length) continue;
+      var g = groups.filter(function (x) { return x.date === key; })[0];
+      if (!g) {
+        g = { id: 'day-' + key, date: key, title: DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()], sub: d.getDay() === 0 || d.getDay() === 6 ? 'Weekend' : 'School day' };
+        groups.push(g);
+      }
+      todays.forEach(function (r) {
+        tasks.push({ id: r.id + '-' + key, kid: r.kid, group: g.id, subject: r.subject, title: r.title, note: r.note, routine: true });
+      });
+    }
+    groups.sort(function (a, b) { var x = a.sort || a.date, y = b.sort || b.date; return x < y ? -1 : x > y ? 1 : 0; });
+  })();
+
   function toggle(id) {
     if (checked[id]) delete checked[id]; else checked[id] = true;
     pending[id] = !!checked[id];
@@ -267,6 +312,7 @@ var TASKS = [
     var meta = el('div', 'meta');
     meta.appendChild(el('span', 'who ' + t.kid, NAMES[t.kid]));
     meta.appendChild(el('span', 'subj', [t.subject, t.time].filter(Boolean).join(' · ')));
+    if (t.routine) meta.appendChild(el('span', 'subj', '🔁 Weekly'));
     body.appendChild(meta);
     body.appendChild(el('div', 't', t.title));
     if (t.note) body.appendChild(el('p', 'note', t.note));
@@ -282,7 +328,7 @@ var TASKS = [
   function render() {
     var board = document.getElementById('board');
     board.textContent = '';
-    var visible = TASKS.filter(shown);
+    var visible = tasks.filter(shown);
     var done = visible.filter(function (t) { return checked[t.id]; }).length;
 
     document.getElementById('count').textContent =
@@ -293,7 +339,7 @@ var TASKS = [
       board.appendChild(el('div', 'empty', 'Nothing here yet.'));
       return;
     }
-    GROUPS.forEach(function (g) {
+    groups.forEach(function (g) {
       var list = visible.filter(function (t) { return t.group === g.id; });
       if (!list.length) return;
       var sec = el('section', 'day');
