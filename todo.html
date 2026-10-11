@@ -171,7 +171,7 @@ var TASKS = [
 ];
 
 /* Weekly routine: shown automatically on the right days for the next 7 days.
-   day: 0 = Sunday, 1 = Monday ... 6 = Saturday. Each day gets its own tick. */
+   day (or days: [...]): 0 = Sunday, 1 = Monday ... 6 = Saturday. Each day gets its own tick. */
 var ROUTINE = [
   { id: 'r-lingo-class', kid: 'bryan', day: 2, subject: 'LingoAce', title: 'LingoAce 上课' },
   { id: 'r-liu-start', kid: 'bryan', day: 3, subject: '刘老师', title: '开始做刘老师的作业',
@@ -183,7 +183,22 @@ var ROUTINE = [
     note: '明天上课，今天检查一遍，放进书包。' },
   { id: 'r-liu-class', kid: 'bryan', day: 6, subject: '刘老师', title: '刘老师的课' },
   { id: 'r-lingo-hw', kid: 'bryan', day: 0, subject: 'LingoAce', title: '做 LingoAce 作业',
-    note: '打印出来做，量不多。星期二上课前完成。' }
+    note: '打印出来做，量不多。星期二上课前完成。' },
+
+  { id: 'r-wang-class', kid: 'jordan', day: 0, subject: '汪老师中文', title: '汪老师中文课', time: 'Morning' },
+  { id: 'r-wang-rev1', kid: 'jordan', day: 1, subject: '汪老师中文', title: '复习昨天汪老师课上学的内容',
+    note: '趁还记得清楚，把昨天学的字和词读一读、写一写。',
+    link: 'write.html', linkText: '去中文练字 →' },
+  { id: 'r-wang-rev2', kid: 'jordan', day: 3, subject: '汪老师中文', title: '继续复习汪老师的内容',
+    note: '有作业的话今天做一部分。',
+    link: 'write.html', linkText: '去中文练字 →' },
+  { id: 'r-wang-rev3', kid: 'jordan', day: 5, subject: '汪老师中文', title: '再复习一遍汪老师的内容',
+    link: 'write.html', linkText: '去中文练字 →' },
+  { id: 'r-wang-prep', kid: 'jordan', day: 6, subject: '汪老师中文', title: '准备明天汪老师的课',
+    note: '检查作业做完了没有，把要带的书本准备好。' },
+  { id: 'r-math-night', kid: 'jordan', days: [0, 1, 2, 3, 4, 5, 6], subject: 'Math', time: 'Evening', title: '晚上数学时间',
+    note: '听讲一个新的数学知识，再做几道练习。也可以玩九九乘法 Block Builder 练口诀。',
+    link: 'times-table.html', linkText: '玩九九乘法 →' }
 ];
 
 (function () {
@@ -271,7 +286,7 @@ var ROUTINE = [
     var now = new Date();
     for (var i = 0; i < 7; i++) {
       var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i), key = dayKey(d);
-      var todays = ROUTINE.filter(function (r) { return r.day === d.getDay(); });
+      var todays = ROUTINE.filter(function (r) { return (r.days || [r.day]).indexOf(d.getDay()) >= 0; });
       if (!todays.length) continue;
       var g = groups.filter(function (x) { return x.date === key; })[0];
       if (!g) {
@@ -279,7 +294,7 @@ var ROUTINE = [
         groups.push(g);
       }
       todays.forEach(function (r) {
-        tasks.push({ id: r.id + '-' + key, kid: r.kid, group: g.id, subject: r.subject, title: r.title, note: r.note, routine: true });
+        tasks.push({ id: r.id + '-' + key, kid: r.kid, group: g.id, subject: r.subject, time: r.time, title: r.title, note: r.note, link: r.link, linkText: r.linkText, routine: true });
       });
     }
     groups.sort(function (a, b) { var x = a.sort || a.date, y = b.sort || b.date; return x < y ? -1 : x > y ? 1 : 0; });
