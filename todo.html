@@ -46,7 +46,7 @@
   <h1>This week's to-do</h1>
   <p class="hello" id="hello"></p>
 
-  <div class="banner">Mon–Wed (12–14 Oct) are home days. Start your school work early and finish it early.</div>
+  <div class="banner">Focus on ClassDojo tasks and preparation needed before Liu Laoshi / Wang Laoshi lessons. Tick only after you have checked the work.</div>
 
   <div class="kids" role="group" aria-label="Show tasks for">
     <button type="button" data-kid="all" aria-pressed="true">Both</button>
@@ -70,137 +70,48 @@
 var UPDATED = 'Sun 11 Oct';
 
 var GROUPS = [
-  { id: 'rev',  sort: '2026-10-10',  title: 'This weekend to Wed 14 Oct', sub: 'English Paper 2 revision. Plan your own time for these.' },
-  { id: 'sun',  date: '2026-10-11', title: 'Sunday 11 Oct',     sub: 'Get ready' },
-  { id: 'mon',  date: '2026-10-12', title: 'Monday 12 Oct',     sub: 'Home day' },
-  { id: 'tue',  date: '2026-10-13', title: 'Tuesday 13 Oct',    sub: 'Home day' },
-  { id: 'wed',  date: '2026-10-14', title: 'Wednesday 14 Oct',  sub: 'Home day' },
-  { id: 'week', sort: '2026-10-14~', title: 'Home learning week', sub: 'No exact day from the teacher. Finish as early as you can.' },
-  { id: 'thu',  date: '2026-10-15', title: 'Thursday 15 Oct',   sub: 'Back at school' }
+  { id: 'mon', date: '2026-10-12', title: 'Monday 12 Oct', sub: 'Bryan · Math' },
+  { id: 'tue', date: '2026-10-13', title: 'Tuesday 13 Oct', sub: 'Bryan · Math' },
+  { id: 'wed', date: '2026-10-14', title: 'Wednesday 14 Oct', sub: 'Bryan · SLS' },
+  { id: 'thu', date: '2026-10-15', title: 'Thursday 15 Oct', sub: 'Bryan · Chinese dictation' },
+  { id: 'week', sort: '2026-10-15~', title: 'No exact due date', sub: 'Jordan’s home-learning tasks and other ClassDojo work' }
 ];
 
 var TASKS = [
-  { id: 'b-en-verbs', kid: 'bryan', group: 'rev', subject: 'English',
-    title: 'Watch the verbs videos, Lessons 1 to 5',
-    note: "They're on your English teacher's Google Classroom. Catch up on any you missed." },
-  { id: 'b-en-irregular', kid: 'bryan', group: 'rev', subject: 'English',
-    title: 'Memorise the irregular verbs list',
-    note: 'Chant it again and again until you know it by heart.' },
-  { id: 'b-en-spell', kid: 'bryan', group: 'rev', subject: 'English',
-    title: 'Learn the words on the blue Spelling List' },
-  { id: 'b-en-spellgame', kid: 'bryan', group: 'rev', subject: 'English',
-    title: 'Spelling Game Challenge',
-    note: 'Start at P4. Play as many rounds as you like, because the words change each round. Move up a level once you clear all the P4 words.',
-    link: 'https://tinyurl.com/MCspell', linkText: 'Open the spelling game →' },
-  { id: 'b-en-spell-extra', kid: 'bryan', group: 'rev', subject: 'English',
-    title: 'Add the words you got wrong to your Spelling List',
-    note: "Flip through your Spelling and Editing Practices. Write every word you couldn't spell on foolscap paper and staple it behind the blue Spelling List." },
-  { id: 'b-en-wa2', kid: 'bryan', group: 'rev', subject: 'English',
-    title: 'Revise the WA2 papers in your red file',
-    note: 'Go over the strategies for Tense Sequence, Cloze Passage, Comprehension, Grammar Drills and Synthesis & Transformation. Then look through all the WA2 practice and exam papers for the mistakes you made.' },
-  { id: 'b-en-notes', kid: 'bryan', group: 'rev', subject: 'English',
-    title: 'Make revision notes from your mistakes',
-    note: "Write them on foolscap paper and staple the pages together, or start a revision exercise book. This helps you not make the same mistakes again." },
-
-  { id: 'b-prep', kid: 'bryan', group: 'sun', subject: 'Math',
-    title: 'Find your Math file and practice papers',
-    note: 'Look at the cover page of each paper to see how long it takes. PP3A and PP3B came last week. More papers come home by the end of this week.' },
-  { id: 'j-login', kid: 'jordan', group: 'sun', subject: 'Chinese',
-    title: 'Try logging in to ezhishi.net',
-    note: 'Make sure it works before next week.',
-    link: 'https://ezhishi.net', linkText: 'Open ezhishi.net →' },
-
-  { id: 'b-zh-l15-rev1', kid: 'bryan', group: 'mon', subject: 'Chinese',
-    title: '复习第15课听写/默写（1/3）',
-    note: '星期四考查。读一遍词语，自己默写一次，错的字再多写几遍。' },
-  { id: 'b-pp2b', kid: 'bryan', group: 'mon', subject: 'Math',
+  { id: 'b-pp2b', kid: 'bryan', group: 'mon', subject: 'Math · ClassDojo',
     title: 'Finish PP2B (2024 Paper 2)',
     note: 'Time yourself with the duration on the cover page. Do it on your own.' },
-  { id: 'b-en-pa', kid: 'bryan', group: 'mon', subject: 'English',
-    title: 'English Practice A (1 hour only)',
-    note: "Do Sections A to F only. Skip Section G (Comprehension). Section B: look up the options in a dictionary and write down what they mean. S&T Q4: answer it using logic. The 'if (condition)' structure doesn't work for this one." },
-
-  { id: 'b-zh-l15-rev2', kid: 'bryan', group: 'tue', subject: 'Chinese',
-    title: '复习第15课听写/默写（2/3）',
-    note: '星期四考查。重点练昨天写错的字。' },
-  { id: 'b-pp1a', kid: 'bryan', group: 'tue', subject: 'Math', time: 'Morning',
+  { id: 'b-pp1a', kid: 'bryan', group: 'tue', subject: 'Math · ClassDojo', time: 'Morning',
     title: 'Finish PP1A (2025 Paper 1)',
-    note: 'Time yourself with the duration on the cover page. Do it on your own.' },
-  { id: 'b-pp1b', kid: 'bryan', group: 'tue', subject: 'Math', time: 'Afternoon',
+    note: 'Complete in the morning, as instructed by Ms Chua.' },
+  { id: 'b-pp1b', kid: 'bryan', group: 'tue', subject: 'Math · ClassDojo', time: 'Afternoon',
     title: 'Finish PP1B (2025 Paper 2)',
-    note: 'Time yourself with the duration on the cover page. Do it on your own.' },
-  { id: 'b-en-pb', kid: 'bryan', group: 'tue', subject: 'English',
-    title: 'English Practice B (1 hour only)',
-    note: "Do Sections A to F only. Skip Section G (Comprehension). Section B: look up the options in a dictionary and write down what they mean. Use the strategies from class for each section so you get them right. S&T 'whose' question: give it a try, or leave it blank if you don't know how." },
-
-  { id: 'b-zh-l15-rev3', kid: 'bryan', group: 'wed', subject: 'Chinese',
-    title: '复习第15课听写/默写（3/3）',
-    note: '明天考查。完整默写一遍，检查有没有错。' },
-  { id: 'b-sls-check', kid: 'bryan', group: 'wed', subject: 'Math',
-    title: 'Check your answers on SLS',
-    note: 'Ms Chua will use your answer-checking to pick questions for class discussion.' },
-  { id: 'b-sls-irs', kid: 'bryan', group: 'wed', subject: 'Math',
+    note: 'Complete in the afternoon, as instructed by Ms Chua.' },
+  { id: 'b-sls-check', kid: 'bryan', group: 'wed', subject: 'Math · ClassDojo',
+    title: 'Check your answers on SLS' },
+  { id: 'b-sls-irs', kid: 'bryan', group: 'wed', subject: 'Math · ClassDojo',
     title: 'Do the IRS Unit 5 module on SLS' },
-  { id: 'b-en-cloze', kid: 'bryan', group: 'wed', subject: 'English',
-    title: 'Cloze Comprehension: Mona Lisa and Eliezer Wiesel',
-    note: 'Use the strategies from class: collocation and context clues.' },
-  { id: 'b-en-mark', kid: 'bryan', group: 'wed', subject: 'English',
-    title: 'Mark English Practice A and B yourself',
-    note: 'Mark in pencil and write your corrections in green. For S&T, write the whole sentence out again. Your teacher will post the answers on the class blog next Wednesday.' },
-
-  { id: 'j-xpy', kid: 'jordan', group: 'week', subject: 'Chinese',
-    title: '新朋友' },
-  { id: 'j-ezhishi', kid: 'jordan', group: 'week', subject: 'Chinese',
-    title: 'ezhishi.net',
-    note: 'A learning website. Your teacher put assignments inside for you.',
-    link: 'https://ezhishi.net', linkText: 'Open ezhishi.net →' },
-  { id: 'j-animal-book', kid: 'jordan', group: 'week', subject: 'Project',
-    title: 'My Animal Mini Book',
-    note: 'Choose an animal you like (not a giraffe). Find some fun facts about it and write them in your four-page booklet. Keep each fact short and easy to read. You can draw or add a picture of your animal too. Do it over the weekend and Mon–Wed.' },
-
-  { id: 'b-zh-l15-test', kid: 'bryan', group: 'thu', subject: 'Chinese',
-    title: '第15课听写/默写考查',
-    note: '今天在学校考查。早上出门前再看一遍第15课的词语。' },
-  { id: 'b-zh-l15-16-words', kid: 'bryan', group: 'week', subject: 'Chinese',
-    title: '做第15课和第16课词语册子' },
-  { id: 'b-zh-supp7', kid: 'bryan', group: 'week', subject: 'Chinese',
-    title: '做补充练习（七）' },
-  { id: 'b-sci-pp2', kid: 'bryan', group: 'week', subject: 'Science',
-    title: 'Science Practice Paper 2',
-    note: 'Do it like a real exam: 1 hour 45 minutes, shade the OAS answer sheet, and no Science notes or books. This helps you get ready for the Science EYE.' }
+  { id: 'b-zh-l15-test', kid: 'bryan', group: 'thu', subject: 'Chinese · ClassDojo',
+    title: '第15课听写／默写测试',
+    note: '测试当天早上可再快速复习第15课词语。' },
+  { id: 'b-zh-l15-16-words', kid: 'bryan', group: 'week', subject: 'Chinese · ClassDojo',
+    title: '完成第15课和第16课词语册' },
+  { id: 'b-zh-supp7', kid: 'bryan', group: 'week', subject: 'Chinese · ClassDojo',
+    title: '完成补充练习（七）' },
+  { id: 'j-xpy', kid: 'jordan', group: 'week', subject: 'Chinese · ClassDojo',
+    title: '完成华文居家学习：《新朋友》' },
+  { id: 'j-ezhishi', kid: 'jordan', group: 'week', subject: 'Chinese · ClassDojo',
+    title: '完成 ezhishi.net 居家学习练习',
+    link: 'https://ezhishi.net', linkText: 'Open ezhishi.net →' }
 ];
 
-/* Weekly routine: shown automatically on the right days for the next 7 days.
-   day (or days: [...]): 0 = Sunday, 1 = Monday ... 6 = Saturday. Each day gets its own tick. */
+/* Weekly routine: only show preparation tasks relevant to the next 7 days. */
 var ROUTINE = [
-  { id: 'r-lingo-class', kid: 'bryan', day: 2, subject: 'LingoAce', title: 'LingoAce 上课' },
-  { id: 'r-liu-start', kid: 'bryan', day: 3, subject: '刘老师', title: '开始做刘老师的作业',
-    note: '星期六上刘老师的课。今天开始做，不要留到最后一天。' },
-  { id: 'r-debate-prep', kid: 'bryan', day: 4, subject: 'Debate', title: '准备 Debate',
-    note: '明天（星期五）上 Debate 课。' },
-  { id: 'r-debate-class', kid: 'bryan', day: 5, subject: 'Debate', title: 'Debate 课' },
-  { id: 'r-liu-finish', kid: 'bryan', day: 5, subject: '刘老师', title: '完成刘老师的作业',
-    note: '明天上课，今天检查一遍，放进书包。' },
-  { id: 'r-liu-class', kid: 'bryan', day: 6, subject: '刘老师', title: '刘老师的课' },
-  { id: 'r-lingo-hw', kid: 'bryan', day: 0, subject: 'LingoAce', title: '做 LingoAce 作业',
-    note: '打印出来做，量不多。星期二上课前完成。' },
-
-  { id: 'r-wang-class', kid: 'jordan', day: 0, subject: '汪老师中文', title: '汪老师中文课', time: 'Morning' },
-  { id: 'r-wang-rev1', kid: 'jordan', day: 1, subject: '汪老师中文', title: '复习昨天汪老师课上学的内容',
-    note: '趁还记得清楚，把昨天学的字和词读一读、写一写。',
-    link: 'write.html', linkText: '去中文练字 →' },
-  { id: 'r-wang-rev2', kid: 'jordan', day: 3, subject: '汪老师中文', title: '继续复习汪老师的内容',
-    note: '有作业的话今天做一部分。',
-    link: 'write.html', linkText: '去中文练字 →' },
-  { id: 'r-wang-rev3', kid: 'jordan', day: 5, subject: '汪老师中文', title: '再复习一遍汪老师的内容',
-    link: 'write.html', linkText: '去中文练字 →' },
-  { id: 'r-wang-prep', kid: 'jordan', day: 6, subject: '汪老师中文', title: '准备明天汪老师的课',
-    note: '检查作业做完了没有，把要带的书本准备好。' },
-  { id: 'r-math-night', kid: 'jordan', days: [0, 1, 2, 3, 4, 5, 6], subject: 'Math', time: 'Evening', title: '晚上数学时间',
-    note: '听讲一个新的数学知识，再做几道练习。也可以玩九九乘法 Block Builder 练口诀。',
-    link: 'times-table.html', linkText: '玩九九乘法 →' }
+  { id: 'r-liu-prep', kid: 'bryan', days: [3, 4, 5], subject: '刘老师', title: '准备刘老师的课',
+    note: '检查刘老师布置的作业和需要带的材料；只有需要提前准备时才打勾。' },
+  { id: 'r-wang-prep', kid: 'jordan', days: [5, 6], subject: '王老师', title: '准备王老师的课',
+    note: '检查王老师布置的作业和需要带的材料；只有需要提前准备时才打勾。' }
 ];
-
 (function () {
   var NAMES = { bryan: 'Bryan', jordan: 'Jordan' };
   var KEY = 'todo_checked_v1';      // copy of the ticks on this device
