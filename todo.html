@@ -74,6 +74,8 @@ var GROUPS = [
   { id: 'tue', date: '2026-10-13', title: 'Tuesday 13 Oct', sub: 'Bryan · Math' },
   { id: 'wed', date: '2026-10-14', title: 'Wednesday 14 Oct', sub: 'Bryan · SLS' },
   { id: 'thu', date: '2026-10-15', title: 'Thursday 15 Oct', sub: 'Bryan · Chinese dictation' },
+  // showFrom: the group stays hidden until that day (for reminders set up in advance).
+  { id: 'nov10', date: '2026-11-10', showFrom: '2026-11-10', title: 'Tuesday 10 Nov', sub: 'Reminder for tomorrow' },
   { id: 'week', sort: '2026-10-15~', title: 'No exact due date', sub: 'Jordan’s home-learning tasks and other ClassDojo work' }
 ];
 
@@ -103,6 +105,9 @@ var TASKS = [
   { id: 'j-ezhishi', kid: 'jordan', group: 'week', subject: 'Chinese · ClassDojo',
     title: '完成 ezhishi.net 居家学习练习',
     link: 'https://ezhishi.net', linkText: 'Open ezhishi.net →' },
+  { id: 'b-ness-1111', kid: 'bryan', group: 'nov10', subject: 'School',
+    title: 'Tomorrow: NESS representatives training',
+    note: 'Wednesday 11 Nov, 2pm to 4pm, for the P4–P6 NESS representatives.' },
   { id: 'j-animal-book', kid: 'jordan', group: 'week', subject: 'Project · ClassDojo',
     title: 'My Animal Mini Book',
     note: 'Choose an animal you like (not a giraffe). Find some fun facts about it and write them in your four-page booklet. Keep each fact short and easy to read. You may also draw or add a picture of your animal. Finish by Wednesday 14 Oct (the PSLE marking days).' }
@@ -195,7 +200,9 @@ var ROUTINE = [
   var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   function pad(n) { return (n < 10 ? '0' : '') + n; }
   function dayKey(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
-  var groups = GROUPS.slice(), tasks = TASKS.slice();
+  var todayKey = dayKey(new Date());
+  var groups = GROUPS.filter(function (g) { return !g.showFrom || todayKey >= g.showFrom; });
+  var tasks = TASKS.filter(function (t) { return groups.some(function (g) { return g.id === t.group; }); });
   (function addRoutine() {
     var now = new Date();
     for (var i = 0; i < 7; i++) {
