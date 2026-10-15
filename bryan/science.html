@@ -1,28 +1,270 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Bryan · 科学 Science</title>
+<title>Bryan's Science Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito+Sans:wght@400;700&display=swap">
+<link rel="stylesheet" href="../hub.css">
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f6f8fb;color:#263238}
-.app{max-width:1100px;margin:auto;padding:18px}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
-h1{margin:0;font-size:25px}
-.sub{color:#78909c;font-size:14px;margin-top:4px}
-.secondary{padding:11px 17px;border-radius:12px;font-weight:700;background:#eceff1;color:#37474f;text-decoration:none;display:inline-flex;align-items:center}
-.card{background:white;border-radius:22px;padding:40px 20px;box-shadow:0 5px 20px #0000000b;text-align:center;color:#78909c}
-@media(max-width:760px){.app{padding:12px}h1{font-size:21px}}
+[hidden]{display:none!important}
+.wrap{max-width:820px}
+h1{color:var(--ink)}
+.back{cursor:pointer;background:none;border:0;font:700 17px var(--body);padding:0}
+
+/* level filter */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.filters button{font:700 15px var(--body);min-height:42px;padding:0 16px;border-radius:999px;border:2px solid var(--ink);background:var(--card);color:var(--ink);cursor:pointer}
+.filters button[aria-pressed=true]{background:var(--ink);color:#fff}
+
+/* topic list (like the 必考字 day list) */
+.theme{margin:24px 0 10px;display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:22px}
+.theme i{width:14px;height:14px;border-radius:50%;display:inline-block}
+.topics{display:grid;gap:10px}
+.topic{display:block;width:100%;text-align:left;background:var(--card);border:2px solid #d8dde4;border-radius:16px;padding:12px 16px;cursor:pointer;font:inherit;color:var(--ink)}
+.topic:hover{border-color:var(--c)}
+.topic .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-weight:700;font-size:14px}
+.topic .lv{color:var(--c)}
+.topic .st{color:var(--mute);font-size:13px;white-space:nowrap}
+.topic .st.done{color:#1f7a3f}
+.topic .t{display:flex;align-items:center;gap:10px;margin-top:4px;font-size:21px;font-weight:700}
+.topic .t span:first-child{font-size:26px}
+
+/* topic page */
+.thead{display:flex;align-items:center;gap:14px;margin:6px 0 18px}
+.thead .big{font-size:52px;line-height:1}
+.thead h1{margin:0;font-size:clamp(26px,5vw,38px);line-height:1.1}
+.pill{display:inline-block;font-size:13px;font-weight:700;padding:2px 12px;border-radius:999px;color:#fff;margin-top:6px}
+.door{cursor:pointer;text-align:left;font:inherit}
+
+/* section tabs */
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;margin:0 0 14px}
+.tabs button{flex:0 0 auto;font:700 14px var(--body);min-height:40px;padding:0 14px;border-radius:999px;border:2px solid var(--ink);background:var(--card);color:var(--ink);cursor:pointer}
+.tabs button[aria-pressed=true]{background:var(--ink);color:#fff}
+.panel{background:var(--card);border:3px solid var(--ink);border-radius:20px;padding:18px;box-shadow:0 6px 0 var(--ink)}
+.panel h2{font-family:var(--display);font-weight:800;font-size:26px;margin:0 0 4px}
+.panel .intro{color:var(--mute);margin:0 0 12px}
+.points{margin:0;padding-left:22px}
+.points li{margin:0 0 10px;font-size:17px;line-height:1.55}
+.tiplist{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.tiplist li{background:#FFF7DD;border-left:6px solid var(--yellow);border-radius:0 12px 12px 0;padding:10px 14px;font-size:16px}
+.facts{display:grid;gap:12px}
+.facts div{background:#EEF7FF;border-radius:14px;padding:14px 16px;font-size:17px}
+
+/* flip cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.flip{min-height:110px;border:2px solid var(--ink);border-radius:14px;background:#fff;padding:12px;font:inherit;color:var(--ink);cursor:pointer;text-align:center;display:flex;align-items:center;justify-content:center}
+.flip b{font-family:var(--display);font-size:20px}
+.flip[aria-pressed=true]{background:#F1ECFF}
+
+/* quiz */
+.qscore{font-weight:700;margin:0 0 12px}
+.q{border-top:2px dashed #e1dcef;padding:14px 0}
+.q p{font-weight:700;font-size:17px;margin:0 0 8px}
+.opts{display:grid;gap:6px}
+.opts button{text-align:left;font:16px var(--body);color:var(--ink);background:#fff;border:2px solid #cfd5dd;border-radius:12px;padding:10px 12px;cursor:pointer}
+.opts button.right{border-color:#2E8B57;background:#E5F5EA}
+.opts button.wrong{border-color:#CF3F3F;background:#FBE7E7}
+.opts button:disabled{cursor:default;color:var(--ink)}
+.why{margin:8px 0 0;font-size:15px;color:#3f4a5a}
+
+/* experiments */
+.sim{display:grid;gap:10px}
+.sim .stage{width:100%;height:auto;background:#FBFDFF;border:2px solid #dfe5ec;border-radius:14px;display:block}
+.sim canvas.stage{max-width:100%}
+.ctrl{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ctrl .lbl,.lbl{font-weight:700;font-size:14px;color:var(--mute);margin-right:4px}
+.chip,.sbtn{font:700 14px var(--body);min-height:40px;padding:0 14px;border-radius:999px;border:2px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer}
+.sbtn{background:var(--yellow)}
+.chip[aria-pressed=true]{background:var(--ink);color:#fff}
+.sbtn:disabled{opacity:.4;cursor:default}
+.slider{gap:10px}
+.slider input{flex:1;min-width:140px;accent-color:var(--purple)}
+.slider .val{font-weight:700;min-width:6em}
+.out{background:#F4F1FF;border-radius:12px;padding:10px 14px;font-size:16px;min-height:44px}
+.out.good{background:#E5F5EA}
+.out.bad{background:#FBE7E7}
+.bigcard{font-size:20px;font-weight:700;text-align:center;padding:10px}
+.bigcard .emo,.keybox .emo,.dish .emo{font-size:64px;line-height:1.1}
+.bins{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bin{border:2px dashed #cfd5dd;border-radius:14px;padding:10px;min-height:80px}
+.bin .got{font-size:28px;display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.pick{display:flex;flex-wrap:wrap;gap:6px}
+.keybox{text-align:center}
+.keybox .kq{font-size:18px;font-weight:700;margin:8px 0}
+.keybox .ctrl{justify-content:center}
+.path{text-align:left;color:var(--mute);font-size:14px;margin:6px auto;max-width:420px}
+.dishes{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.dish{border:2px solid #cfd5dd;border-radius:14px;padding:10px;display:grid;gap:6px;text-align:center}
+.dish.yes{border-color:#2E8B57;background:#F1FAF3}
+.dish.no{border-color:#CF3F3F;background:#FDF3F3}
+.dish .chip{font-size:12px;min-height:34px;padding:0 8px}
+.meter{height:18px;border:2px solid var(--ink);border-radius:999px;overflow:hidden;background:#fff}
+.meter span{display:block;height:100%;width:50%;background:linear-gradient(90deg,#CF3F3F,#F2B84B,#2E8B57);transition:width .3s}
+.scroll{overflow-x:auto}
+table.res{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
+table.res th,table.res td{border:1px solid #d8dde4;padding:6px 8px;text-align:left}
+table.res th{background:#F4F1FF}
+.chip:focus-visible,.sbtn:focus-visible,.topic:focus-visible,.tabs button:focus-visible,.opts button:focus-visible,.flip:focus-visible,.filters button:focus-visible{outline:4px solid var(--purple);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.meter span{transition:none}}
 </style>
 </head>
 <body>
-<div class="app">
-<header>
-  <div><h1>🔬 Bryan · 科学 Science</h1><div class="sub">Bryan 的学习</div></div>
-  <a class="secondary" href="index.html">↩ 返回 Bryan</a>
-</header>
-<div class="card">🚧 内容准备中 · Coming soon</div>
-</div>
+<div class="wrap" id="app"></div>
+<script src="science-data.js"></script>
+<script src="science-sims.js"></script>
+<script>
+(function () {
+  'use strict';
+  var app = document.getElementById('app');
+  var T = window.SCI_TOPICS, THEMES = window.SCI_THEMES;
+  var SECTIONS = [
+    ['experiment', '🧪', 'Virtual experiment'], ['summary', '📝', 'Summary'], ['terms', '🔤', 'Key words'],
+    ['quiz', '❓', 'Quiz'], ['tips', '🎯', 'Exam tips'], ['facts', '💡', 'Fun facts']
+  ];
+  var BEST_KEY = 'sci_best_v1', FILTER_KEY = 'sci_level_v1';
+  function read(k, d) { try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } }
+  function write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  var best = read(BEST_KEY, {});
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  function button(cls, text, fn) { var b = el('button', cls, text); b.type = 'button'; b.onclick = fn; return b; }
+  function topic(id) { return T.filter(function (t) { return t.id === id; })[0]; }
+  function go(hash) { location.hash = hash; }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var x = a[i]; a[i] = a[j]; a[j] = x; } return a; }
+
+  /* ---------- topic list ---------- */
+  function listView() {
+    var level = read(FILTER_KEY, 'all');
+    app.textContent = '';
+    var back = el('a', 'back', '← Bryan'); back.href = 'index.html'; app.appendChild(back);
+    app.appendChild(el('h1', null, '🔬 Science Lab'));
+    app.appendChild(el('p', 'hello', T.length + ' topics from P3 to P6. Each one has a virtual experiment, a summary, key words, a quiz, exam tips and fun facts.'));
+    var f = el('div', 'filters'); f.setAttribute('role', 'group'); f.setAttribute('aria-label', 'Show level');
+    ['all', 'P3', 'P4', 'P5', 'P6'].forEach(function (lv) {
+      var b = button(null, lv === 'all' ? 'All levels' : lv, function () { write(FILTER_KEY, lv); listView(); });
+      b.setAttribute('aria-pressed', lv === level ? 'true' : 'false'); f.appendChild(b);
+    });
+    app.appendChild(f);
+    Object.keys(THEMES).forEach(function (th) {
+      var list = T.filter(function (t) { return t.theme === th && (level === 'all' || covers(t.level, level)); });
+      if (!list.length) return;
+      var h = el('h2', 'theme'), dot = el('i'); dot.style.background = THEMES[th].color; h.appendChild(dot); h.appendChild(document.createTextNode(THEMES[th].name));
+      app.appendChild(h);
+      var box = el('div', 'topics');
+      list.forEach(function (t) {
+        var c = button('topic', null, function () { go('#t=' + t.id); });
+        c.style.setProperty('--c', THEMES[t.theme].color);
+        var row = el('div', 'row');
+        row.appendChild(el('span', 'lv', t.level + ' · ' + THEMES[t.theme].name));
+        var b = best[t.id];
+        row.appendChild(el('span', 'st' + (b === t.quiz.length ? ' done' : ''), b == null ? 'Start →' : (b === t.quiz.length ? '✓ Quiz ' : 'Quiz ') + b + '/' + t.quiz.length));
+        var tt = el('div', 't'); tt.appendChild(el('span', null, t.emoji)); tt.appendChild(el('span', null, t.title));
+        c.appendChild(row); c.appendChild(tt); box.appendChild(c);
+      });
+      app.appendChild(box);
+    });
+  }
+  // "P3–P4" covers P3 and P4.
+  function covers(range, lv) { var p = range.replace('P', '').split(/[–-]/).map(function (x) { return +x.replace('P', ''); }); var n = +lv.slice(1); return n >= p[0] && n <= (p[1] || p[0]); }
+
+  /* ---------- topic page ---------- */
+  function header(t) {
+    var h = el('div', 'thead');
+    h.appendChild(el('div', 'big', t.emoji));
+    var d = el('div'); d.appendChild(el('h1', null, t.title));
+    var pill = el('span', 'pill', t.level + ' · ' + THEMES[t.theme].name); pill.style.background = THEMES[t.theme].color; d.appendChild(pill);
+    h.appendChild(d); return h;
+  }
+  function topicView(t) {
+    app.textContent = '';
+    app.appendChild(button('back', '← All topics', function () { go('#'); }));
+    app.appendChild(header(t));
+    var grid = el('nav', 'doors');
+    SECTIONS.forEach(function (s) {
+      var d = button('door', null, function () { go('#t=' + t.id + '&s=' + s[0]); });
+      d.appendChild(el('div', 'icon', s[1]));
+      d.appendChild(el('h3', null, s[2]));
+      var sub = { experiment: t.sim, summary: t.summary.length + ' key points', terms: t.terms.length + ' flip cards', quiz: best[t.id] == null ? t.quiz.length + ' questions' : 'Best score: ' + best[t.id] + '/' + t.quiz.length, tips: 'Common mistakes to avoid', facts: t.facts.length + ' surprising facts' }[s[0]];
+      d.appendChild(el('p', null, sub));
+      d.appendChild(el('span', 'enter', 'Open →'));
+      grid.appendChild(d);
+    });
+    app.appendChild(grid);
+  }
+
+  /* ---------- sections ---------- */
+  function sectionView(t, sec) {
+    app.textContent = '';
+    app.appendChild(button('back', '← ' + t.title, function () { go('#t=' + t.id); }));
+    app.appendChild(header(t));
+    var tabs = el('div', 'tabs'); tabs.setAttribute('role', 'group'); tabs.setAttribute('aria-label', 'Sections');
+    SECTIONS.forEach(function (s) {
+      var b = button(null, s[1] + ' ' + s[2], function () { go('#t=' + t.id + '&s=' + s[0]); });
+      b.setAttribute('aria-pressed', s[0] === sec ? 'true' : 'false'); tabs.appendChild(b);
+    });
+    app.appendChild(tabs);
+    var p = el('section', 'panel'), S = SECTIONS.filter(function (s) { return s[0] === sec; })[0];
+    p.appendChild(el('h2', null, S[1] + ' ' + S[2]));
+    ({ experiment: experiment, summary: summary, terms: terms, quiz: quiz, tips: tips, facts: facts })[sec](t, p);
+    app.appendChild(p);
+  }
+  function experiment(t, p) {
+    p.appendChild(el('p', 'intro', t.sim));
+    var box = el('div', 'sim'); p.appendChild(box);
+    try { window.SCI_SIMS[t.id](box); } catch (e) { box.appendChild(el('p', null, 'This experiment could not start.')); }
+  }
+  function summary(t, p) { var ol = el('ol', 'points'); t.summary.forEach(function (x) { ol.appendChild(el('li', null, x)); }); p.appendChild(ol); }
+  function terms(t, p) {
+    p.appendChild(el('p', 'intro', 'Tap a card to see its meaning. Tap again to flip it back.'));
+    var g = el('div', 'cards');
+    t.terms.forEach(function (x) {
+      var c = button('flip', null, function () { var on = c.getAttribute('aria-pressed') === 'true'; c.setAttribute('aria-pressed', on ? 'false' : 'true'); fill(!on); });
+      function fill(back) { c.textContent = ''; if (back) c.appendChild(el('span', null, x[1])); else c.appendChild(el('b', null, x[0])); c.setAttribute('aria-label', back ? x[0] + ': ' + x[1] : x[0]); }
+      c.setAttribute('aria-pressed', 'false'); fill(false); g.appendChild(c);
+    });
+    p.appendChild(g);
+  }
+  function quiz(t, p) {
+    var answered = 0, right = 0;
+    var score = el('p', 'qscore'); p.appendChild(score);
+    function upd() {
+      score.textContent = 'Score: ' + right + ' / ' + t.quiz.length + (answered === t.quiz.length ? (right === t.quiz.length ? ' 🎉 Perfect!' : ' · Done!') : '') + (best[t.id] != null ? '   (best: ' + best[t.id] + ')' : '');
+    }
+    t.quiz.forEach(function (q, i) {
+      var box = el('div', 'q'); box.appendChild(el('p', null, (i + 1) + '. ' + q.q));
+      var opts = el('div', 'opts'), why = el('p', 'why'); why.hidden = true;
+      shuffle(q.a.map(function (a, k) { return k; })).forEach(function (k) {
+        var b = button(null, q.a[k], function () {
+          answered++; if (k === q.c) right++;
+          Array.prototype.forEach.call(opts.children, function (o) { o.disabled = true; if (+o.dataset.k === q.c) o.classList.add('right'); });
+          if (k !== q.c) b.classList.add('wrong');
+          why.textContent = (k === q.c ? '✓ ' : '✗ ') + q.e; why.hidden = false;
+          if (answered === t.quiz.length && (best[t.id] == null || right > best[t.id])) { best[t.id] = right; write(BEST_KEY, best); }
+          upd();
+        });
+        b.dataset.k = k; opts.appendChild(b);
+      });
+      box.appendChild(opts); box.appendChild(why); p.appendChild(box);
+    });
+    p.appendChild(button('sbtn', '↻ Try again', function () { sectionView(t, 'quiz'); }));
+    upd();
+  }
+  function tips(t, p) { var ul = el('ul', 'tiplist'); t.tips.forEach(function (x) { ul.appendChild(el('li', null, x)); }); p.appendChild(ul); }
+  function facts(t, p) { var g = el('div', 'facts'); t.facts.forEach(function (x) { g.appendChild(el('div', null, '💡 ' + x)); }); p.appendChild(g); }
+
+  /* ---------- routing: #t=<topic>&s=<section> ---------- */
+  function route() {
+    var q = {}; location.hash.replace(/^#/, '').split('&').forEach(function (kv) { var p = kv.split('='); if (p[0]) q[p[0]] = decodeURIComponent(p[1] || ''); });
+    var t = q.t && topic(q.t);
+    if (!t) listView();
+    else if (q.s && SECTIONS.some(function (s) { return s[0] === q.s; })) sectionView(t, q.s);
+    else topicView(t);
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>
 </body>
 </html>
