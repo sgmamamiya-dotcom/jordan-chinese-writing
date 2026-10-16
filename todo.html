@@ -67,13 +67,15 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* To update: edit UPDATED, GROUPS, TASKS and ROUTINE below. Ticks are saved online (Supabase table todo_checks, see supabase/todo_checks.sql) with a copy on each device. */
-var UPDATED = 'Sun 11 Oct';
+var UPDATED = 'Fri 16 Oct';
 
 var GROUPS = [
   { id: 'mon', date: '2026-10-12', title: 'Monday 12 Oct', sub: 'Bryan · Math' },
   { id: 'tue', date: '2026-10-13', title: 'Tuesday 13 Oct', sub: 'Bryan · Math' },
   { id: 'wed', date: '2026-10-14', title: 'Wednesday 14 Oct', sub: 'Bryan · SLS' },
   { id: 'thu', date: '2026-10-15', title: 'Thursday 15 Oct', sub: 'Bryan · Chinese dictation' },
+  { id: 'wkend17', sort: '2026-10-17', title: 'Weekend 17–18 Oct', sub: 'Jordan · Math' },
+  { id: 'mon19', date: '2026-10-19', title: 'Monday 19 Oct', sub: 'Jordan · Hand in' },
   // showFrom: the group stays hidden until that day (for reminders set up in advance).
   { id: 'nov10', date: '2026-11-10', showFrom: '2026-11-10', title: 'Tuesday 10 Nov', sub: 'Reminder for tomorrow' },
   { id: 'week', sort: '2026-10-15~', title: 'No exact due date', sub: 'Jordan’s home-learning tasks and other ClassDojo work' }
@@ -108,6 +110,19 @@ var TASKS = [
   { id: 'b-ness-1111', kid: 'bryan', group: 'nov10', subject: 'School',
     title: 'Tomorrow: NESS representatives training',
     note: 'Wednesday 11 Nov, 2pm to 4pm, for the P4–P6 NESS representatives.' },
+  { id: 'j-math-corr', kid: 'jordan', group: 'wkend17', subject: 'Math · ClassDojo',
+    title: 'Do corrections on the returned Math worksheets',
+    note: 'Chapter 12 (Multiplication), Chapter 13 (Division), Bite-Sized Assessment on Length and Time, Practice Worksheet 7 (Length), Topical Worksheets on Multiplication and Division, and Review 6. Use them for revision. Time will not be tested in the NWA.' },
+  { id: 'j-math-sign', kid: 'jordan', group: 'wkend17', subject: 'Math · ClassDojo',
+    title: 'Get the Math worksheets signed and keep them in your Math file',
+    note: 'Ask a parent to sign them. Keep them in your Math file at home.' },
+  { id: 'j-koobits', kid: 'jordan', group: 'wkend17', subject: 'Math · ClassDojo',
+    title: 'Koobits' },
+  { id: 'j-mcq', kid: 'jordan', group: 'wkend17', subject: 'Math · ClassDojo',
+    title: 'Multiple-choice questions worksheet',
+    note: 'Hand it in on Monday 19 Oct.' },
+  { id: 'j-mcq-submit', kid: 'jordan', group: 'mon19', subject: 'Math · ClassDojo',
+    title: 'Hand in the multiple-choice questions worksheet' },
   { id: 'j-animal-book', kid: 'jordan', group: 'week', subject: 'Project · ClassDojo',
     title: 'My Animal Mini Book',
     note: 'Choose an animal you like (not a giraffe). Find some fun facts about it and write them in your four-page booklet. Keep each fact short and easy to read. You may also draw or add a picture of your animal. Finish by Wednesday 14 Oct (the PSLE marking days).' }
