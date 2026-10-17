@@ -67,7 +67,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* To update: edit UPDATED, GROUPS, TASKS and ROUTINE below. Ticks are saved online (Supabase table todo_checks, see supabase/todo_checks.sql) with a copy on each device. */
-var UPDATED = 'Fri 16 Oct';
+var UPDATED = 'Sun 18 Oct';
 
 var GROUPS = [
   { id: 'mon', date: '2026-10-12', title: 'Monday 12 Oct', sub: 'Bryan · Math' },
@@ -76,6 +76,10 @@ var GROUPS = [
   { id: 'thu', date: '2026-10-15', title: 'Thursday 15 Oct', sub: 'Bryan · Chinese dictation' },
   { id: 'wkend17', sort: '2026-10-17', title: 'Weekend 17–18 Oct', sub: 'Jordan · Math' },
   { id: 'mon19', date: '2026-10-19', title: 'Monday 19 Oct', sub: 'Jordan · Hand in' },
+  { id: 'exam26', date: '2026-10-26', title: 'Monday 26 Oct', sub: 'Bryan · English exam (Paper 2 and Listening)' },
+  { id: 'exam27', date: '2026-10-27', title: 'Tuesday 27 Oct', sub: 'Bryan · Math exam (Paper 1 and 2)' },
+  { id: 'exam28', date: '2026-10-28', title: 'Wednesday 28 Oct', sub: 'Bryan · Chinese exam (Paper 2)' },
+  { id: 'exam29', date: '2026-10-29', title: 'Thursday 29 Oct', sub: 'Bryan · Science exam' },
   // showFrom: the group stays hidden until that day (for reminders set up in advance).
   { id: 'nov10', date: '2026-11-10', showFrom: '2026-11-10', title: 'Tuesday 10 Nov', sub: 'Reminder for tomorrow' },
   { id: 'week', sort: '2026-10-15~', title: 'No exact due date', sub: 'Jordan’s home-learning tasks and other ClassDojo work' }
@@ -107,6 +111,27 @@ var TASKS = [
   { id: 'j-ezhishi', kid: 'jordan', group: 'week', subject: 'Chinese · ClassDojo',
     title: '完成 ezhishi.net 居家学习练习',
     link: 'https://ezhishi.net', linkText: 'Open ezhishi.net →' },
+  { id: 'b-ex-rules', kid: 'bryan', group: 'exam26', subject: 'Exam rules',
+    title: 'No water bottle and no smart watch in the exam room',
+    note: 'This applies on all exam days. Water bottles and unapproved electronic devices (e.g. smart watches) are not allowed. Any absence needs a valid medical certificate, and there is no make-up exam.' },
+  { id: 'b-ex-el2', kid: 'bryan', group: 'exam26', subject: 'Exam · English', time: '0800–0950',
+    title: 'English Paper 2 (Language Use and Comprehension)',
+    note: '1h 50min. Grammar, vocabulary, synthesis and transformation, spelling and grammar, cloze, visual text and open-ended comprehension.' },
+  { id: 'b-ex-el3', kid: 'bryan', group: 'exam26', subject: 'Exam · English', time: '1100–1130',
+    title: 'English Paper 3 (Listening Comprehension)',
+    note: '30 min. 20 multiple-choice questions.' },
+  { id: 'b-ex-m1', kid: 'bryan', group: 'exam27', subject: 'Exam · Math', time: '0800–0910',
+    title: 'Math Paper 1',
+    note: '1h 10min. 30 short-answer questions. Bring a mathematical set. All P4 topics.' },
+  { id: 'b-ex-m2', kid: 'bryan', group: 'exam27', subject: 'Exam · Math', time: '1100–1220',
+    title: 'Math Paper 2',
+    note: '1h 20min. 5 short-answer and 10 structured / long-answer questions. Bring a mathematical set.' },
+  { id: 'b-ex-zh2', kid: 'bryan', group: 'exam28', subject: 'Exam · Chinese', time: '0800–0900',
+    title: '华文卷二（语文理解与运用）',
+    note: '1小时。范围：4A至4B课本第15课，包括已经学过的字词。' },
+  { id: 'b-ex-sci', kid: 'bryan', group: 'exam29', subject: 'Exam · Science', time: '0800–0945',
+    title: 'Science exam (Booklet A and B)',
+    note: '1h 45min. 30 multiple-choice and 10–11 structured questions. Covers selected P3 topics (Diversity of Materials, Diversity of Living Things, Magnets) and all P4 topics (Matter, Heat, Plant Parts and Functions, Light, Human Systems).' },
   { id: 'b-ness-1111', kid: 'bryan', group: 'nov10', subject: 'School',
     title: 'Tomorrow: NESS representatives training',
     note: 'Wednesday 11 Nov, 2pm to 4pm, for the P4–P6 NESS representatives.' },
