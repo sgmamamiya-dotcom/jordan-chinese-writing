@@ -380,14 +380,131 @@ textarea{width:100%;min-height:96px;font:inherit;font-size:18px;border:3px solid
       { h: 'Soft', b: 'soft', cat: 'tc', w: ['fluffy','cosy','squishy','fuzzy','downy','feathery','spongy','furry','mushy','cushy'] },
       { h: 'Heavy', b: 'heavy', cat: 'tc', w: ['hefty','bulky','massive','weighty','chunky'] },
       { h: 'Light', b: 'light', cat: 'tc', w: ['airy','bubbly','dainty','frothy','powdery'] }
+    ]},
+    // Book pages 30–47.
+    { id: 'cond', name: 'Conditions', groups: [
+      { h: 'Messy', b: 'messy', cat: 'cn', ex: 'The dishevelled room was littered with beat-up toys and filthy clothes.', w: ['cluttered','untidy','dishevelled','disorganised','sloppy','rumpled','wrinkled','littered','unkempt','muddled'] },
+      { h: 'Neat', b: 'neat', cat: 'cn', w: ['orderly','immaculate','organised','spick-and-span','shipshape','uncluttered','well-groomed','meticulous'] },
+      { h: 'Old', b: 'old', cat: 'cn', w: ['ancient','antique','rickety','shabby','tattered','threadbare','worn-out','rusty','dilapidated','moth-eaten','run-down','old-fashioned'] },
+      { h: 'New', b: 'new', cat: 'cn', w: ['brand-new','up-to-date','unused','untouched','trendy','stylish','cutting-edge'] },
+      { h: 'Dirty', b: 'dirty', cat: 'cn', w: ['filthy','grimy','grubby','muddy','mucky','greasy','stained','smudged','soiled','polluted','squalid'] },
+      { h: 'Clean', b: 'clean', cat: 'cn', w: ['spotless','hygienic','unblemished','stainless','flawless','squeaky-clean'] },
+      { h: 'Damaged', b: 'broken', cat: 'cn', w: ['beat-up','cracked','smashed','ripped','shredded','crumbled','wrecked','demolished','mangled','fractured','destroyed'] },
+      { h: 'Undamaged', cat: 'cn', w: ['intact','unharmed','unscathed','unbroken','uninjured','in mint condition'] }
+    ]},
+    { id: 'body', name: 'Body, Hair & Face', groups: [
+      { h: 'Thin', b: 'thin', cat: 'bd', ex: 'Petite and slender, the ballerina twirled like a delicate flower.', w: ['slender','slim','petite','skinny','lanky','scrawny','bony','gangly','slight'] },
+      { h: 'Big-built', b: 'fat', cat: 'bd', w: ['plump','chubby','stocky','burly','portly','rotund','pudgy','broad'] },
+      { h: 'Short', b: 'short', cat: 'bd', w: ['tiny','pint-sized','stumpy','stubby','squat','undersized','wee'] },
+      { h: 'Tall', b: 'tall', cat: 'bd', w: ['towering','lofty','lanky','gangly','skyscraping'] },
+      { h: 'Weak', b: 'weak', cat: 'bd', w: ['feeble','frail','fragile','sickly','limp','puny'] },
+      { h: 'Strong & fit', b: 'strong', cat: 'bd', w: ['muscular','brawny','powerful','strapping','athletic','robust','toned'] },
+      { h: 'Hair', b: 'hair', cat: 'bd', ex: 'Long, flowing locks of strawberry blonde hair curled down her back.', w: ['locks','mane','strands','tresses','tufts','wisps','tendrils'] },
+      { h: 'How hair looks', cat: 'bd', w: ['glossy','sleek','frizzy','tangled','shaggy','flowing','bouncy','springy','wiry','flyaway','straggly'] },
+      { h: 'Hairstyles', cat: 'bd', w: ['braided','curly','wavy','cropped','ponytail','pigtails','ringlets','spiky','gelled','layered','bobbed','shoulder-length','waist-length'] },
+      { h: 'Hair colour', cat: 'bd', w: ['flaxen','jet black','platinum','strawberry blonde','sandy blonde','brunette','fiery red','snowy white'] },
+      { h: 'Eyes', cat: 'bd', ex: 'He had droopy eyes, pointy ears and a crooked nose.', w: ['almond-shaped','beady','bloodshot','droopy','squinty','doe-like'] },
+      { h: 'Nose & mouth', cat: 'bd', w: ['hooked','crooked','upturned','bulbous','pouty','pursed','puckered','gaping','slack-jawed'] },
+      { h: 'Cheeks & chin', cat: 'bd', w: ['dimpled','puffy','sunken','hollow','chipmunk'] },
+      { h: 'Skin', cat: 'bd', w: ['freckled','weathered','pallid','sallow','ruddy','blotchy','tanned','leathery','scarred','wrinkly'] },
+      { h: 'Facial hair', cat: 'bd', w: ['beard','moustache','goatee','sideburns','whiskers','clean-shaven','scruffy'] }
+    ]},
+    { id: 'char', name: 'Character Traits', groups: [
+      { h: 'kind', b: 'nice', cat: 'ct', ex: 'The tender and compassionate nurse never left her patient\'s side.', w: ['caring','compassionate','considerate','thoughtful','sympathetic','soft-hearted','tender'] },
+      { h: 'brave', b: 'brave', cat: 'ct', w: ['courageous','fearless','daring','heroic','valiant','adventurous','dauntless'] },
+      { h: 'honest', b: 'honest', cat: 'ct', w: ['truthful','trustworthy','sincere','honourable','straightforward'] },
+      { h: 'hard-working', b: 'hard-working', cat: 'ct', w: ['diligent','industrious','determined','persevering','persistent','ambitious','studious'] },
+      { h: 'friendly', b: 'friendly', cat: 'ct', w: ['amiable','affable','good-natured','genial','sociable','outgoing','cordial'] },
+      { h: 'funny', b: 'funny', cat: 'ct', w: ['hilarious','humorous','comical','witty','amusing','playful'] },
+      { h: 'clever', b: 'smart', cat: 'ct', w: ['intelligent','knowledgeable','quick-witted','ingenious','gifted','talented','skilful','bookish'] },
+      { h: 'wise', b: 'wise', cat: 'ct', w: ['sensible','insightful','perceptive','prudent'] },
+      { h: 'generous', b: 'generous', cat: 'ct', w: ['selfless','unselfish','charitable','benevolent','noble'] },
+      { h: 'polite', b: 'polite', cat: 'ct', w: ['courteous','respectful','gracious','civil'] },
+      { h: 'responsible', b: 'responsible', cat: 'ct', w: ['dependable','reliable','mature','conscientious','dutiful'] },
+      { h: 'creative', b: 'creative', cat: 'ct', w: ['imaginative','artistic','inventive','innovative','ingenious'] },
+      { h: 'energetic', b: 'energetic', cat: 'ct', w: ['lively','enthusiastic','high-spirited','vivacious','sprightly'] },
+      { h: 'loyal', b: 'loyal', cat: 'ct', w: ['faithful','devoted','dedicated','committed'] },
+      { h: 'humble', b: 'humble', cat: 'ct', w: ['modest','meek','self-effacing'] },
+      { h: 'mean', b: 'mean', cat: 'ct', w: ['cruel','unkind','heartless','cold-hearted','vicious','spiteful','malicious','ruthless'] },
+      { h: 'rude', b: 'rude', cat: 'ct', w: ['impolite','disrespectful','insolent','surly','impudent','inconsiderate'] },
+      { h: 'selfish', b: 'selfish', cat: 'ct', w: ['greedy','stingy','miserly','self-centred'] },
+      { h: 'stubborn', b: 'stubborn', cat: 'ct', w: ['headstrong','obstinate','wilful','hard-headed','strong-willed'] },
+      { h: 'bossy', b: 'bossy', cat: 'ct', w: ['domineering','demanding','controlling','overbearing'] },
+      { h: 'show-off', b: 'proud', cat: 'ct', w: ['arrogant','boastful','conceited','haughty','smug','vain','pompous'] },
+      { h: 'sneaky', b: 'sneaky', cat: 'ct', w: ['cunning','sly','crafty','devious','mischievous','scheming','wily','deceitful'] },
+      { h: 'lazy', b: 'lazy', cat: 'ct', w: ['idle','slothful','lethargic','unmotivated'] },
+      { h: 'irresponsible', b: 'careless', cat: 'ct', w: ['forgetful','reckless','unreliable','inattentive'] },
+      { h: 'jealous', b: 'jealous', cat: 'ct', w: ['envious','possessive','green-eyed'] },
+      { h: 'cowardly', b: 'cowardly', cat: 'ct', w: ['timid','spineless','faint-hearted'] },
+      { h: 'strange', b: 'weird', cat: 'ct', w: ['eccentric','peculiar','bizarre','mysterious','outlandish'] }
+    ]},
+    { id: 'feel', name: 'Feelings', groups: [
+      { h: 'scared', b: 'scared', cat: 'em', ex: 'Trembling in terror, the panic-stricken singer stood frozen on stage.', w: ['terrified','petrified','frightened','panic-stricken','alarmed','horrified','startled','spooked','shaken','terror-stricken'] },
+      { h: 'angry', b: 'angry', cat: 'em', w: ['furious','fuming','enraged','irate','infuriated','outraged','raging','incensed'] },
+      { h: 'annoyed', b: 'annoyed', cat: 'em', w: ['irritated','grumpy','cranky','frustrated','grouchy','irritable','sulky','peeved'] },
+      { h: 'happy', b: 'happy', cat: 'em', w: ['delighted','overjoyed','ecstatic','elated','thrilled','joyful','jubilant','gleeful','light-hearted','cheery'] },
+      { h: 'excited', b: 'excited', cat: 'em', w: ['eager','animated','enthusiastic','passionate','hyper'] },
+      { h: 'sad', b: 'sad', cat: 'em', w: ['miserable','heartbroken','glum','downcast','dejected','devastated','crestfallen','grief-stricken','melancholy','heavy-hearted'] },
+      { h: 'lonely', b: 'lonely', cat: 'em', w: ['isolated','forlorn','lonesome','forsaken','rejected'] },
+      { h: 'nervous', b: 'nervous', cat: 'em', w: ['anxious','jittery','tense','uneasy','restless','apprehensive','jumpy'] },
+      { h: 'calm', b: 'calm', cat: 'em', w: ['peaceful','relaxed','serene','tranquil','placid','mellow','unruffled'] },
+      { h: 'confused', b: 'confused', cat: 'em', w: ['puzzled','baffled','bewildered','perplexed','flustered','dazed','stumped','mystified'] },
+      { h: 'surprised', b: 'surprised', cat: 'em', w: ['amazed','astonished','astounded','stunned','shocked','flabbergasted','dumbfounded','speechless','awestruck'] },
+      { h: 'embarrassed', b: 'embarrassed', cat: 'em', w: ['ashamed','humiliated','mortified','sheepish','self-conscious'] },
+      { h: 'sorry', b: 'sorry', cat: 'em', w: ['apologetic','remorseful','regretful','contrite'] },
+      { h: 'disappointed', b: 'disappointed', cat: 'em', w: ['discouraged','disheartened','dismayed','downhearted','dissatisfied'] },
+      { h: 'proud', b: 'proud', cat: 'em', w: ['satisfied','honoured','gratified','dignified','contented'] },
+      { h: 'shy', b: 'shy', cat: 'em', w: ['bashful','coy','reserved','introverted','demure'] },
+      { h: 'upset', b: 'upset', cat: 'em', w: ['distressed','distraught','troubled','disturbed','unsettled'] }
+    ]},
+    { id: 'desc', name: 'Big, Good & More', groups: [
+      { h: 'Big', b: 'big', cat: 'op', ex: 'The monstrously oversized cat towered over the teensy mouse.', w: ['enormous','gigantic','huge','massive','colossal','immense','mammoth','humongous','vast','spacious','jumbo','whopping','mountainous','oversized'] },
+      { h: 'Small', b: 'small', cat: 'op', w: ['teeny','teensy','minute','microscopic','miniature','minuscule','pocket-sized','bite-sized','cramped','diminutive'] },
+      { h: 'Beautiful', b: 'beautiful', cat: 'op', w: ['gorgeous','stunning','breathtaking','elegant','graceful','exquisite','magnificent','enchanting','charming','adorable','glamorous','splendid'] },
+      { h: 'Ugly', b: 'ugly', cat: 'op', ex: 'The frightful haircut bordered on grotesque.', w: ['hideous','grotesque','frightful','repulsive','revolting','unsightly','monstrous','beastly','creepy','misshapen','unattractive'] },
+      { h: 'Good', b: 'good', cat: 'op', ex: 'Despite the foul weather, we still had a sensational day at the park.', w: ['excellent','fantastic','marvellous','outstanding','superb','terrific','wonderful','remarkable','sensational','spectacular','phenomenal','extraordinary','fabulous','incredible'] },
+      { h: 'Bad', b: 'bad', cat: 'op', w: ['awful','terrible','dreadful','horrible','atrocious','appalling','horrendous','lousy','ghastly','abominable','wretched'] },
+      { h: 'Interesting', b: 'interesting', cat: 'op', w: ['fascinating','gripping','captivating','intriguing','absorbing','riveting','spellbinding','thrilling','engrossing','thought-provoking','enthralling','compelling'] },
+      { h: 'Boring', b: 'boring', cat: 'op', ex: 'The dull, monotonous book left me feeling uninspired.', w: ['tedious','monotonous','uninspired','humdrum','tiresome','lifeless','unexciting','repetitious','uninteresting','wearisome'] },
+      { h: 'A little', b: 'a little', cat: 'op', w: ['a handful of','a sprinkling of','a scattering of','scarce','sparse','scanty','meagre','negligible'] },
+      { h: 'A lot', b: 'a lot', cat: 'op', ex: 'The stars were numberless in the night sky.', w: ['countless','numerous','plenty of','abundant','plentiful','innumerable','endless','numberless','myriad','teeming with','swarming with'] },
+      { h: 'Easy', b: 'easy', cat: 'op', ex: 'The homework was manageable, but the test was complicated.', w: ['effortless','straightforward','manageable','uncomplicated','painless','elementary','clear-cut','self-explanatory'] },
+      { h: 'Hard', b: 'hard', cat: 'op', w: ['challenging','complicated','complex','demanding','exhausting','gruelling','strenuous','perplexing','puzzling','formidable','arduous'] }
+    ]},
+    { id: 'comp', name: 'Compare & Contrast', groups: [
+      { h: 'Comparing (same)', b: 'and', cat: 'cc', ex: 'Tennis is played on a court, whereas baseball is played on a field.', w: ['similarly','likewise','in the same way','just as','similar to','compared to','in comparison','in common','alike','resemble'] },
+      { h: 'Contrasting (different)', b: 'but', cat: 'cc', w: ['whereas','on the other hand','in contrast','by contrast','unlike','although','even though','despite','on the contrary','conversely','different from'] }
+    ]},
+    { id: 'thing', name: 'Instead of "Thing"', groups: [
+      { h: 'an achievement', b: 'thing', cat: 'bs', ex: 'Frogs and toads have many characteristics in common.', w: ['accomplishment','feat','contribution','improvement'] },
+      { h: 'a quality', b: 'thing', cat: 'bs', w: ['characteristic','feature','attribute','trait','aspect'] },
+      { h: 'an idea', b: 'thing', cat: 'bs', w: ['opinion','notion','theory','belief'] },
+      { h: 'a chance', b: 'thing', cat: 'bs', w: ['opportunity','possibility','prospect'] },
+      { h: 'a choice', b: 'thing', cat: 'bs', w: ['option','alternative','decision','preference'] },
+      { h: 'a result', b: 'thing', cat: 'bs', w: ['consequence','outcome','effect','aftermath'] },
+      { h: 'an experience', b: 'thing', cat: 'bs', w: ['adventure','encounter','escapade','ordeal','venture'] },
+      { h: 'a goal', b: 'thing', cat: 'bs', w: ['aim','ambition','objective','intention'] },
+      { h: 'an object', b: 'thing', cat: 'bs', w: ['item','belonging','possession','article'] },
+      { h: 'a part', b: 'thing', cat: 'bs', w: ['component','element','section','segment','detail'] },
+      { h: 'a place', b: 'thing', cat: 'bs', w: ['location','setting','site','vicinity'] },
+      { h: 'a problem', b: 'thing', cat: 'bs', w: ['challenge','obstacle','dilemma','difficulty','predicament','hardship'] },
+      { h: 'a reason', b: 'thing', cat: 'bs', w: ['explanation','motive','justification'] },
+      { h: 'an event', b: 'thing', cat: 'bs', w: ['incident','occasion','occurrence','episode'] },
+      { h: 'a talent', b: 'thing', cat: 'bs', w: ['ability','skill','capability','strength','genius'] },
+      { h: 'a hobby', b: 'thing', cat: 'bs', w: ['pastime','hobby','recreation','amusement'] },
+      { h: 'a way', b: 'thing', cat: 'bs', w: ['method','approach','technique','manner'] },
+      { h: 'a kind', b: 'thing', cat: 'bs', w: ['category','variety','genre'] }
     ]}
   ];
   var CAT_NAME = { tb: 'beginning transition', tm: 'middle transition', te: 'ending transition', mv: 'movement word', av: 'action verb', sd: '"said" word', ev: 'essay verb',
-    ad: '-ly adverb', cs: 'colour or shape word', sg: 'sight word', sn: 'sound word', sm: 'smell word', ts: 'taste word', tc: 'touch word' };
+    ad: '-ly adverb', cs: 'colour or shape word', sg: 'sight word', sn: 'sound word', sm: 'smell word', ts: 'taste word', tc: 'touch word',
+    cn: 'condition word', bd: 'body, hair or face word', ct: 'character trait', em: 'feelings word', op: 'describing word', cc: 'compare/contrast word', bs: 'specific noun' };
   var SENSES = ['cs', 'sg', 'sn', 'sm', 'ts', 'tc'];
   // Tired words to flag in red.
   var DULL = { said: 1, says: 1, went: 1, walked: 1, ran: 1, moved: 1, ate: 1, got: 1, took: 1,
-    very: 1, nice: 1, good: 1, bad: 1, happy: 1, sad: 1 };
+    very: 1, nice: 1, good: 1, bad: 1, happy: 1, sad: 1,
+    // From the book's "50 Boring Words and Phrases to Avoid" (p48).
+    big: 1, small: 1, thing: 1, things: 1, stuff: 1, 'a lot': 1, scared: 1, ugly: 1, boring: 1, interesting: 1, fun: 1 };
 
   // Word → category lookup for highlighting. First list wins on overlaps.
   var LOOKUP = {};
@@ -595,7 +712,40 @@ textarea{width:100%;min-height:96px;font:inherit;font-size:18px;border:3px solid
     { tag: 'Touch', q: 'Walking barefoot on the ___ sand at noon burnt the soles of my feet.', a: 'scorching', o: ['icy','frosty','chilly'], why: '"Scorching" means extremely hot.' },
     { tag: 'Touch', q: 'Careful! The cactus is very ___.', a: 'prickly', o: ['silky','velvety','fluffy'], why: '"Prickly" means covered in sharp points.' },
     { tag: 'Touch', q: 'We forgot our umbrellas and came home completely ___.', a: 'drenched', o: ['parched','arid','dusty'], why: '"Drenched" means soaking wet.' },
-    { tag: 'Touch', q: 'The melting marshmallow left my fingers ___.', a: 'gooey', o: ['bristly','rigid','parched'], why: '"Gooey" means soft and sticky.' }
+    { tag: 'Touch', q: 'The melting marshmallow left my fingers ___.', a: 'gooey', o: ['bristly','rigid','parched'], why: '"Gooey" means soft and sticky.' },
+    { tag: 'Condition', q: 'After rolling in the mud, the puppy was absolutely ___.', a: 'filthy', o: ['spotless','immaculate','hygienic'], why: '"Filthy" means extremely dirty.' },
+    { tag: 'Condition', q: 'Mum cleaned all morning, and now the kitchen is ___.', a: 'spotless', o: ['grimy','cluttered','filthy'], why: '"Spotless" means so clean there is not a single spot of dirt.' },
+    { tag: 'Condition', q: 'The ___ old bridge creaked and wobbled as we crossed it.', a: 'rickety', o: ['brand-new','up-to-date','unused'], why: '"Rickety" means old and shaky, as if it might fall apart.' },
+    { tag: 'Condition', q: 'Grandpa\'s favourite jumper was so ___ that you could see through the elbows.', a: 'threadbare', o: ['brand-new','immaculate','unused'], why: '"Threadbare" means worn so thin that the threads show.' },
+    { tag: 'Condition', q: 'The egg rolled off the table, but amazingly it stayed ___.', a: 'intact', o: ['shattered','smashed','mangled'], why: '"Intact" means whole and not damaged. "Amazingly" is the clue.' },
+    { tag: 'Body', q: 'The ___ basketball player had to duck to get through the door.', a: 'towering', o: ['pint-sized','stumpy','petite'], why: '"Towering" means very tall.' },
+    { tag: 'Body', q: 'The weightlifter had huge, ___ arms.', a: 'muscular', o: ['frail','feeble','scrawny'], why: '"Muscular" means strong with big muscles.' },
+    { tag: 'Body', q: 'After a week in bed with a fever, Grandma felt weak and ___.', a: 'frail', o: ['brawny','strapping','muscular'], why: '"Frail" means weak and easily hurt.' },
+    { tag: 'Hair', q: 'Her long, ___ hair shone in the sunlight.', a: 'glossy', o: ['frizzy','tangled','straggly'], why: '"Glossy" means smooth and shiny. "Shone" is the clue.' },
+    { tag: 'Hair', q: 'After the windy boat ride, my hair was a ___ mess.', a: 'tangled', o: ['sleek','glossy','flowing'], why: '"Tangled" means twisted together in knots.' },
+    { tag: 'Character', q: 'Even after failing three times, Wei Ming kept practising. He is very ___.', a: 'determined', o: ['idle','unmotivated','lethargic'], why: '"Determined" means you don\'t give up.' },
+    { tag: 'Character', q: 'Sarah shares her snacks and helps others without expecting anything back. She is ___.', a: 'selfless', o: ['greedy','stingy','miserly'], why: '"Selfless" means caring more about others than yourself.' },
+    { tag: 'Character', q: 'Jack owned up to breaking the window. He is ___.', a: 'truthful', o: ['deceitful','devious','cunning'], why: '"Truthful" means honest, telling the truth even when it is hard.' },
+    { tag: 'Character', q: 'The ___ fox tricked the crow into dropping its cheese.', a: 'cunning', o: ['truthful','faithful','timid'], why: '"Cunning" means clever at tricking others.' },
+    { tag: 'Character', q: 'Ken keeps showing off about his new toys. He is so ___.', a: 'boastful', o: ['modest','humble','meek'], why: '"Boastful" means always talking proudly about yourself. "Modest" is the opposite.' },
+    { tag: 'Feelings', q: 'When the lights went out in the haunted house, I was ___.', a: 'petrified', o: ['overjoyed','relaxed','delighted'], why: '"Petrified" means so scared you can\'t move.' },
+    { tag: 'Feelings', q: 'Mei was ___ when she found out she had won first prize.', a: 'overjoyed', o: ['miserable','furious','glum'], why: '"Overjoyed" means extremely happy.' },
+    { tag: 'Feelings', q: 'The maths question had so many steps that I was completely ___.', a: 'baffled', o: ['delighted','serene','relaxed'], why: '"Baffled" means totally confused.' },
+    { tag: 'Feelings', q: 'Lying on the beach listening to the waves, I felt calm and ___.', a: 'serene', o: ['jittery','tense','furious'], why: '"Serene" means peaceful and calm.' },
+    { tag: 'Feelings', q: 'When I tripped on stage in front of the whole school, I was ___.', a: 'mortified', o: ['proud','thrilled','serene'], why: '"Mortified" means extremely embarrassed.' },
+    { tag: 'Feelings', q: 'Before the spelling test, my stomach was full of butterflies and I felt ___.', a: 'jittery', o: ['relaxed','serene','overjoyed'], why: '"Jittery" means nervous and shaky. "Butterflies" is the clue.' },
+    { tag: 'Describing', q: 'The blue whale is the largest animal on Earth. It is truly ___.', a: 'colossal', o: ['microscopic','pint-sized','miniature'], why: '"Colossal" means extremely big.' },
+    { tag: 'Describing', q: 'You need a microscope to see germs because they are ___.', a: 'microscopic', o: ['gigantic','enormous','massive'], why: '"Microscopic" means so small you need a microscope to see it.' },
+    { tag: 'Describing', q: 'With its shining towers, the fairy-tale castle looked ___.', a: 'magnificent', o: ['hideous','grotesque','repulsive'], why: '"Magnificent" means beautiful and very impressive.' },
+    { tag: 'Describing', q: 'The story was so ___ that I could not stop reading until the end.', a: 'gripping', o: ['tedious','monotonous','humdrum'], why: '"Gripping" means so exciting that it holds your attention.' },
+    { tag: 'Describing', q: 'Copying out the same sentence for an hour was ___.', a: 'tedious', o: ['riveting','gripping','fascinating'], why: '"Tedious" means long, dull and boring.' },
+    { tag: 'Describing', q: 'Far from the city lights, there were ___ stars in the sky.', a: 'countless', o: ['scarce','sparse','a handful of'], why: '"Countless" means too many to count.' },
+    { tag: 'Describing', q: 'Climbing Mount Kinabalu was a long and ___ journey.', a: 'gruelling', o: ['effortless','painless','manageable'], why: '"Gruelling" means very hard and tiring.' },
+    { tag: 'Compare', q: 'Cats like to sleep all day, ___ dogs love to run around.', a: 'whereas', o: ['similarly','likewise','just as'], why: '"Whereas" shows a contrast between two things.' },
+    { tag: 'Compare', q: 'Bryan loves reading. ___, his sister always has her nose in a book.', a: 'Similarly', o: ['In contrast','On the other hand','Conversely'], why: '"Similarly" shows that two things are alike.' },
+    { tag: 'Not "thing"', q: 'The tall wall was the last ___ between the prisoner and freedom.', a: 'obstacle', o: ['hobby','pastime','accomplishment'], why: 'An "obstacle" is something that blocks your way.' },
+    { tag: 'Not "thing"', q: 'Winning the science competition was Jun\'s greatest ___.', a: 'accomplishment', o: ['obstacle','dilemma','predicament'], why: 'An "accomplishment" is something you achieved.' },
+    { tag: 'Not "thing"', q: 'I couldn\'t decide whether to go to the party or study for my test. It was a real ___.', a: 'dilemma', o: ['pastime','accomplishment','possession'], why: 'A "dilemma" is a hard choice between two things.' }
   ];
   var MISS_KEY = 'bryan_bbw_missed_v1';
   var round = [], qi = 0, score = 0, missed = [];
@@ -723,7 +873,17 @@ textarea{width:100%;min-height:96px;font:inherit;font-size:18px;border:3px solid
     { s: 'The sky was blue.', dull: 'blue', hint: 'What kind of blue? Azure? Sapphire? Turquoise?', ideas: ['A cloudless azure sky stretched above the beach.', 'The sky was a brilliant sapphire after the storm.'] },
     { s: 'It was a hot day.', dull: 'hot', hint: 'How hot? Try a word from the Touch list.', ideas: ['It was a scorching, sweltering afternoon.', 'The sun blazed down on the sizzling pavement.'] },
     { s: 'She closed the door quietly.', dull: 'quietly', hint: 'Try a stronger -ly adverb.', ideas: ['She closed the door noiselessly so she would not wake the baby.', 'She stealthily closed the door behind her.'] },
-    { s: 'He went home slowly after losing the match.', dull: 'slowly', hint: 'How did he feel? Try a sad -ly adverb, and a better word for "went".', ideas: ['He trudged home dejectedly after losing the match.', 'Wearily, he plodded home after losing the match.'] }
+    { s: 'He went home slowly after losing the match.', dull: 'slowly', hint: 'How did he feel? Try a sad -ly adverb, and a better word for "went".', ideas: ['He trudged home dejectedly after losing the match.', 'Wearily, he plodded home after losing the match.'] },
+    { s: 'The room was a mess.', dull: 'mess', hint: 'Use words from Conditions: messy, dirty, damaged…', ideas: ['The cluttered room was littered with beat-up toys and grubby clothes.', 'My brother\'s untidy room was a disorganised jumble of books and socks.'] },
+    { s: 'The ballerina was thin.', dull: 'thin', hint: 'Try a kind word from Body, Hair & Face.', ideas: ['The slender ballerina twirled gracefully across the stage.', 'Petite and slim, the ballerina floated like a feather.'] },
+    { s: 'She had long hair.', dull: 'long', hint: 'Describe how her hair looks: colour, style, length.', ideas: ['Waist-length, glossy black hair flowed down her back.', 'She had flowing, wavy locks that bounced as she walked.'] },
+    { s: 'The nurse was nice to her patient.', dull: 'nice', hint: 'Use a character trait word.', ideas: ['The compassionate nurse never left her patient\'s side.', 'The caring, gentle nurse held the patient\'s hand.'] },
+    { s: 'The singer on stage was scared.', dull: 'scared', hint: 'How scared? Show it with a Feelings word.', ideas: ['The petrified singer stood frozen on stage, trembling.', 'Panic-stricken, the singer forgot every word of the song.'] },
+    { s: 'The cat was big and the mouse was small.', dull: 'big', hint: 'Swap both boring words (big AND small).', ideas: ['The enormous cat towered over the teensy mouse.', 'The colossal cat pounced, but the minuscule mouse escaped.'] },
+    { s: 'The book was boring.', dull: 'boring', hint: 'Try a word from the Boring list.', ideas: ['The tedious, monotonous book sent me to sleep.', 'The book was so humdrum that I gave up after one chapter.'] },
+    { s: 'The night sky had a lot of stars.', dull: 'a lot', hint: 'How many? Try countless, numerous…', ideas: ['Countless stars twinkled in the night sky.', 'The night sky was teeming with glittering stars.'] },
+    { s: 'The homework was easy, but the test was hard.', dull: 'hard', hint: 'Swap both: easy AND hard.', ideas: ['The homework was manageable, but the test was complicated.', 'The homework was effortless, but the test was a real challenge.'] },
+    { s: 'Frogs and toads have many things in common.', dull: 'things', hint: 'What kind of "things"? Be specific!', ideas: ['Frogs and toads have many characteristics in common.', 'Frogs and toads share many features.'] }
   ];
   var upOrder = [], ui = 0;
   function startUp() { upOrder = shuffle(UP); ui = 0; showUp(); }
@@ -767,7 +927,8 @@ textarea{width:100%;min-height:96px;font:inherit;font-size:18px;border:3px solid
     { t: 'An Act of Kindness', d: 'Write about a time you helped someone, or someone helped you.' },
     { t: 'A Scary Moment', d: 'Something frightening happened. How did you feel and what did you do?' },
     { t: 'The Accident', d: 'Someone got hurt at school or at the playground. What did you see and do?' },
-    { t: 'At the Hawker Centre', d: 'Describe a busy hawker centre. What did you see, hear, smell, taste and touch?' }
+    { t: 'At the Hawker Centre', d: 'Describe a busy hawker centre. What did you see, hear, smell, taste and touch?' },
+    { t: 'My Best Friend', d: 'Describe your best friend: how they look, what they are like, and a time they showed it.' }
   ];
   var DRAFT_KEY = 'bryan_bbw_drafts_v1', promptIdx = 0;
   function renderWrite() {
@@ -800,6 +961,7 @@ textarea{width:100%;min-height:96px;font:inherit;font-size:18px;border:3px solid
       [count('sd') >= 2 && saidN === 0, 'Use 2 "said" words and no plain "said"', count('sd') + ' used' + (saidN ? ' · "said" appears ' + saidN + '×' : '')],
       [count('ad') >= 1, 'Use 1 strong -ly adverb', 'e.g. cautiously, stealthily · ' + count('ad') + ' used'],
       [senseN >= 3, 'Use 3 senses words', 'sight, sound, smell, taste, touch or colour · ' + senseN + ' used'],
+      [count('ct') + count('em') >= 2, 'Use 2 character or feelings words', 'e.g. courageous, petrified · ' + (count('ct') + count('em')) + ' used'],
       [sentences >= 6 && dullN <= 2, 'No more than 2 boring words left', dullN + ' red word' + (dullN === 1 ? '' : 's')]
     ];
     document.getElementById('w-preview').innerHTML = text.trim() ? highlight(text, hits) : '<span class="note">Your highlighted story appears here.</span>';
