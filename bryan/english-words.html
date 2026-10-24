@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Banish Boring Words</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito+Sans:wght@400;700&display=swap">
+<style>
+:root{
+  --bg:#EFE9FF;--card:#FFFFFF;--ink:#1D1640;--mute:#5F5880;--line:#DCD5F2;
+  --purple:#5B2BD9;--purple-soft:#E6DDFF;--yellow:#FFC93C;--yellow-soft:#FFF3CF;
+  --good:#0E8C7B;--good-soft:#D6F4EF;--bad:#C2413A;--bad-soft:#FBE0DE;
+  --display:"Baloo 2",system-ui,sans-serif;
+  --body:"Nunito Sans",system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#16122B;--card:#221D3D;--ink:#EDE9FF;--mute:#A9A2CC;--line:#383059;
+    --purple:#A88BFF;--purple-soft:#2F2655;--yellow:#FFC93C;--yellow-soft:#3A3120;
+    --good:#4FD1BC;--good-soft:#173A36;--bad:#FF8A80;--bad-soft:#3F2224;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16122B;--card:#221D3D;--ink:#EDE9FF;--mute:#A9A2CC;--line:#383059;
+  --purple:#A88BFF;--purple-soft:#2F2655;--yellow:#FFC93C;--yellow-soft:#3A3120;
+  --good:#4FD1BC;--good-soft:#173A36;--bad:#FF8A80;--bad-soft:#3F2224;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:17px/1.55 var(--body);min-height:100vh}
+.wrap{max-width:720px;margin:0 auto;padding:18px 16px 56px}
+.back{display:inline-block;margin-bottom:8px;color:var(--mute);font-weight:700;text-decoration:none;background:none;border:0;font:inherit;font-weight:700;cursor:pointer;padding:0}
+.back:hover{color:var(--ink)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(32px,7vw,46px);line-height:1;margin:4px 0 6px;color:var(--purple)}
+h2{font-family:var(--display);font-weight:800;font-size:26px;line-height:1.15;margin:0 0 6px}
+h3{font-family:var(--display);font-weight:800;font-size:20px;margin:18px 0 8px}
+.lead{color:var(--mute);margin:0 0 18px}
+button{font:inherit;color:inherit}
+a:focus-visible,button:focus-visible,select:focus-visible,textarea:focus-visible{outline:4px solid var(--yellow);outline-offset:3px}
+.screen{display:none}
+.screen.on{display:block}
+
+.boring{background:var(--card);border-radius:18px;padding:14px 16px;margin-bottom:18px;border:2px dashed var(--line)}
+.boring p{margin:2px 0}
+.boring s{color:var(--bad);text-decoration-thickness:2px}
+.boring u{color:var(--good);text-decoration-thickness:2px;font-weight:700}
+
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mode{text-align:left;background:var(--card);border:3px solid var(--ink);border-radius:20px;padding:16px;cursor:pointer;
+  box-shadow:0 6px 0 var(--ink);transition:transform .12s,box-shadow .12s;display:flex;flex-direction:column}
+.mode:hover{transform:translateY(3px);box-shadow:0 3px 0 var(--ink)}
+.mode .ic{font-size:34px;line-height:1}
+.mode b{font-family:var(--display);font-size:21px;margin-top:6px;line-height:1.15}
+.mode span{color:var(--mute);font-size:15px}
+.mode .best{margin-top:auto;padding-top:8px;font-size:13px;font-weight:700;color:var(--purple)}
+
+.tips{background:var(--yellow-soft);border-radius:18px;padding:14px 18px;margin-top:22px}
+.tips h3{margin-top:0}
+.tips ol{margin:0;padding-left:20px}
+.tips li{margin:4px 0}
+
+/* word bank */
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.tab{border:2px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;font-weight:700;cursor:pointer}
+.tab[aria-pressed="true"]{background:var(--purple);border-color:var(--purple);color:#fff}
+.group{background:var(--card);border-radius:18px;padding:12px 14px 14px;margin-bottom:12px}
+.group .gh{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.group .gh b{font-family:var(--display);font-size:19px}
+.group .gh s{color:var(--mute)}
+.group .gh em{color:var(--mute);font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{border:2px solid var(--line);background:transparent;border-radius:10px;padding:3px 10px;cursor:pointer;font-size:16px}
+.chip.star{background:var(--yellow-soft);border-color:var(--yellow);font-weight:700}
+.chip.star::before{content:"★ "}
+.ex{margin:8px 0 0;color:var(--mute);font-size:15px;font-style:italic}
+.mine{background:var(--card);border-radius:18px;padding:12px 14px;margin-bottom:16px;border:2px solid var(--yellow)}
+.mine .chips:empty::after{content:"Tap any word below to add it to your collection.";color:var(--mute);font-size:15px}
+
+/* quiz */
+.bar{display:flex;justify-content:space-between;align-items:center;color:var(--mute);font-weight:700;margin-bottom:8px}
+.progress{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:16px}
+.progress i{display:block;height:100%;background:var(--purple);width:0;transition:width .3s}
+.qcard{background:var(--card);border-radius:22px;padding:20px 18px}
+.qtag{display:inline-block;font-size:13px;font-weight:700;color:var(--purple);background:var(--purple-soft);border-radius:99px;padding:2px 10px;margin-bottom:10px}
+.qtext{font-size:clamp(19px,4.6vw,23px);font-weight:700;line-height:1.45;margin:0 0 16px}
+.blank{display:inline-block;min-width:90px;border-bottom:3px solid var(--purple);text-align:center;color:var(--purple)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{border:3px solid var(--line);background:var(--card);border-radius:14px;padding:12px;font-weight:700;font-size:18px;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--purple)}
+.opt.right{background:var(--good-soft);border-color:var(--good)}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
+.opt:disabled{cursor:default}
+.why{margin:14px 0 0;padding:12px 14px;border-radius:14px;background:var(--purple-soft);display:none}
+.why.on{display:block}
+.btn{border:0;border-radius:14px;padding:12px 20px;font-weight:800;font-family:var(--display);font-size:19px;cursor:pointer;background:var(--purple);color:#fff}
+.btn.ghost{background:var(--card);color:var(--ink);border:3px solid var(--line)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.end{text-align:center;padding:30px 18px}
+.big{font-family:var(--display);font-weight:800;font-size:58px;color:var(--purple);line-height:1}
+
+/* transition story */
+.story{background:var(--card);border-radius:22px;padding:18px;line-height:2.1;font-size:18px}
+.story select{font:inherit;font-weight:700;border:2px solid var(--purple);border-radius:10px;padding:2px 4px;background:var(--purple-soft);color:var(--ink);max-width:100%}
+.story select.right{border-color:var(--good);background:var(--good-soft)}
+.story select.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.story h3{margin-top:0}
+
+/* upgrade + write */
+textarea{width:100%;min-height:96px;font:inherit;font-size:18px;border:3px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--card);color:var(--ink);resize:vertical}
+.feedback{margin-top:12px}
+.hl{border-radius:6px;padding:0 3px}
+.hl.up{background:var(--good-soft);color:var(--good);font-weight:700}
+.hl.dull{background:var(--bad-soft);color:var(--bad);font-weight:700}
+.preview{background:var(--card);border-radius:14px;padding:12px 14px;margin-top:10px;white-space:pre-wrap;min-height:48px}
+.checks{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:6px}
+.checks li{background:var(--card);border-radius:12px;padding:8px 12px;display:flex;gap:10px;align-items:flex-start}
+.checks li::before{content:"○";font-weight:800;color:var(--mute)}
+.checks li.ok::before{content:"✓";color:var(--good)}
+.checks li small{color:var(--mute);display:block}
+.prompt{background:var(--yellow-soft);border-radius:18px;padding:14px 16px;margin-bottom:12px}
+.prompt b{font-family:var(--display);font-size:21px}
+.note{color:var(--mute);font-size:14px}
+
+@media(max-width:520px){.modes{grid-template-columns:1fr}.opts{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.mode,.progress i{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HOME -->
+<section class="screen on" id="s-home">
+  <a class="back" href="english.html">← English</a>
+  <h1>Banish Boring Words</h1>
+  <p class="lead">Swap tired words for strong, exact ones and your compositions come alive.</p>
+  <div class="boring">
+    <p>😴 <s>The soccer player moved fast.</s></p>
+    <p>💡 The soccer player <u>streaked</u> past the defenders and <u>sprinted</u> toward the goal.</p>
+  </div>
+  <div class="modes">
+    <button class="mode" data-go="bank"><span class="ic">📖</span><b>Word Bank</b><span>Browse the lists and star your favourite words.</span><span class="best" id="best-bank"></span></button>
+    <button class="mode" data-go="pick"><span class="ic">🎯</span><b>Pick the Best Word</b><span>Synonyms aren't twins. Find the one that fits.</span><span class="best" id="best-pick"></span></button>
+    <button class="mode" data-go="trans"><span class="ic">🔗</span><b>Transition Stories</b><span>Join a composition together with the right linking words.</span><span class="best" id="best-trans"></span></button>
+    <button class="mode" data-go="up"><span class="ic">⬆️</span><b>Upgrade It!</b><span>Rewrite boring sentences in your own words.</span><span class="best" id="best-up"></span></button>
+    <button class="mode" data-go="write"><span class="ic">✍️</span><b>Composition Challenge</b><span>Write a short story and tick off the word checklist.</span><span class="best" id="best-write"></span></button>
+  </div>
+  <div class="tips">
+    <h3>How to use the book</h3>
+    <ol>
+      <li><b>One list a week.</b> Don't read the whole book. Pick one page (e.g. "Said" words) and practise only that.</li>
+      <li><b>Star 5 words</b> you really like from that list. Learn what each one means — "trudged" and "strolled" are both slow, but feel very different.</li>
+      <li><b>Before writing</b>, keep the book open next to your plan. Choose 2–3 starred words for your story.</li>
+      <li><b>After writing</b>, circle every <i>said, went, ran, ate, very, nice</i> and upgrade at least three of them.</li>
+      <li><b>Don't overdo it.</b> One great word per sentence is enough. A sentence stuffed with fancy words sounds strange.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- WORD BANK -->
+<section class="screen" id="s-bank">
+  <button class="back" data-go="home">← All activities</button>
+  <h2>📖 Word Bank</h2>
+  <p class="lead">Tap a word to star it. Your stars show up in the Composition Challenge.</p>
+  <div class="mine"><b>⭐ My word collection</b><div class="chips" id="mine"></div></div>
+  <div class="tabs" id="tabs"></div>
+  <div id="bank"></div>
+</section>
+
+<!-- PICK THE BEST WORD -->
+<section class="screen" id="s-pick">
+  <button class="back" data-go="home">← All activities</button>
+  <div class="bar"><span id="p-count"></span><span id="p-score"></span></div>
+  <div class="progress"><i id="p-bar"></i></div>
+  <div class="qcard" id="p-card">
+    <span class="qtag" id="p-tag"></span>
+    <p class="qtext" id="p-text"></p>
+    <div class="opts" id="p-opts"></div>
+    <div class="why" id="p-why"></div>
+    <div class="row"><button class="btn" id="p-next" hidden>Next →</button></div>
+  </div>
+  <div class="qcard end" id="p-end" hidden>
+    <div class="big" id="p-final"></div>
+    <p id="p-msg"></p>
+    <div class="row" style="justify-content:center">
+      <button class="btn" id="p-again">New round</button>
+      <button class="btn ghost" id="p-retry" hidden>Retry my mistakes</button>
+    </div>
+  </div>
+</section>
+
+<!-- TRANSITION STORIES -->
+<section class="screen" id="s-trans">
+  <button class="back" data-go="home">← All activities</button>
+  <h2>🔗 Transition Stories</h2>
+  <p class="lead">Choose the best linking word for each gap. Think: is this the <b>beginning</b>, a <b>surprise</b>, a <b>contrast</b>, or the <b>end</b>?</p>
+  <div class="tabs" id="t-tabs"></div>
+  <div class="story" id="t-story"></div>
+  <div class="row"><button class="btn" id="t-check">Check my story</button><button class="btn ghost" id="t-reset">Clear</button></div>
+  <div class="why" id="t-why"></div>
+</section>
+
+<!-- UPGRADE IT -->
+<section class="screen" id="s-up">
+  <button class="back" data-go="home">← All activities</button>
+  <div class="bar"><span id="u-count"></span><span>Write your own version</span></div>
+  <div class="progress"><i id="u-bar"></i></div>
+  <div class="qcard">
+    <span class="qtag">Boring sentence</span>
+    <p class="qtext" id="u-text"></p>
+    <p class="note" id="u-hint"></p>
+    <textarea id="u-input" placeholder="Type your upgraded sentence here…"></textarea>
+    <div class="row"><button class="btn" id="u-check">Check</button><button class="btn ghost" id="u-skip">Show ideas</button></div>
+    <div class="why" id="u-why"></div>
+    <div class="row"><button class="btn" id="u-next" hidden>Next →</button></div>
+  </div>
+</section>
+
+<!-- COMPOSITION CHALLENGE -->
+<section class="screen" id="s-write">
+  <button class="back" data-go="home">← All activities</button>
+  <h2>✍️ Composition Challenge</h2>
+  <div class="prompt" id="w-prompt"></div>
+  <div class="tabs" id="w-tabs"></div>
+  <textarea id="w-input" style="min-height:220px" placeholder="Write 6–10 sentences. Your draft saves itself."></textarea>
+  <p class="note">Green = strong word from the book. Red = boring word to upgrade.</p>
+  <div class="preview" id="w-preview"></div>
+  <ul class="checks" id="w-checks"></ul>
+  <p class="note" id="w-stars"></p>
+</section>
+
+</div>
+<script>
+(function () {
+  // ---------- word lists (a P4-friendly selection, grouped like the book) ----------
+  var BANK = [
+    { id: 'trans', name: 'Transitions', groups: [
+      { h: 'For the beginning', cat: 'tb', ex: 'It all started when I heard a strange noise.',
+        w: ['First of all','To begin','Initially','At first','Early on','In the beginning','It all started when','One morning'] },
+      { h: 'For the middle', cat: 'tm', ex: 'Suddenly, the lights went out.',
+        w: ['Next','After that','Then','Meanwhile','Suddenly','All of a sudden','However','Before long','Soon after','Shortly thereafter','In the meantime','Later on','In addition','Moreover','For example','In fact'] },
+      { h: 'For the end', cat: 'te', ex: 'In the end, we laughed about the whole adventure.',
+        w: ['Finally','At last','Eventually','In the end','Ultimately','As a result','Without a doubt','To sum up','In conclusion','Last of all','From that day on'] }
+    ]},
+    { id: 'move', name: 'Movements', groups: [
+      { h: 'Fast', b: 'moved fast', cat: 'mv', ex: 'The boy darted across the field.',
+        w: ['dashed','darted','sprinted','bolted','raced','hurried','rushed','scurried','scrambled','zoomed','zipped','charged','streaked','pounced','lunged','zigzagged','scampered','galloped','hastened','fled'] },
+      { h: 'Slow', b: 'walked', cat: 'mv', ex: 'The tired hikers trudged up the hill.',
+        w: ['strolled','ambled','sauntered','wandered','trudged','plodded','tiptoed','crept','inched','dawdled','lingered','shuffled','limped','staggered','hobbled','meandered','edged','drifted','glided','marched','stomped'] }
+    ]},
+    { id: 'act', name: 'Action Verbs', groups: [
+      { h: 'ate', b: 'ate', cat: 'av', ex: 'The hungry boy gobbled his noodles.', w: ['gobbled','devoured','wolfed down','munched','nibbled','feasted on','gorged on','scarfed down'] },
+      { h: 'drank', b: 'drank', cat: 'av', w: ['gulped','sipped','slurped','guzzled','swallowed'] },
+      { h: 'took', b: 'took', cat: 'av', w: ['grabbed','snatched','seized','clutched','plucked','swiped'] },
+      { h: 'held', b: 'held', cat: 'av', w: ['clutched','gripped','clasped','grasped','cradled','squeezed'] },
+      { h: 'threw', b: 'threw', cat: 'av', w: ['hurled','flung','tossed','lobbed','pitched','chucked'] },
+      { h: 'fell', b: 'fell', cat: 'av', w: ['tumbled','toppled','collapsed','stumbled','plunged','tripped','slipped'] },
+      { h: 'hit', b: 'hit', cat: 'av', w: ['smacked','whacked','thumped','punched','slapped','bashed','pounded'] },
+      { h: 'jumped', b: 'jumped', cat: 'av', w: ['leapt','hopped','bounced','vaulted','sprang','pounced'] },
+      { h: 'pulled', b: 'pulled', cat: 'av', w: ['tugged','yanked','dragged','hauled','heaved','wrenched'] },
+      { h: 'broke', b: 'broke', cat: 'av', w: ['shattered','cracked','snapped','smashed','split'] },
+      { h: 'shook', b: 'shook', cat: 'av', w: ['trembled','shivered','quivered','wobbled','shuddered','quaked'] },
+      { h: 'smiled', b: 'smiled', cat: 'av', w: ['beamed','grinned','smirked'] },
+      { h: 'slept', b: 'slept', cat: 'av', w: ['dozed','napped','snoozed','snored','slumbered'] },
+      { h: 'found', b: 'found', cat: 'av', w: ['discovered','spotted','located','uncovered'] },
+      { h: 'made', b: 'made', cat: 'av', w: ['built','created','constructed','invented','assembled'] },
+      { h: 'stopped', b: 'stopped', cat: 'av', w: ['halted','paused','froze','ceased'] },
+      { h: 'disappeared', b: 'disappeared', cat: 'av', w: ['vanished','faded','melted away','evaporated'] },
+      { h: 'hugged', b: 'hugged', cat: 'av', w: ['embraced','cuddled','squeezed'] }
+    ]},
+    { id: 'said', name: '"Said" Words', groups: [
+      { h: 'shouted', b: 'said loudly', cat: 'sd', ex: '"Watch out!" Dad bellowed.', w: ['yelled','bellowed','hollered','screamed','shrieked','exclaimed','roared'] },
+      { h: 'whispered', b: 'said softly', cat: 'sd', w: ['murmured','muttered','mumbled','breathed','hissed'] },
+      { h: 'asked', b: 'asked', cat: 'sd', w: ['inquired','questioned','wondered','queried'] },
+      { h: 'answered', b: 'answered', cat: 'sd', w: ['replied','responded','retorted'] },
+      { h: 'cried', b: 'said sadly', cat: 'sd', w: ['sobbed','wept','wailed','whimpered','sniffled','bawled'] },
+      { h: 'laughed', b: 'said happily', cat: 'sd', w: ['giggled','chuckled','chortled','snickered','cheered'] },
+      { h: 'complained', b: 'complained', cat: 'sd', w: ['grumbled','groaned','moaned','whined','fussed'] },
+      { h: 'begged', b: 'begged', cat: 'sd', w: ['pleaded','implored','urged'] },
+      { h: 'argued', b: 'argued', cat: 'sd', w: ['protested','objected','insisted','snapped'] },
+      { h: 'ordered', b: 'ordered', cat: 'sd', w: ['commanded','demanded','instructed'] },
+      { h: 'warned', b: 'warned', cat: 'sd', w: ['cautioned','alerted','reminded'] },
+      { h: 'boasted', b: 'boasted', cat: 'sd', w: ['bragged','announced','declared'] },
+      { h: 'stuttered', b: 'said nervously', cat: 'sd', w: ['stammered','faltered','hesitated'] },
+      { h: 'teased', b: 'teased', cat: 'sd', w: ['mocked','taunted','jeered'] },
+      { h: 'explained', b: 'explained', cat: 'sd', w: ['described','clarified','added'] },
+      { h: 'gasped', b: 'gasped', cat: 'sd', w: ['panted','wheezed','choked'] }
+    ]},
+    { id: 'essay', name: 'Essay Verbs', groups: [
+      { h: 'Talking about a story or article', cat: 'ev', ex: 'The story teaches us that honesty matters. (not "The story is about…")',
+        w: ['shows','reveals','describes','explains','highlights','suggests','teaches','reminds','compares','presents','explores','illustrates'] },
+      { h: 'What a character does', cat: 'ev', ex: 'The main character struggles with fear but overcomes it.',
+        w: ['struggles','faces','learns','discovers','realises','overcomes','copes with','attempts'] }
+    ]}
+  ];
+  var CAT_NAME = { tb: 'beginning transition', tm: 'middle transition', te: 'ending transition', mv: 'movement word', av: 'action verb', sd: '"said" word', ev: 'essay verb' };
+  // Tired words to flag in red.
+  var DULL = { said: 1, says: 1, went: 1, walked: 1, ran: 1, moved: 1, ate: 1, got: 1, took: 1,
+    very: 1, nice: 1, good: 1, bad: 1, happy: 1, sad: 1 };
+
+  // Word → category lookup for highlighting. First list wins on overlaps.
+  var LOOKUP = {};
+  BANK.forEach(function (sec) { sec.groups.forEach(function (g) { g.w.forEach(function (w) {
+    var k = w.toLowerCase(); if (!LOOKUP[k]) LOOKUP[k] = g.cat;
+  }); }); });
+  var PHRASES = Object.keys(LOOKUP).sort(function (a, b) { return b.length - a.length; });
+
+  function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function load(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
+  function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+  // Finds strong and boring words in a piece of writing.
+  function scan(text) {
+    var hits = [], lower = text.toLowerCase(), taken = new Array(text.length);
+    PHRASES.forEach(function (p) {
+      var re = new RegExp('\\b' + p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), m;
+      while ((m = re.exec(lower))) {
+        var free = true;
+        for (var i = m.index; i < m.index + p.length; i++) if (taken[i]) { free = false; break; }
+        if (!free) continue;
+        for (i = m.index; i < m.index + p.length; i++) taken[i] = true;
+        hits.push({ at: m.index, len: p.length, cat: LOOKUP[p], word: p });
+      }
+    });
+    Object.keys(DULL).forEach(function (d) {
+      var re = new RegExp('\\b' + d + '\\b', 'g'), m;
+      while ((m = re.exec(lower))) if (!taken[m.index]) hits.push({ at: m.index, len: d.length, dull: true, word: d });
+    });
+    return hits.sort(function (a, b) { return a.at - b.at; });
+  }
+  function highlight(text, hits) {
+    var out = '', pos = 0;
+    hits.forEach(function (h) {
+      out += esc(text.slice(pos, h.at));
+      out += '<span class="hl ' + (h.dull ? 'dull' : 'up') + '">' + esc(text.substr(h.at, h.len)) + '</span>';
+      pos = h.at + h.len;
+    });
+    return out + esc(text.slice(pos));
+  }
+
+  // ---------- navigation ----------
+  var screens = {};
+  document.querySelectorAll('.screen').forEach(function (s) { screens[s.id.slice(2)] = s; });
+  var starters = { bank: renderBank, pick: function () { startPick(null); }, trans: function () { renderStory(storyIdx); }, up: startUp, write: function () { wasDone = true; renderWrite(); }, home: renderBest };
+  function go(name) {
+    Object.keys(screens).forEach(function (k) { screens[k].classList.toggle('on', k === name); });
+    if (starters[name]) starters[name]();
+    window.scrollTo(0, 0);
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-go]');
+    if (t) go(t.getAttribute('data-go'));
+  });
+
+  var BEST_KEY = 'bryan_bbw_best_v1';
+  function renderBest() {
+    var b = load(BEST_KEY, {}), stars = load(STAR_KEY, []);
+    document.getElementById('best-bank').textContent = stars.length ? '★ ' + stars.length + (stars.length === 1 ? ' word' : ' words') + ' starred' : '';
+    document.getElementById('best-pick').textContent = b.pick != null ? 'Best: ' + b.pick + '%' : '';
+    document.getElementById('best-trans').textContent = b.trans ? b.trans + ' of ' + STORIES.length + ' stories perfect' : '';
+    document.getElementById('best-up').textContent = b.up ? b.up + (b.up === 1 ? ' sentence' : ' sentences') + ' upgraded' : '';
+    document.getElementById('best-write').textContent = b.write ? 'Checklist done ' + b.write + '×' : '';
+  }
+  function bumpBest(key, val, mode) {
+    var b = load(BEST_KEY, {});
+    if (mode === 'max') b[key] = Math.max(b[key] || 0, val); else b[key] = (b[key] || 0) + val;
+    save(BEST_KEY, b);
+  }
+
+  // ---------- word bank ----------
+  var STAR_KEY = 'bryan_bbw_stars_v1', bankTab = 'trans';
+  function renderBank() {
+    var tabs = document.getElementById('tabs');
+    tabs.innerHTML = BANK.map(function (s) { return '<button class="tab" data-tab="' + s.id + '" aria-pressed="' + (s.id === bankTab) + '">' + esc(s.name) + '</button>'; }).join('');
+    var stars = load(STAR_KEY, []), sec = BANK.filter(function (s) { return s.id === bankTab; })[0];
+    document.getElementById('bank').innerHTML = sec.groups.map(function (g) {
+      return '<div class="group"><div class="gh"><b>' + esc(g.h) + '</b>' + (g.b ? '<em>instead of</em> <s>' + esc(g.b) + '</s>' : '') + '</div>' +
+        '<div class="chips">' + g.w.map(function (w) { return '<button class="chip' + (stars.indexOf(w) > -1 ? ' star' : '') + '" data-w="' + esc(w) + '">' + esc(w) + '</button>'; }).join('') + '</div>' +
+        (g.ex ? '<p class="ex">' + esc(g.ex) + '</p>' : '') + '</div>';
+    }).join('');
+    document.getElementById('mine').innerHTML = stars.map(function (w) { return '<button class="chip star" data-w="' + esc(w) + '">' + esc(w) + '</button>'; }).join('');
+  }
+  screens.bank.addEventListener('click', function (e) {
+    var tab = e.target.closest('[data-tab]');
+    if (tab) { bankTab = tab.getAttribute('data-tab'); renderBank(); return; }
+    var c = e.target.closest('[data-w]');
+    if (!c) return;
+    var w = c.getAttribute('data-w'), stars = load(STAR_KEY, []), i = stars.indexOf(w);
+    if (i > -1) stars.splice(i, 1); else stars.push(w);
+    save(STAR_KEY, stars); renderBank();
+  });
+
+  // ---------- pick the best word ----------
+  // Every option comes from the same family, so only the context decides.
+  var PICK = [
+    { tag: 'Movement', q: 'The exhausted hikers ___ up the last steep hill, their legs aching with every step.', a: 'trudged', o: ['sprinted','skipped','zoomed'], why: '"Trudged" means walking slowly and heavily because you are tired. "Exhausted" and "aching" are the clues.' },
+    { tag: 'Movement', q: 'When the bell rang, the children ___ out of the classroom to grab the best spot in the playground.', a: 'dashed', o: ['strolled','tiptoed','lingered'], why: 'They want the best spot, so they move fast. "Dashed" = ran quickly.' },
+    { tag: 'Movement', q: 'Not wanting to wake the baby, Mum ___ past the bedroom door.', a: 'tiptoed', o: ['stomped','charged','galloped'], why: '"Tiptoed" means walking quietly on your toes. Stomping would wake the baby!' },
+    { tag: 'Movement', q: 'The lion crouched low, then ___ on the unsuspecting zebra.', a: 'pounced', o: ['ambled','dozed','wandered'], why: '"Pounced" means jumped suddenly to catch something.' },
+    { tag: 'Movement', q: 'With an injured ankle, the footballer ___ off the field.', a: 'limped', o: ['sprinted','bounded','pranced'], why: '"Limped" means walking unevenly because one leg is hurt.' },
+    { tag: 'Movement', q: 'On a lazy Sunday afternoon, Grandpa ___ along the beach, enjoying the breeze.', a: 'strolled', o: ['bolted','scrambled','charged'], why: '"Strolled" is a relaxed, slow walk for pleasure.' },
+    { tag: 'Movement', q: 'The frightened mouse ___ under the cupboard when it saw the cat.', a: 'scurried', o: ['sauntered','marched','plodded'], why: '"Scurried" means moved quickly with short, fast steps, just like a small scared animal.' },
+    { tag: 'Action', q: 'The starving boy ___ his fried rice in less than a minute.', a: 'gobbled', o: ['nibbled','sipped','tasted'], why: '"Gobbled" means ate quickly and greedily. "Starving" and "less than a minute" are the clues.' },
+    { tag: 'Action', q: 'The shy little rabbit ___ at a leaf of lettuce.', a: 'nibbled', o: ['devoured','gulped','feasted on'], why: '"Nibbled" means took small, gentle bites.' },
+    { tag: 'Action', q: 'After the race, Bryan ___ a whole bottle of water in a few seconds.', a: 'gulped', o: ['sipped','nibbled','tasted'], why: '"Gulped" means swallowed quickly in big mouthfuls.' },
+    { tag: 'Action', q: 'Grandma ___ her hot tea slowly, careful not to burn her tongue.', a: 'sipped', o: ['guzzled','gulped','chugged'], why: '"Sipped" means drank in tiny amounts, which is what you do with hot tea.' },
+    { tag: 'Action', q: 'The glass vase slipped off the table and ___ into a hundred pieces.', a: 'shattered', o: ['snapped','bent','tore'], why: 'Glass "shatters" into many pieces. Sticks snap; paper tears.' },
+    { tag: 'Action', q: 'The tiny kitten ___ in the cold rain, its fur soaked through.', a: 'shivered', o: ['bounced','strutted','beamed'], why: '"Shivered" means shook because of the cold.' },
+    { tag: 'Action', q: 'The frightened child ___ her mother\'s hand tightly in the crowd.', a: 'clutched', o: ['tapped','tossed','patted'], why: '"Clutched" means held on tightly, often because you are scared.' },
+    { tag: 'Action', q: 'The firefighters ___ the heavy hose across the road.', a: 'hauled', o: ['tossed','plucked','flicked'], why: '"Hauled" means pulled something heavy with a lot of effort.' },
+    { tag: 'Action', q: 'Holding the trophy high, the captain ___ from ear to ear.', a: 'grinned', o: ['frowned','scowled','smirked'], why: '"Grinned" is a big, happy smile. "Smirked" is a smug, unkind smile.' },
+    { tag: 'Action', q: 'The moment the lights came on, the shadow ___ as if it had never been there.', a: 'vanished', o: ['collapsed','tumbled','built'], why: '"Vanished" means disappeared suddenly.' },
+    { tag: '"Said"', q: '"Watch out!" Dad ___ as the ball flew towards the window.', a: 'yelled', o: ['whispered','mumbled','sighed'], why: 'A warning in an emergency is shouted, so "yelled". The exclamation mark is a clue.' },
+    { tag: '"Said"', q: '"Can you keep a secret?" Mei Ling ___ into my ear.', a: 'whispered', o: ['bellowed','shrieked','announced'], why: 'Secrets are said softly. "Into my ear" is the clue.' },
+    { tag: '"Said"', q: '"I don\'t want to tidy my room," Jordan ___ with a frown.', a: 'grumbled', o: ['cheered','chuckled','boasted'], why: '"Grumbled" means complained in an unhappy voice. "Frown" is the clue.' },
+    { tag: '"Said"', q: '"I scored the most goals in the whole school!" Ryan ___.', a: 'boasted', o: ['whimpered','muttered','apologised'], why: '"Boasted" means talked proudly about yourself.' },
+    { tag: '"Said"', q: '"P-p-please don\'t make me go up on stage," Amy ___.', a: 'stammered', o: ['bellowed','bragged','cheered'], why: '"Stammered" means spoke with pauses and repeated sounds because of nerves. The "P-p-please" shows it.' },
+    { tag: '"Said"', q: '"Please, please let me keep the puppy!" Sam ___.', a: 'pleaded', o: ['ordered','snapped','muttered'], why: '"Pleaded" means begged in an emotional way.' },
+    { tag: '"Said"', q: '"Do not touch the hot beaker," our teacher ___ the class.', a: 'warned', o: ['bragged to','giggled at','grumbled at'], why: '"Warned" means told someone about danger.' },
+    { tag: '"Said"', q: '"My ice cream fell on the floor," the little boy ___, tears rolling down his cheeks.', a: 'sobbed', o: ['chuckled','boasted','bellowed'], why: '"Sobbed" means cried loudly. "Tears" is the clue.' },
+    { tag: '"Said"', q: '"Wait for me!" Lily ___, out of breath after running up the stairs.', a: 'panted', o: ['murmured','giggled','boasted'], why: '"Panted" means spoke while breathing fast and hard.' },
+    { tag: 'Transition', q: 'We were playing happily in the park. ___, dark clouds rolled in and it started to pour.', a: 'All of a sudden', o: ['In conclusion','First of all','To sum up'], why: 'Something unexpected happens in the middle of the story, so use a "surprise" transition.' },
+    { tag: 'Transition', q: '___, after hours of searching, we found the lost puppy hiding under a car.', a: 'At last', o: ['To begin','Initially','For example'], why: '"At last" shows that something finally happened after a long wait.' },
+    { tag: 'Transition', q: 'I wanted to play outside. ___, it was raining heavily.', a: 'However', o: ['Therefore','First of all','In addition'], why: '"However" shows a contrast: what I wanted vs what actually happened.' },
+    { tag: 'Transition', q: 'I forgot to set my alarm. ___, I was late for school.', a: 'As a result', o: ['However','To begin','Meanwhile'], why: '"As a result" shows cause and effect.' },
+    { tag: 'Essay verb', q: 'The story ___ us that honesty is always the best policy.', a: 'teaches', o: ['measures','disputes','gobbles'], why: 'Use "teaches" or "reminds" when writing about the lesson of a story.' },
+    { tag: 'Essay verb', q: 'The article ___ how butterflies travel thousands of kilometres every year.', a: 'explains', o: ['boasts','grumbles','stammers'], why: 'Use "explains" or "describes" for information texts, instead of "is about".' }
+  ];
+  var MISS_KEY = 'bryan_bbw_missed_v1';
+  var round = [], qi = 0, score = 0, missed = [];
+  function startPick(only) {
+    round = only ? PICK.filter(function (p) { return only.indexOf(p.q) > -1; }) : shuffle(PICK).slice(0, 10);
+    qi = 0; score = 0; missed = [];
+    document.getElementById('p-card').hidden = false;
+    document.getElementById('p-end').hidden = true;
+    showPick();
+  }
+  function showPick() {
+    var q = round[qi];
+    document.getElementById('p-count').textContent = 'Question ' + (qi + 1) + ' of ' + round.length;
+    document.getElementById('p-score').textContent = '⭐ ' + score;
+    document.getElementById('p-bar').style.width = (qi / round.length * 100) + '%';
+    document.getElementById('p-tag').textContent = q.tag;
+    document.getElementById('p-text').innerHTML = esc(q.q).replace('___', '<span class="blank" id="p-blank">?</span>');
+    var box = document.getElementById('p-opts'); box.innerHTML = '';
+    shuffle([q.a].concat(q.o)).forEach(function (o) {
+      var b = document.createElement('button'); b.className = 'opt'; b.textContent = o;
+      b.onclick = function () { answerPick(o, b); };
+      box.appendChild(b);
+    });
+    document.getElementById('p-why').className = 'why';
+    document.getElementById('p-next').hidden = true;
+  }
+  function answerPick(o, btn) {
+    var q = round[qi], ok = o === q.a;
+    document.querySelectorAll('#p-opts .opt').forEach(function (b) { b.disabled = true; if (b.textContent === q.a) b.classList.add('right'); });
+    if (ok) score++; else { btn.classList.add('wrong'); missed.push(q.q); }
+    document.getElementById('p-blank').textContent = q.a;
+    var why = document.getElementById('p-why');
+    why.innerHTML = (ok ? '✅ <b>Yes!</b> ' : '💡 <b>Best word: ' + esc(q.a) + '.</b> ') + esc(q.why);
+    why.className = 'why on';
+    document.getElementById('p-score').textContent = '⭐ ' + score;
+    var nx = document.getElementById('p-next'); nx.hidden = false; nx.focus();
+  }
+  document.getElementById('p-next').onclick = function () {
+    qi++;
+    if (qi < round.length) return showPick();
+    var pct = Math.round(score / round.length * 100);
+    document.getElementById('p-bar').style.width = '100%';
+    document.getElementById('p-card').hidden = true;
+    document.getElementById('p-end').hidden = false;
+    document.getElementById('p-final').textContent = score + '/' + round.length;
+    document.getElementById('p-msg').textContent = pct === 100 ? 'Perfect! Not a boring word in sight.' : pct >= 70 ? 'Great work! Look again at the ones you missed.' : 'Good try. Read the clue words in each sentence carefully.';
+    document.getElementById('p-retry').hidden = !missed.length;
+    save(MISS_KEY, missed);
+    if (round.length === 10) bumpBest('pick', pct, 'max');
+  };
+  document.getElementById('p-again').onclick = function () { startPick(null); };
+  document.getElementById('p-retry').onclick = function () { startPick(load(MISS_KEY, [])); };
+
+  // ---------- transition stories ----------
+  // [answer|wrong|wrong] marks a gap.
+  var STORIES = [
+    { t: 'The Lost Wallet', s: '[It all started when|In conclusion|As a result] Daniel and I were walking home from school. [Suddenly|Initially|To sum up], Daniel spotted a brown wallet lying near the bus stop. [At first|Finally|In the end], we did not know what to do. We wanted to buy ice cream with the money inside. [However|Therefore|First of all], we knew it was wrong. [After that|To begin|In the beginning], we looked inside and found an address card. [Eventually|Initially|For example], after twenty minutes of searching, we found the owner\'s flat. [In the end|To begin|Meanwhile], the old lady hugged us and thanked us for our honesty.',
+      why: 'Beginning → "It all started when". Surprise → "Suddenly". Feelings at the start → "At first". Contrast → "However". Next step → "After that". After a long time → "Eventually". Ending → "In the end".' },
+    { t: 'Sports Day', s: '[It was the morning of|As a result of|In conclusion of] Sports Day and my heart was pounding. [First of all|Lastly|In the end], our teacher lined us up for the 100-metre race. [Meanwhile|Finally|To begin], my parents were cheering wildly from the stands. When the whistle blew, I bolted forward. [All of a sudden|In the beginning|To sum up], my shoelace came undone and I tumbled onto the track. [Before long|At first|Initially], I scrambled back up and kept running. [Although|Therefore|First], I came in last, my classmates cheered for me. [From that day on|To begin with|Early on], I always double-knot my shoelaces!',
+      why: 'Setting the scene → "It was the morning of". First event → "First of all". Two things at the same time → "Meanwhile". Surprise → "All of a sudden". A short time later → "Before long". Contrast inside one sentence → "Although". A lesson for the future → "From that day on".' },
+    { t: 'The Science Experiment', s: '[To begin|Lastly|In conclusion], we poured vinegar into a plastic bottle. [Next|Finally|In the beginning], we used a funnel to add two spoons of baking soda into a balloon. [Then|To begin|Initially], we stretched the balloon over the mouth of the bottle. [As soon as|Although|However] the baking soda fell in, the mixture fizzed and bubbled. [Before long|At first|To begin], the balloon had swelled to the size of a football! [As a result|However|For instance] of this experiment, we learned that the reaction gives off a gas. [To sum up|First of all|Meanwhile], it was the most exciting lesson of the term.',
+      why: 'Steps in order → "To begin", "Next", "Then". At the exact moment → "As soon as". Quickly after → "Before long". Cause and effect → "As a result". Wrapping up → "To sum up".' }
+  ];
+  var storyIdx = 0;
+  function renderStory(i) {
+    storyIdx = i;
+    var done = load('bryan_bbw_trans_v1', []);
+    document.getElementById('t-tabs').innerHTML = STORIES.map(function (s, k) {
+      return '<button class="tab" data-story="' + k + '" aria-pressed="' + (k === i) + '">' + (done.indexOf(k) > -1 ? '✓ ' : '') + esc(s.t) + '</button>';
+    }).join('');
+    var n = 0;
+    var html = esc(STORIES[i].s).replace(/\[([^\]]+)\]/g, function (_, opts) {
+      var list = opts.split('|');
+      return '<select data-a="' + list[0] + '" aria-label="Gap ' + (++n) + '"><option value="">— choose —</option>' +
+        shuffle(list).map(function (o) { return '<option>' + o + '</option>'; }).join('') + '</select>';
+    });
+    document.getElementById('t-story').innerHTML = '<h3>' + esc(STORIES[i].t) + '</h3>' + html;
+    document.getElementById('t-why').className = 'why';
+  }
+  document.getElementById('t-tabs').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-story]'); if (b) renderStory(+b.getAttribute('data-story'));
+  });
+  document.getElementById('t-story').addEventListener('change', function (e) { e.target.className = ''; });
+  document.getElementById('t-check').onclick = function () {
+    var sels = document.querySelectorAll('#t-story select'), right = 0;
+    sels.forEach(function (s) {
+      // Capital letter only matters at the start of a sentence, so compare loosely.
+      var ok = s.value && s.value.toLowerCase() === s.getAttribute('data-a').toLowerCase();
+      s.className = s.value ? (ok ? 'right' : 'wrong') : '';
+      if (ok) right++;
+    });
+    var why = document.getElementById('t-why');
+    if (right === sels.length) {
+      var done = load('bryan_bbw_trans_v1', []);
+      if (done.indexOf(storyIdx) < 0) { done.push(storyIdx); save('bryan_bbw_trans_v1', done); bumpBest('trans', 1); }
+      why.innerHTML = '🎉 <b>All ' + right + ' correct!</b> ' + esc(STORIES[storyIdx].why);
+    } else {
+      why.innerHTML = '<b>' + right + ' of ' + sels.length + ' correct.</b> Change the red ones and check again. Ask: is it a surprise, a contrast, a next step, or the ending?';
+    }
+    why.className = 'why on';
+  };
+  document.getElementById('t-reset').onclick = function () { renderStory(storyIdx); };
+
+  // ---------- upgrade it ----------
+  var UP = [
+    { s: 'The dog ran to the gate.', dull: 'ran', hint: 'Try a fast movement word.', ideas: ['The dog bolted to the gate, barking wildly.', 'The dog darted to the gate the moment it heard the doorbell.'] },
+    { s: 'My sister ate the whole cake.', dull: 'ate', hint: 'How did she eat it? Quickly? Greedily?', ideas: ['My sister gobbled up the whole cake before anyone else could have a slice.', 'My sister devoured the whole cake in five minutes.'] },
+    { s: '"Stop running!" said the teacher.', dull: 'said', hint: 'The teacher is speaking loudly and firmly.', ideas: ['"Stop running!" the teacher bellowed across the corridor.', '"Stop running!" the teacher commanded.'] },
+    { s: 'The old man walked to the bus stop.', dull: 'walked', hint: 'Try a slow movement word that shows he is old or tired.', ideas: ['The old man shuffled to the bus stop, leaning on his walking stick.', 'The old man hobbled slowly to the bus stop.'] },
+    { s: 'The boy cried when he lost his toy.', dull: 'cried', hint: 'How hard was he crying?', ideas: ['The boy sobbed when he lost his toy.', 'The boy wailed loudly when he realised his toy was gone.'] },
+    { s: 'Tom took the last cookie.', dull: 'took', hint: 'Was it quick and sneaky?', ideas: ['Tom snatched the last cookie before I could reach it.', 'Tom swiped the last cookie when nobody was looking.'] },
+    { s: 'The vase broke on the floor.', dull: 'broke', hint: 'What happens to glass when it hits the floor?', ideas: ['The vase shattered into tiny pieces on the floor.', 'The vase smashed on the floor with a loud crash.'] },
+    { s: '"I am the fastest runner in class," said Ken.', dull: 'said', hint: 'Ken is showing off.', ideas: ['"I am the fastest runner in class," Ken boasted.', '"I am the fastest runner in class," Ken bragged, puffing out his chest.'] },
+    { s: 'We went into the dark cave.', dull: 'went', hint: 'Were you scared? Move slowly and quietly.', ideas: ['We crept into the dark cave, holding our breath.', 'We tiptoed nervously into the dark cave.'] },
+    { s: 'I was scared, so I held Mum\'s hand.', dull: 'held', hint: 'How tightly did you hold it?', ideas: ['Trembling with fear, I clutched Mum\'s hand.', 'I gripped Mum\'s hand so tightly that my knuckles turned white.'] },
+    { s: 'The baby slept in the car.', dull: 'slept', hint: 'Light sleep, deep sleep, or noisy sleep?', ideas: ['The baby dozed peacefully in the car.', 'The baby snored softly in the back seat.'] },
+    { s: 'She laughed at the funny video.', dull: 'laughed', hint: 'A little laugh or a big one?', ideas: ['She giggled at the funny video.', 'She chortled so hard at the funny video that she nearly fell off her chair.'] },
+    { s: 'The thief went out of the shop.', dull: 'went', hint: 'A thief wants to escape quickly.', ideas: ['The thief bolted out of the shop.', 'The thief fled from the shop with the stolen bag.'] },
+    { s: '"Please let me go to the party," said Anna.', dull: 'said', hint: 'Anna really, really wants to go.', ideas: ['"Please let me go to the party," Anna pleaded.', '"Please let me go to the party," Anna begged, clasping her hands together.'] }
+  ];
+  var upOrder = [], ui = 0;
+  function startUp() { upOrder = shuffle(UP); ui = 0; showUp(); }
+  function showUp() {
+    var q = upOrder[ui];
+    document.getElementById('u-count').textContent = 'Sentence ' + (ui + 1) + ' of ' + upOrder.length;
+    document.getElementById('u-bar').style.width = (ui / upOrder.length * 100) + '%';
+    document.getElementById('u-text').innerHTML = esc(q.s).replace(new RegExp('\\b' + q.dull + '\\b'), '<s>' + q.dull + '</s>');
+    document.getElementById('u-hint').textContent = '💡 ' + q.hint;
+    var inp = document.getElementById('u-input'); inp.value = '';
+    document.getElementById('u-why').className = 'why';
+    document.getElementById('u-next').hidden = true;
+  }
+  function ideasHtml(q) { return '<p style="margin:8px 0 0"><b>Ideas:</b></p><ul style="margin:4px 0 0;padding-left:20px">' + q.ideas.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul>'; }
+  document.getElementById('u-check').onclick = function () {
+    var q = upOrder[ui], text = document.getElementById('u-input').value.trim(), why = document.getElementById('u-why');
+    if (!text) { why.innerHTML = 'Type your upgraded sentence first.'; why.className = 'why on'; return; }
+    var hits = scan(text), strong = hits.filter(function (h) { return !h.dull; }),
+        stillDull = new RegExp('\\b' + q.dull + '\\b', 'i').test(text), msg;
+    if (!stillDull && strong.length) { msg = '🌟 <b>Upgraded!</b> You used: ' + strong.map(function (h) { return '<b>' + esc(h.word) + '</b>'; }).join(', ') + '.'; bumpBest('up', 1); }
+    else if (stillDull) msg = '🔁 The boring word <b>' + q.dull + '</b> is still there. Swap it for a stronger word.';
+    else msg = '👍 The boring word is gone. Is your new word from the Word Bank? If you used a different strong word, that\'s fine too!';
+    why.innerHTML = '<div class="preview" style="margin:0 0 8px">' + highlight(text, hits) + '</div>' + msg + ideasHtml(q);
+    why.className = 'why on';
+    document.getElementById('u-next').hidden = false;
+  };
+  document.getElementById('u-skip').onclick = function () {
+    var why = document.getElementById('u-why');
+    why.innerHTML = ideasHtml(upOrder[ui]) + '<p class="note" style="margin:8px 0 0">Now try writing your own version.</p>';
+    why.className = 'why on';
+  };
+  document.getElementById('u-next').onclick = function () {
+    ui++;
+    if (ui < upOrder.length) showUp();
+    else { startUp(); }
+  };
+
+  // ---------- composition challenge ----------
+  var PROMPTS = [
+    { t: 'A Race Against Time', d: 'You were late for something important and had to hurry. What happened?' },
+    { t: 'An Act of Kindness', d: 'Write about a time you helped someone, or someone helped you.' },
+    { t: 'A Scary Moment', d: 'Something frightening happened. How did you feel and what did you do?' },
+    { t: 'The Accident', d: 'Someone got hurt at school or at the playground. What did you see and do?' }
+  ];
+  var DRAFT_KEY = 'bryan_bbw_drafts_v1', promptIdx = 0;
+  function renderWrite() {
+    var p = PROMPTS[promptIdx], drafts = load(DRAFT_KEY, {});
+    document.getElementById('w-prompt').innerHTML = '<b>' + esc(p.t) + '</b><br>' + esc(p.d);
+    document.getElementById('w-tabs').innerHTML = PROMPTS.map(function (q, k) {
+      return '<button class="tab" data-prompt="' + k + '" aria-pressed="' + (k === promptIdx) + '">' + esc(q.t) + '</button>';
+    }).join('');
+    document.getElementById('w-input').value = drafts[promptIdx] || '';
+    var stars = load(STAR_KEY, []);
+    document.getElementById('w-stars').textContent = stars.length ? '⭐ Your starred words: ' + stars.join(', ') : '⭐ Tip: star some words in the Word Bank and they will show up here.';
+    checkWrite();
+  }
+  // wasDone stops a finished draft from counting again every time it is reopened.
+  var wasDone = true;
+  function checkWrite() {
+    var text = document.getElementById('w-input').value, hits = scan(text);
+    var count = function (cat) { var seen = {}; hits.forEach(function (h) { if (h.cat === cat) seen[h.word] = 1; }); return Object.keys(seen).length; };
+    var saidN = hits.filter(function (h) { return h.dull && (h.word === 'said' || h.word === 'says'); }).length;
+    var dullN = hits.filter(function (h) { return h.dull; }).length;
+    var sentences = text.split(/[.!?]+/).filter(function (s) { return s.trim().split(/\s+/).length > 2; }).length;
+    var rules = [
+      [sentences >= 6, 'Write at least 6 sentences', sentences + ' so far'],
+      [count('tb') >= 1, 'Start with a beginning transition', 'e.g. It all started when…'],
+      [count('tm') >= 2, 'Use 2 middle transitions', 'e.g. Suddenly… However… · ' + count('tm') + ' used'],
+      [count('te') >= 1, 'End with an ending transition', 'e.g. In the end…'],
+      [count('mv') >= 2, 'Use 2 movement words', count('mv') + ' used'],
+      [count('av') >= 2, 'Use 2 action verbs', count('av') + ' used'],
+      [count('sd') >= 2 && saidN === 0, 'Use 2 "said" words and no plain "said"', count('sd') + ' used' + (saidN ? ' · "said" appears ' + saidN + '×' : '')],
+      [sentences >= 6 && dullN <= 2, 'No more than 2 boring words left', dullN + ' red word' + (dullN === 1 ? '' : 's')]
+    ];
+    document.getElementById('w-preview').innerHTML = text.trim() ? highlight(text, hits) : '<span class="note">Your highlighted story appears here.</span>';
+    document.getElementById('w-checks').innerHTML = rules.map(function (r) {
+      return '<li class="' + (r[0] ? 'ok' : '') + '"><span>' + esc(r[1]) + '<small>' + esc(r[2]) + '</small></span></li>';
+    }).join('');
+    var all = rules.every(function (r) { return r[0]; });
+    if (all && !wasDone) bumpBest('write', 1);
+    wasDone = all;
+  }
+  document.getElementById('w-tabs').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-prompt]'); if (!b) return;
+    promptIdx = +b.getAttribute('data-prompt'); wasDone = true; renderWrite();
+  });
+  document.getElementById('w-input').addEventListener('input', function () {
+    var drafts = load(DRAFT_KEY, {}); drafts[promptIdx] = this.value; save(DRAFT_KEY, drafts);
+    checkWrite();
+  });
+  renderBest();
+})();
+</script>
+</body>
+</html>

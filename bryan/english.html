@@ -12,17 +12,24 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;ma
 h1{margin:0;font-size:25px}
 .sub{color:#78909c;font-size:14px;margin-top:4px}
 .secondary{padding:11px 17px;border-radius:12px;font-weight:700;background:#eceff1;color:#37474f;text-decoration:none;display:inline-flex;align-items:center}
-.card{background:white;border-radius:22px;padding:40px 20px;box-shadow:0 5px 20px #0000000b;text-align:center;color:#78909c}
+.subjects{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.subject{display:block;background:white;border-radius:22px;padding:22px;box-shadow:0 5px 20px #0000000b;text-decoration:none;color:inherit;transition:transform .15s}
+.subject:hover{transform:translateY(-2px)}
+.subject .icon{font-size:40px}
+.subject h2{margin:10px 0 4px;font-size:20px}
+.subject p{margin:0;color:#78909c;font-size:14px;line-height:1.6}
 @media(max-width:760px){.app{padding:12px}h1{font-size:21px}}
 </style>
 </head>
 <body>
 <div class="app">
 <header>
-  <div><h1>🔤 Bryan · 英文 English</h1><div class="sub">Bryan 的学习</div></div>
+  <div><h1>🔤 Bryan · 英文 English</h1><div class="sub">Composition writing · pick one to start</div></div>
   <a class="secondary" href="index.html">↩ 返回 Bryan</a>
 </header>
-<div class="card">🚧 内容准备中 · Coming soon</div>
+<div class="subjects">
+  <a class="subject" href="english-words.html"><div class="icon">💡</div><h2>Banish Boring Words</h2><p>Strong verbs, "said" words and transitions: word bank, quizzes, sentence upgrades and a composition challenge</p></a>
+</div>
 </div>
 </body>
 </html>
