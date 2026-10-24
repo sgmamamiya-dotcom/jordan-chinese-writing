@@ -307,8 +307,58 @@ textarea{width:100%;min-height:96px;font:inherit;font-size:18px;border:3px solid
 
   function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  // ---------- saving: localStorage on this device, copied to Supabase ----------
+  var SB_URL = 'https://YOUR-PROJECT.supabase.co';   // Supabase → Project Settings → API → Project URL
+  var SB_KEY = 'YOUR-ANON-PUBLIC-KEY';              // Supabase → Project Settings → API → anon / publishable key
+  var STUDENT = 'bryan';
+  var SYNC_KEYS = ['bryan_bbw_best_v1', 'bryan_bbw_stars_v1', 'bryan_bbw_missed_v1', 'bryan_bbw_trans_v1', 'bryan_bbw_drafts_v1'];
+  var TS_KEY = 'bryan_bbw_sync_ts_v1'; // when each key last changed on this device
+  var SB_ON = SB_URL.indexOf('YOUR-') < 0;
+  var pending = {}, pushTimer = null;
+
   function load(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
-  function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function put(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function save(k, v) {
+    put(k, v);
+    var ts = load(TS_KEY, {}); ts[k] = new Date().toISOString(); put(TS_KEY, ts);
+    pending[k] = 1; clearTimeout(pushTimer); pushTimer = setTimeout(push, 1500);
+  }
+  function sb(path, opts) {
+    opts = opts || {};
+    opts.headers = Object.assign({ apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' }, opts.headers);
+    return fetch(SB_URL + '/rest/v1/' + path, opts);
+  }
+  // Sends changed keys to Supabase. Failed keys stay queued for the next try.
+  function push(keepalive) {
+    var keys = Object.keys(pending); if (!SB_ON || !keys.length) return;
+    pending = {};
+    var ts = load(TS_KEY, {});
+    var rows = keys.map(function (k) { return { student: STUDENT, key: k, value: load(k, null), updated_at: ts[k] || new Date().toISOString() }; });
+    sb('progress?on_conflict=student,key', { method: 'POST', keepalive: !!keepalive,
+      headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(rows) })
+      .then(function (r) { if (!r.ok) throw r; })
+      .catch(function () { keys.forEach(function (k) { pending[k] = 1; }); });
+  }
+  // On page open: take whichever copy is newer, Supabase or this device.
+  function pull() {
+    if (!SB_ON) return;
+    sb('progress?student=eq.' + STUDENT + '&select=key,value,updated_at')
+      .then(function (r) { if (!r.ok) throw r; return r.json(); })
+      .then(function (rows) {
+        var ts = load(TS_KEY, {}), remote = {};
+        rows.forEach(function (row) { remote[row.key] = row; });
+        SYNC_KEYS.forEach(function (k) {
+          var row = remote[k], lt = ts[k] ? Date.parse(ts[k]) : 0, rt = row ? Date.parse(row.updated_at) : 0;
+          if (row && rt > lt) { put(k, row.value); ts[k] = row.updated_at; }
+          else if (localStorage.getItem(k) != null && (!row || lt > rt)) { if (!ts[k]) ts[k] = new Date().toISOString(); pending[k] = 1; }
+        });
+        put(TS_KEY, ts);
+        push();
+        renderBest();
+      })
+      .catch(function () {});
+  }
+  window.addEventListener('pagehide', function () { clearTimeout(pushTimer); push(true); });
 
   // Finds strong and boring words in a piece of writing.
   function scan(text) {
@@ -636,6 +686,7 @@ textarea{width:100%;min-height:96px;font:inherit;font-size:18px;border:3px solid
     checkWrite();
   });
   renderBest();
+  pull();
 })();
 </script>
 </body>
