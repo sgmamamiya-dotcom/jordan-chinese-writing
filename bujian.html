@@ -177,6 +177,8 @@ button:focus-visible{outline:3px solid #8FB8FF;outline-offset:3px}
 .tile:active{transform:rotate(var(--rot,0deg)) translateY(5px);box-shadow:0 3px 0 var(--edge),0 8px 14px rgba(0,0,0,.4),inset 0 2px 0 rgba(255,255,255,.6)}
 .tile[disabled]{opacity:.22;transform:scale(.92);box-shadow:none;cursor:default}
 .tile.glow{animation:glow .9s ease 3}
+.tile.two{font-size:clamp(22px,4.8vw,32px);letter-spacing:-.08em}
+.mt.two{font-size:17px;letter-spacing:-.08em}
 .actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:30px}
 .btn{min-height:50px;padding:12px 26px;border-radius:999px;font-weight:900;font-size:17px;border:1px solid var(--glass-line);background:var(--glass)}
 .btn.cta{border:0;color:#fff;background:linear-gradient(180deg,var(--cta-a),var(--cta-b));box-shadow:0 5px 0 var(--cta-edge),0 14px 26px rgba(255,90,140,.35),inset 0 2px 0 rgba(255,255,255,.45);text-shadow:0 2px 0 rgba(120,20,50,.45);min-width:150px}
@@ -351,12 +353,12 @@ var CHARS=[
 ['b2','观','guān','lr',['又','见'],['戈','贝','欢'],'观赏','动物园里可{}赏到蛇、长颈鹿、猩猩、鸭子等动物。'],
 ['b2','赏','shǎng','tb',['尚','贝'],['常','见','目'],'观赏','动物园里可观{}到蛇、长颈鹿、猩猩、鸭子等动物。'],
 ['b2','蛇','shé','lr',['虫','它'],['忄','宀','也'],'蛇','动物园里可观赏到{}、长颈鹿、猩猩、鸭子等动物。'],
-['b2','颈','jǐng','lr',['巠','页'],['贝','见','工'],'长颈鹿','动物园里可观赏到蛇、长{}鹿、猩猩、鸭子等动物。'],
+['b2','颈','jǐng','lr',['圣','页'],['贝','见','工'],'长颈鹿','动物园里可观赏到蛇、长{}鹿、猩猩、鸭子等动物。'],
 ['b2','鸭','yā','lr',['甲','鸟'],['申','田','乌'],'鸭子','动物园里可观赏到蛇、长颈鹿、猩猩、{}子等动物。'],
 ['b3','难','nán','lr',['又','隹'],['佳','讠','欠'],'无难事','天下无{}事，只怕有心人。'],
 ['b3','怕','pà','lr',['忄','白'],['氵','日','百'],'只怕','天下无难事，只{}有心人。'],
 ['b3','论','lùn','lr',['讠','仑'],['氵','伦','令'],'无论','无{}做什么事，我们只要坚持到底，一定能成功。'],
-['b3','坚','jiān','tb',['又','土'],['夕','士','工'],'坚持','无论做什么事，我们只要{}持到底，一定能成功。'],
+['b3','坚','jiān','tlb',['丨丨','又','土'],['川','叉','士'],'坚持','无论做什么事，我们只要{}持到底，一定能成功。'],
 ['b3','持','chí','lr',['扌','寺'],['氵','时','手'],'坚持','无论做什么事，我们只要坚{}到底，一定能成功。'],
 ['b3','底','dǐ','stl',['广','氐'],['厂','低','氏'],'到底','无论做什么事，我们只要坚持到{}，一定能成功。'],
 ['b3','功','gōng','lr',['工','力'],['王','刀','匚'],'成功','无论做什么事，我们只要坚持到底，一定能成{}。']
@@ -591,7 +593,7 @@ function play(){
     frame=st.slots.map(function(g,i){
       var id=q.slots[i],ch=id===null?'':tileCh(q,id);
       var cls=['slot',id===null?'empty':'',(i===q.active&&id===null)?'active':'',(i===0&&st.shell)?'shell '+st.shell:'',q.locked[i]?'locked':'',q.bad.indexOf(i)>=0?'bad':'',q.pop===i?'pop':''].join(' ');
-      var style='left:'+g[0]+'%;top:'+g[1]+'%;width:'+g[2]+'%;height:'+g[3]+'%;font-size:'+g[4]+'cqw;z-index:'+((i===0&&st.shell)?1:2);
+      var style='left:'+g[0]+'%;top:'+g[1]+'%;width:'+g[2]+'%;height:'+g[3]+'%;font-size:'+(ch.length>1?g[4]*0.55:g[4])+'cqw;z-index:'+((i===0&&st.shell)?1:2);
       return '<button class="'+cls+'" style="'+style+'" data-a="slot" data-i="'+i+'" aria-label="'+st.labels[i]+'格'+(ch?'，已放'+ch:'，空')+'">'+(ch||'<span class="lab">'+st.labels[i]+'</span>')+'</button>';
     }).join('');
   }
@@ -604,7 +606,7 @@ function play(){
     var ready=q.slots.every(function(v){return v!==null;});
     var tiles=q.tiles.map(function(t){
       var used=q.slots.indexOf(t.id)>=0;
-      return '<button class="tile c'+t.col+(q.glow===t.id?' glow':'')+'" style="--rot:'+t.rot+'deg" data-a="tile" data-id="'+t.id+'"'+(used?' disabled':'')+' aria-label="部件 '+t.ch+'">'+t.ch+'</button>';
+      return '<button class="tile c'+t.col+(t.ch.length>1?' two':'')+(q.glow===t.id?' glow':'')+'" style="--rot:'+t.rot+'deg" data-a="tile" data-id="'+t.id+'"'+(used?' disabled':'')+' aria-label="部件 '+t.ch+'">'+t.ch+'</button>';
     }).join('');
     bottom='<div class="tray">'+tiles+'</div>'+
       '<div class="actions">'+
@@ -613,7 +615,7 @@ function play(){
         '<button class="btn ghost" data-a="reveal"'+(q.busy?' disabled':'')+'>看答案</button>'+
       '</div>';
   }else{
-    var eq=it.parts.map(function(ch,i){return (i?'<span>+</span>':'')+'<span class="mt c'+((i*2+1)%6)+'">'+ch+'</span>';}).join('');
+    var eq=it.parts.map(function(ch,i){return (i?'<span>+</span>':'')+'<span class="mt c'+((i*2+1)%6)+(ch.length>1?' two':'')+'">'+ch+'</span>';}).join('');
     bottom='<div class="done">'+
       '<div class="stars" role="img" aria-label="'+q.stars+' 星">'+stars(q.stars)+'</div>'+
       '<div class="gain">能量 +'+q.gain+'</div>'+
