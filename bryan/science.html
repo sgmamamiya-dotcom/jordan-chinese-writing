@@ -146,6 +146,7 @@ table.res th{background:#F4F1FF}
 <body>
 <div class="wrap" id="app"></div>
 <script src="science-data.js"></script>
+<script src="science-olevel.js"></script>
 <script src="science-sims.js"></script>
 <script>
 (function () {
@@ -160,7 +161,7 @@ table.res th{background:#F4F1FF}
     ['slides', '🖼️', 'Lesson slides'], ['videos', '🎬', 'Videos'], ['summary', '📝', 'Summary'], ['terms', '🔤', 'Key words'],
     ['quiz', '❓', 'Practice quiz'], ['form', '📋', 'Class quiz'], ['tips', '🎯', 'Exam tips'], ['facts', '💡', 'Fun facts']
   ];
-  function sectionsFor(t) { return t.kind === 'lesson' ? LESSON_SECTIONS : SECTIONS; }
+  function sectionsFor(t) { return t.kind === 'lesson' ? LESSON_SECTIONS : SECTIONS.filter(function (s) { return s[0] !== 'experiment' || window.SCI_SIMS[t.id]; }); }
   var BEST_KEY = 'sci_best_v1', FILTER_KEY = 'sci_level_v1', WATCH_KEY = 'sci_watched_v1';
   function read(k, d) { try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } }
   function write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }

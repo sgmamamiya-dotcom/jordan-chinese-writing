@@ -804,5 +804,264 @@
     draw();
   };
 
+
+  /* ================= O-Level experiments (shown under SPSO) ================= */
+  function fix(x, d) { return (Math.round(x * Math.pow(10, d)) / Math.pow(10, d)).toFixed(d); }
+  // Axes for a small x–y graph inside an SVG. Returns helpers to map values to pixels.
+  function axes(s, o) {
+    var X = function (v) { return o.left + (v - o.x0) / (o.x1 - o.x0) * o.w; }, Y = function (v) { return o.top + o.h - (v - o.y0) / (o.y1 - o.y0) * o.h; };
+    var g = S('g', null, s);
+    (o.xt || []).forEach(function (v) { S('line', { x1: X(v), x2: X(v), y1: o.top, y2: o.top + o.h, stroke: '#eef1f5' }, g); S('text', { x: X(v), y: o.top + o.h + 15, 'text-anchor': 'middle', 'font-size': 11, fill: '#5F5880', text: v }, g); });
+    (o.yt || []).forEach(function (v) { S('line', { x1: o.left, x2: o.left + o.w, y1: Y(v), y2: Y(v), stroke: '#eef1f5' }, g); S('text', { x: o.left - 6, y: Y(v) + 4, 'text-anchor': 'end', 'font-size': 11, fill: '#5F5880', text: v }, g); });
+    S('path', { d: 'M' + o.left + ' ' + o.top + ' V' + (o.top + o.h) + ' H' + (o.left + o.w), stroke: '#1D1640', 'stroke-width': 2, fill: 'none' }, g);
+    S('text', { x: o.left + o.w / 2, y: o.top + o.h + 32, 'text-anchor': 'middle', 'font-size': 12, 'font-weight': 700, fill: '#1D1640', text: o.xl }, g);
+    S('text', { x: 14, y: o.top + o.h / 2, 'text-anchor': 'middle', 'font-size': 12, 'font-weight': 700, fill: '#1D1640', transform: 'rotate(-90 14 ' + (o.top + o.h / 2) + ')', text: o.yl }, g);
+    return { X: X, Y: Y, g: g };
+  }
+
+  /* Kinematics: speed–time graph */
+  SIMS['ol-motion'] = function (root) {
+    var u = 5, a = 2, TMAX = 10;
+    var s = svg(380, 250, 'Speed–time graph');
+    var ax = axes(s, { left: 50, top: 14, w: 310, h: 190, x0: 0, x1: TMAX, y0: 0, y1: 60, xt: [0, 2, 4, 6, 8, 10], yt: [0, 20, 40, 60], xl: 'time / s', yl: 'speed / (m/s)' });
+    var area = S('path', { fill: '#1D4ED8', 'fill-opacity': .15 }, s), line = S('path', { stroke: '#1D4ED8', 'stroke-width': 3, fill: 'none' }, s);
+    var fb = note('');
+    function v(t) { return Math.max(0, u + a * t); }
+    function draw() {
+      var pts = [], dist = 0, dt = 0.05;
+      for (var t = 0; t <= TMAX + 1e-9; t += dt) { pts.push(ax.X(t) + ' ' + ax.Y(v(t))); if (t > 0) dist += (v(t) + v(t - dt)) / 2 * dt; }
+      line.setAttribute('d', 'M' + pts.join(' L'));
+      area.setAttribute('d', 'M' + ax.X(0) + ' ' + ax.Y(0) + ' L' + pts.join(' L') + ' L' + ax.X(TMAX) + ' ' + ax.Y(0) + ' Z');
+      var stop = a < 0 && u + a * TMAX < 0 ? -u / a : null;
+      setNote(fb, 'Final speed after ' + TMAX + ' s: ' + fix(v(TMAX), 1) + ' m/s. Gradient = acceleration = ' + a + ' m/s². Shaded area = distance travelled = ' + fix(dist, 1) + ' m.' + (stop != null ? ' The object stops at t = ' + fix(stop, 1) + ' s and stays at rest.' : '') + (a === 0 ? ' Zero acceleration: constant speed, a horizontal line.' : ''));
+    }
+    root.append(s,
+      slider('Starting speed u', 0, 20, 1, u, function (x) { return x + ' m/s'; }, function (x) { u = x; draw(); }),
+      slider('Acceleration a', -4, 4, 0.5, a, function (x) { return x + ' m/s²'; }, function (x) { a = x; draw(); }),
+      fb);
+    draw();
+  };
+
+  /* Refraction and total internal reflection */
+  SIMS['ol-light'] = function (root) {
+    var M = { 'air-water': ['Air', 1, 'Water', 1.33], 'air-glass': ['Air', 1, 'Glass', 1.5], 'air-diamond': ['Air', 1, 'Diamond', 2.42], 'water-air': ['Water', 1.33, 'Air', 1], 'glass-air': ['Glass', 1.5, 'Air', 1] };
+    var key = 'air-glass', i = 40;
+    var s = svg(360, 260, 'Light ray crossing a boundary');
+    var top = S('rect', { x: 0, y: 0, width: 360, height: 130 }, s), bot = S('rect', { x: 0, y: 130, width: 360, height: 130 }, s);
+    S('line', { x1: 0, x2: 360, y1: 130, y2: 130, stroke: '#1D1640', 'stroke-width': 2 }, s);
+    S('line', { x1: 180, x2: 180, y1: 10, y2: 250, stroke: '#5F5880', 'stroke-dasharray': '6 5' }, s);
+    S('text', { x: 186, y: 22, 'font-size': 11, fill: '#5F5880', text: 'normal' }, s);
+    var tl = S('text', { x: 10, y: 22, 'font-size': 13, 'font-weight': 700, fill: '#1D1640' }, s), bl = S('text', { x: 10, y: 250, 'font-size': 13, 'font-weight': 700, fill: '#1D1640' }, s);
+    arrowMarker(s, 'olray', '#E11D48');
+    var inc = S('line', { stroke: '#E11D48', 'stroke-width': 4, 'marker-end': 'url(#olray)' }, s);
+    var refl = S('line', { stroke: '#E11D48', 'stroke-width': 4, 'marker-end': 'url(#olray)' }, s);
+    var refr = S('line', { stroke: '#E11D48', 'stroke-width': 4, 'marker-end': 'url(#olray)' }, s);
+    var fb = note('');
+    function shade(n) { return n === 1 ? '#FFFFFF' : n < 1.4 ? '#DBEAFE' : n < 2 ? '#BFDBFE' : '#A5B4FC'; }
+    function draw() {
+      var m = M[key], n1 = m[1], n2 = m[3], L = 120, ri = i * Math.PI / 180;
+      top.setAttribute('fill', shade(n1)); bot.setAttribute('fill', shade(n2));
+      tl.textContent = m[0] + ' (n = ' + n1 + ')'; bl.textContent = m[2] + ' (n = ' + n2 + ')';
+      inc.setAttribute('x1', 180 - L * Math.sin(ri)); inc.setAttribute('y1', 130 - L * Math.cos(ri)); inc.setAttribute('x2', 180); inc.setAttribute('y2', 130);
+      refl.setAttribute('x1', 180); refl.setAttribute('y1', 130); refl.setAttribute('x2', 180 + L * Math.sin(ri)); refl.setAttribute('y2', 130 - L * Math.cos(ri));
+      var sr = n1 * Math.sin(ri) / n2, crit = n1 > n2 ? Math.asin(n2 / n1) * 180 / Math.PI : null;
+      if (sr > 1) {
+        refr.style.display = 'none'; refl.setAttribute('stroke-opacity', 1);
+        setNote(fb, 'Angle of incidence ' + i + '° is bigger than the critical angle (' + fix(crit, 1) + '°), so ALL the light reflects back: total internal reflection.', 'good');
+      } else {
+        var r = Math.asin(sr); refr.style.display = '';
+        refr.setAttribute('x1', 180); refr.setAttribute('y1', 130); refr.setAttribute('x2', 180 + L * Math.sin(r)); refr.setAttribute('y2', 130 + L * Math.cos(r));
+        refl.setAttribute('stroke-opacity', .2);
+        var rd = r * 180 / Math.PI;
+        setNote(fb, 'i = ' + i + '°, r = ' + fix(rd, 1) + '°. ' + (i === 0 ? 'Along the normal, the ray does not bend.' : n2 > n1 ? 'Into a denser medium: light slows down and bends towards the normal.' : 'Into a less dense medium: light speeds up and bends away from the normal.') + (crit != null ? ' Critical angle here: ' + fix(crit, 1) + '°. Go past it!' : '') + ' Check: n₁ sin i = n₂ sin r.');
+      }
+    }
+    root.append(s,
+      chips('Light goes from', Object.keys(M).map(function (k) { return [k, M[k][0] + ' → ' + M[k][2]]; }), key, function (k) { key = k; draw(); }),
+      slider('Angle of incidence', 0, 89, 1, i, function (x) { return x + '°'; }, function (x) { i = x; draw(); }),
+      fb);
+    draw();
+  };
+
+  /* Series and parallel circuits */
+  SIMS['ol-electricity'] = function (root) {
+    var mode = 'series', V = 6, R1 = 4, R2 = 8;
+    var s = svg(360, 240, 'Circuit diagram'), g = S('g', null, s);
+    var fb = note(''), tb = table(['', 'R₁', 'R₂', 'Whole circuit']); tb.el.classList.add('res');
+    function txt(x, y, t, opt) { return S('text', Object.assign({ x: x, y: y, 'text-anchor': 'middle', 'font-size': 12, 'font-weight': 700, fill: '#1D1640', text: t }, opt || {}), g); }
+    function wire(d) { S('path', { d: d, stroke: '#1D1640', 'stroke-width': 3, fill: 'none' }, g); }
+    function res(cx, cy, label, sub) { S('rect', { x: cx - 28, y: cy - 11, width: 56, height: 22, fill: '#FFF7E6', stroke: '#B45309', 'stroke-width': 3 }, g); txt(cx, cy - 18, label); txt(cx, cy + 28, sub, { fill: '#1D4ED8' }); }
+    function meter(cx, cy, l, sub) { S('circle', { cx: cx, cy: cy, r: 15, fill: '#fff', stroke: '#1D1640', 'stroke-width': 3 }, g); txt(cx, cy + 4, l); txt(cx, cy + 32, sub, { fill: '#1D4ED8' }); }
+    function draw() {
+      g.textContent = '';
+      var I, I1, I2, V1, V2, R;
+      if (mode === 'series') { R = R1 + R2; I = I1 = I2 = V / R; V1 = I * R1; V2 = I * R2; }
+      else { I1 = V / R1; I2 = V / R2; I = I1 + I2; V1 = V2 = V; R = 1 / (1 / R1 + 1 / R2); }
+      wire('M40 50 H320 V200 H40 Z');
+      if (mode === 'parallel') wire('M110 50 V120 H270 V50');
+      // battery on left side
+      S('rect', { x: 30, y: 112, width: 20, height: 16, fill: '#FBFDFF' }, g);
+      S('line', { x1: 22, x2: 58, y1: 113, y2: 113, stroke: '#1D1640', 'stroke-width': 3 }, g);
+      S('line', { x1: 31, x2: 49, y1: 127, y2: 127, stroke: '#1D1640', 'stroke-width': 6 }, g);
+      txt(80, 124, V + ' V', { 'text-anchor': 'start' });
+      if (mode === 'series') { res(140, 50, 'R₁ = ' + R1 + ' Ω', fix(V1, 2) + ' V'); res(230, 50, 'R₂ = ' + R2 + ' Ω', fix(V2, 2) + ' V'); }
+      else { res(190, 50, 'R₁ = ' + R1 + ' Ω', fix(I1, 2) + ' A'); res(190, 120, 'R₂ = ' + R2 + ' Ω', fix(I2, 2) + ' A'); }
+      meter(190, 200, 'A', fix(I, 2) + ' A');
+      tb.clear();
+      tb.add(['Current', fix(I1, 2) + ' A', fix(I2, 2) + ' A', fix(I, 2) + ' A']);
+      tb.add(['P.d.', fix(V1, 2) + ' V', fix(V2, 2) + ' V', V + ' V']);
+      tb.add(['Resistance', R1 + ' Ω', R2 + ' Ω', fix(R, 2) + ' Ω']);
+      setNote(fb, mode === 'series'
+        ? 'Series: the same current (' + fix(I, 2) + ' A) flows through both. Total R = R₁ + R₂ = ' + R + ' Ω. The p.d.s add up: ' + fix(V1, 2) + ' + ' + fix(V2, 2) + ' = ' + V + ' V. The bigger resistor gets the bigger share of the voltage.'
+        : 'Parallel: each resistor gets the full ' + V + ' V. The branch currents add up: ' + fix(I1, 2) + ' + ' + fix(I2, 2) + ' = ' + fix(I, 2) + ' A. Total R = ' + fix(R, 2) + ' Ω, less than the smallest resistor.');
+    }
+    root.append(s,
+      chips('Connect the resistors in', [['series', 'Series'], ['parallel', 'Parallel']], mode, function (m) { mode = m; draw(); }),
+      slider('Battery voltage', 1, 12, 1, V, function (x) { return x + ' V'; }, function (x) { V = x; draw(); }),
+      slider('R₁', 1, 20, 1, R1, function (x) { return x + ' Ω'; }, function (x) { R1 = x; draw(); }),
+      slider('R₂', 1, 20, 1, R2, function (x) { return x + ' Ω'; }, function (x) { R2 = x; draw(); }),
+      el('div', { class: 'scroll' }, tb.el), fb);
+    draw();
+  };
+
+  /* Build an atom */
+  SIMS['ol-atoms'] = function (root) {
+    var EL = [null, ['H', 'Hydrogen', 1], ['He', 'Helium', 4], ['Li', 'Lithium', 7], ['Be', 'Beryllium', 9], ['B', 'Boron', 11], ['C', 'Carbon', 12], ['N', 'Nitrogen', 14], ['O', 'Oxygen', 16], ['F', 'Fluorine', 19], ['Ne', 'Neon', 20],
+      ['Na', 'Sodium', 23], ['Mg', 'Magnesium', 24], ['Al', 'Aluminium', 27], ['Si', 'Silicon', 28], ['P', 'Phosphorus', 31], ['S', 'Sulfur', 32], ['Cl', 'Chlorine', 35], ['Ar', 'Argon', 40], ['K', 'Potassium', 39], ['Ca', 'Calcium', 40]];
+    var p = 6, n = 6, e = 6;
+    var s = svg(360, 300, 'Atom model'), g = S('g', null, s);
+    var fb = note('');
+    function shells(k) { var c = [], cap = [2, 8, 8, 2]; for (var i = 0; i < 4 && k > 0; i++) { c.push(Math.min(k, cap[i])); k -= cap[i]; } return c; }
+    function counter(label, get, set, min, max, color) {
+      var out = el('output', { class: 'val' });
+      var row = el('div', { class: 'ctrl' }, el('span', { class: 'lbl', style: 'color:' + color }, label), btn('−', function () { set(Math.max(min, get() - 1)); draw(); }), out, btn('+', function () { set(Math.min(max, get() + 1)); draw(); }));
+      row.out = out; return row;
+    }
+    var cp = counter('● Protons', function () { return p; }, function (v) { p = v; }, 1, 20, '#DC2626');
+    var cn = counter('● Neutrons', function () { return n; }, function (v) { n = v; }, 0, 24, '#6B7280');
+    var ce = counter('● Electrons', function () { return e; }, function (v) { e = v; }, 0, 20, '#1D4ED8');
+    function draw() {
+      g.textContent = ''; cp.out.textContent = p; cn.out.textContent = n; ce.out.textContent = e;
+      var cx = 180, cy = 150, sh = shells(e);
+      [34, 64, 94, 124].forEach(function (r, k) { if (k < Math.max(sh.length, 1)) S('circle', { cx: cx, cy: cy, r: r + 14, fill: 'none', stroke: '#CBD5E1', 'stroke-width': 1.5 }, g); });
+      var N = p + n, pi = 0, ni = 0;
+      for (var k = 0; k < N; k++) {
+        var isP = (k % 2 === 0 && pi < p) || ni >= n; if (isP) pi++; else ni++;
+        var rr = 5.6 * Math.sqrt(k), th = k * 2.39996;
+        S('circle', { cx: cx + rr * Math.cos(th), cy: cy + rr * Math.sin(th), r: 6.5, fill: isP ? '#DC2626' : '#9CA3AF', stroke: '#fff', 'stroke-width': 1 }, g);
+      }
+      sh.forEach(function (cnt, k) {
+        var r = [48, 78, 108, 138][k];
+        for (var j = 0; j < cnt; j++) { var a = j / cnt * 2 * Math.PI - Math.PI / 2; S('circle', { cx: cx + r * Math.cos(a), cy: cy + r * Math.sin(a), r: 5.5, fill: '#1D4ED8' }, g); }
+      });
+      var E = EL[p], A = p + n, q = p - e, qs = q === 0 ? '' : (Math.abs(q) > 1 ? Math.abs(q) : '') + (q > 0 ? '+' : '−');
+      var msg = E[1] + ' (' + E[0] + qs + '): proton number ' + p + ', nucleon number ' + A + ', charge ' + (q === 0 ? '0, a neutral atom' : (q > 0 ? '+' : '−') + Math.abs(q) + ', an ion') + '. Electronic configuration: ' + (sh.join(', ') || 'none') + '.';
+      if (A !== E[2]) msg += ' The most common ' + E[1].toLowerCase() + ' atom has ' + (E[2] - p) + ' neutrons, so this is a different isotope of ' + E[1].toLowerCase() + '.';
+      var full = sh.length && sh[sh.length - 1] === [2, 8, 8, 2][sh.length - 1] && sh.length < 4;
+      if (full) msg += ' Full outer shell: very stable, like a noble gas.';
+      setNote(fb, msg, full ? 'good' : '');
+    }
+    root.append(s, cp, cn, ce, fb);
+    draw();
+  };
+
+  /* Titration with universal indicator */
+  SIMS['ol-acids'] = function (root) {
+    var VA = 25, C = 0.1, add = 0, pts = [];
+    var UI = ['#D7263D', '#E8442E', '#F06A26', '#F59A23', '#F6C324', '#E8DC2A', '#B5D334', '#3FAE49', '#1F9E89', '#1C7FB6', '#2F5DAA', '#3B44A0', '#4E3896', '#5B2C8C', '#6A237F'];
+    var s = svg(380, 250, 'Titration');
+    // flask
+    var liq = S('path', { d: 'M40 220 L80 150 L80 130 L100 130 L100 150 L140 220 Z' }, s);
+    S('path', { d: 'M75 95 L75 150 L32 228 H148 L105 150 L105 95', fill: 'none', stroke: '#1D1640', 'stroke-width': 3 }, s);
+    S('rect', { x: 84, y: 10, width: 12, height: 70, fill: '#E5E7EB', stroke: '#1D1640', 'stroke-width': 2 }, s);
+    var bur = S('rect', { x: 86, y: 12, width: 8, height: 66, fill: '#DBEAFE' }, s);
+    S('text', { x: 100, y: 30, 'font-size': 11, fill: '#5F5880', text: 'NaOH' }, s);
+    var ax = axes(s, { left: 205, top: 26, w: 160, h: 170, x0: 0, x1: 50, y0: 0, y1: 14, xt: [0, 25, 50], yt: [0, 7, 14], xl: 'NaOH added / cm³', yl: '' });
+    S('text', { x: 205, y: 14, 'text-anchor': 'middle', 'font-size': 12, 'font-weight': 700, fill: '#1D1640', text: 'pH' }, s);
+    var curve = S('path', { stroke: '#B45309', 'stroke-width': 2.5, fill: 'none' }, s), dot = S('circle', { r: 5, fill: '#B45309' }, s);
+    var fb = note('');
+    function pH(v) {
+      var h = C * VA / 1000 - C * v / 1000, tot = (VA + v) / 1000;
+      if (Math.abs(h) < 1e-9) return 7;
+      return h > 0 ? -Math.log10(h / tot) : 14 + Math.log10(-h / tot);
+    }
+    function draw() {
+      var ph = pH(add), col = UI[Math.max(0, Math.min(14, Math.round(ph)))];
+      liq.setAttribute('fill', col);
+      bur.setAttribute('height', 66 * (1 - add / 50)); bur.setAttribute('y', 12 + 66 * add / 50);
+      if (!pts.length || pts[pts.length - 1][0] !== add) pts.push([add, ph]);
+      pts.sort(function (a, b) { return a[0] - b[0]; });
+      curve.setAttribute('d', 'M' + pts.map(function (q) { return ax.X(q[0]) + ' ' + ax.Y(q[1]); }).join(' L'));
+      dot.setAttribute('cx', ax.X(add)); dot.setAttribute('cy', ax.Y(ph));
+      var where = ph < 6.5 ? 'still acidic (excess H⁺ ions)' : ph > 7.5 ? 'now alkaline (excess OH⁻ ions)' : 'neutral: exactly enough alkali has been added';
+      setNote(fb, 'Flask: 25.0 cm³ of 0.10 mol/dm³ hydrochloric acid with universal indicator. Burette: 0.10 mol/dm³ sodium hydroxide. Added ' + fix(add, 1) + ' cm³ → pH ' + fix(ph, 1) + ', ' + where + '.' + (Math.abs(add - 25) < 1e-9 ? ' 🎯 End point! HCl + NaOH → NaCl + H₂O. Moles of NaOH = 0.10 × 0.025 = 0.0025 mol = moles of HCl.' : ''), Math.abs(add - 25) < 1e-9 ? 'good' : '');
+    }
+    function addV(d) { add = Math.max(0, Math.min(50, Math.round((add + d) * 10) / 10)); draw(); }
+    root.append(s, el('div', { class: 'ctrl' }, btn('+ 5 cm³', function () { addV(5); }), btn('+ 1 cm³', function () { addV(1); }), btn('+ 0.1 cm³ (drop)', function () { addV(0.1); }), btn('↺ Start again', function () { add = 0; pts = []; draw(); }, 'chip')), fb);
+    draw();
+  };
+
+  /* Osmosis in potato strips */
+  SIMS['ol-cells'] = function (root) {
+    var c = 0, done = {};
+    var s = svg(360, 170, 'Potato strip in sugar solution');
+    S('rect', { x: 20, y: 30, width: 320, height: 120, rx: 14, fill: '#EFF6FF', stroke: '#93C5FD', 'stroke-width': 2 }, s);
+    S('rect', { x: 50, y: 52, width: 200, height: 26, fill: 'none', stroke: '#9CA3AF', 'stroke-dasharray': '5 4' }, s);
+    S('text', { x: 50, y: 46, 'font-size': 11, fill: '#5F5880', text: 'starting length (5.0 cm)' }, s);
+    var strip = S('rect', { x: 50, y: 92, height: 30, rx: 4, fill: '#F5DEB3', stroke: '#B45309', 'stroke-width': 2 }, s);
+    var lab = S('text', { x: 50, y: 140, 'font-size': 12, 'font-weight': 700, fill: '#1D1640' }, s);
+    var fb = note(''), tb = table(['Sugar solution (mol/dm³)', 'Start mass (g)', 'End mass (g)', 'Change (%)']);
+    // Classroom-style model: no net change at about 0.3 mol/dm³.
+    function change(x) { return x <= 0.3 ? 55 * (0.3 - x) : -30 * (1 - Math.exp(-(x - 0.3) * 4)); }
+    function draw() {
+      var pc = change(c), len = 200 * (1 + pc / 100 * 0.6);
+      strip.setAttribute('width', len); lab.textContent = 'after 30 min: ' + fix(5 * len / 200, 1) + ' cm';
+      var state = pc > 2 ? 'Water entered the cells by osmosis: the cells became turgid and the strip got longer and firmer.' : pc < -10 ? 'Water left the cells by osmosis: the cells became flaccid and plasmolysed, and the strip is shorter and floppy.' : pc < -2 ? 'Water left the cells by osmosis, so the strip shrank a little and became softer.' : 'Almost no change: the water potential of the solution is about the same as the potato cells.';
+      setNote(fb, c + ' mol/dm³: mass change ' + (pc > 0 ? '+' : '') + fix(pc, 1) + '%. ' + state);
+      if (!done[c]) { done[c] = 1; var keys = Object.keys(done).map(Number).sort(function (x, y) { return x - y; }); tb.clear(); keys.forEach(function (k) { var d = change(k); tb.add([fix(k, 1), '2.00', fix(2 * (1 + d / 100), 2), (d > 0 ? '+' : '') + fix(d, 1)]); }); }
+    }
+    root.append(s,
+      chips('Sugar solution', [0, 0.2, 0.4, 0.6, 0.8, 1.0].map(function (x) { return [x, x === 0 ? 'Pure water' : fix(x, 1) + ' M']; }), c, function (x) { c = x; draw(); }),
+      fb, el('p', { class: 'lbl' }, 'Your results (try every solution, then find where the change crosses zero):'), el('div', { class: 'scroll' }, tb.el),
+      el('p', { class: 'lbl' }, 'The numbers come from a simple model, but follow the pattern of the real experiment.'));
+    draw();
+  };
+
+  /* Enzyme activity: temperature and pH */
+  SIMS['ol-enzymes'] = function (root) {
+    var EZ = { amylase: ['Amylase (mouth, small intestine)', 7], pepsin: ['Pepsin (stomach)', 2] };
+    var ez = 'amylase', T = 37, ph = 7, dead = false;
+    var s = svg(380, 250, 'Enzyme activity against temperature');
+    var ax = axes(s, { left: 50, top: 14, w: 310, h: 180, x0: 0, x1: 80, y0: 0, y1: 100, xt: [0, 20, 37, 60, 80], yt: [0, 50, 100], xl: 'temperature / °C', yl: 'rate of reaction (%)' });
+    var curve = S('path', { stroke: '#15803D', 'stroke-width': 3, fill: 'none' }, s), dot = S('circle', { r: 7, fill: '#15803D', stroke: '#fff', 'stroke-width': 2 }, s);
+    var meter = el('div', { class: 'meter' }, el('span')), fb = note('');
+    function fT(t) { return t <= 0 ? 0 : t <= 37 ? Math.pow(t / 37, 1.3) : Math.exp(-Math.pow((t - 37) / 10, 2)); }
+    function fP() { return Math.exp(-Math.pow((ph - EZ[ez][1]) / 1.8, 2)); }
+    var reset = btn('🧪 Use fresh enzyme', function () { dead = false; draw(); }, 'chip');
+    function draw() {
+      if (T >= 60) dead = true;
+      var pts = []; for (var t = 0; t <= 80; t += 1) pts.push(ax.X(t) + ' ' + ax.Y(100 * fT(t) * fP()));
+      curve.setAttribute('d', 'M' + pts.join(' L'));
+      var r = dead ? 0 : 100 * fT(T) * fP();
+      dot.setAttribute('cx', ax.X(T)); dot.setAttribute('cy', ax.Y(r));
+      meter.firstChild.style.width = r.toFixed(1) + '%';
+      reset.hidden = !dead;
+      var m;
+      if (dead) m = T >= 60 ? 'At ' + T + ' °C the active site has changed shape: the enzyme is denatured and the rate is 0.' : 'This enzyme was denatured earlier. Cooling it down does not fix it: denaturing is permanent. Use fresh enzyme.';
+      else if (T < 37) m = 'At ' + T + ' °C molecules move slowly, so there are fewer successful collisions between enzyme and substrate. Warming it up increases the rate.';
+      else if (T === 37) m = '37 °C is the optimum temperature: the fastest rate.';
+      else m = 'Above 37 °C the active site starts to change shape, so fewer substrate molecules fit. Above about 60 °C the enzyme is fully denatured.';
+      var d = Math.abs(ph - EZ[ez][1]);
+      m += ' pH ' + ph + (d < 0.5 ? ' is the optimum pH for this enzyme.' : d < 2 ? ' is close to the optimum (pH ' + EZ[ez][1] + ').' : ' is far from the optimum (pH ' + EZ[ez][1] + '), so the rate is low.');
+      setNote(fb, 'Rate: ' + Math.round(r) + '%. ' + m, dead ? 'bad' : r > 80 ? 'good' : '');
+    }
+    root.append(s,
+      chips('Enzyme', Object.keys(EZ).map(function (k) { return [k, EZ[k][0]]; }), ez, function (k) { ez = k; draw(); }),
+      slider('Temperature', 0, 80, 1, T, function (x) { return x + ' °C'; }, function (x) { T = x; draw(); }),
+      slider('pH', 1, 13, 1, ph, function (x) { return 'pH ' + x; }, function (x) { ph = x; draw(); }),
+      el('div', { class: 'lbl' }, 'Rate of reaction'), meter, reset, fb);
+    draw();
+  };
+
   window.SCI_SIMS = SIMS;
 })();
