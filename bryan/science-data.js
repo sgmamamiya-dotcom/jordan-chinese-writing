@@ -2,6 +2,7 @@
 // Each topic: summary points, key words, a 5-question quiz (c = index of the correct option), exam tips, fun facts.
 // The virtual experiment for each topic lives in science-sims.js under the same id.
 window.SCI_THEMES = {
+  spso: { name: 'SPSO (Science Olympiad)', color: '#0F766E' },
   diversity: { name: 'Diversity', color: '#2E8B57' },
   cycles: { name: 'Cycles', color: '#2A6FC9' },
   systems: { name: 'Systems', color: '#7A4CE0' },
@@ -10,6 +11,14 @@ window.SCI_THEMES = {
 };
 
 window.SCI_TOPICS = [
+  /* ---------------- SPSO lessons: videos + a Google Form quiz ----------------
+     To add a lesson, copy this entry and change id, title, videos (YouTube ids) and form. */
+  {
+    id: 'spso1', kind: 'lesson', emoji: '🏅', title: 'SPSO Lesson 1', level: 'SPSO', theme: 'spso',
+    videos: ['GyN2RhbhiEU', 'wVLaf10T0zI', 'NMM8vx9vDiE', 'TkvjDZseD4k'],
+    form: 'https://docs.google.com/forms/d/e/1FAIpQLSd_nKSsMQtVPS2jzNAFRVvBOGorOMH0kvakPJoEUT3GcYuK2w/viewform'
+  },
+
   /* ---------------- Diversity ---------------- */
   {
     id: 'living', emoji: '🌱', title: 'Living and Non-living Things', level: 'P3', theme: 'diversity',
