@@ -115,6 +115,29 @@ table.res th{background:#F4F1FF}
 .vid label{display:flex;align-items:center;gap:8px;font-weight:700;cursor:pointer}
 .vid input{width:22px;height:22px;accent-color:#0F766E}
 .vid a,.formlink{font-weight:700;color:var(--purple)}
+.vid .by{margin:-6px 0 8px;color:var(--mute);font-size:14px}
+.deck{border-radius:20px;background:linear-gradient(160deg,#0F766E,#134E4A);padding:6px;box-shadow:0 8px 0 var(--ink);border:3px solid var(--ink)}
+.slide{background:#fff;border-radius:15px;padding:22px 24px;min-height:340px;display:flex;flex-direction:column;gap:10px}
+.slide .kick{font-weight:700;color:#0F766E;text-transform:uppercase;letter-spacing:.06em;font-size:13px}
+.slide h3{font-family:var(--display);font-weight:800;font-size:clamp(24px,4.4vw,34px);line-height:1.1;margin:0;display:flex;gap:10px;align-items:center}
+.slide .em{font-size:1.2em}
+.slide ul{margin:0;padding-left:22px;display:grid;gap:6px;font-size:clamp(16px,2.4vw,19px)}
+.slide .steps{list-style:none;padding:0;margin:4px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;counter-reset:st}
+.slide .steps li{counter-increment:st;background:#E6F6F4;border:2px solid #0F766E;border-radius:12px;padding:8px 12px;font-weight:700}
+.slide .steps li::before{content:counter(st) ". ";color:#0F766E}
+.slide .steps li:not(:last-child)::after{content:" →";color:var(--mute)}
+.slide .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:10px}
+.slide .col{border:2px solid #cfe5e2;border-radius:14px;padding:12px;background:#F6FBFA}
+.slide .col b{font-family:var(--display);font-size:20px;color:#0F766E}
+.slide .col p{margin:4px 0 0}
+.slide .col .eg{color:var(--mute);font-size:14px;font-style:italic}
+.slide .note{margin:auto 0 0;background:#FFF6D6;border-radius:12px;padding:10px 12px;font-weight:700}
+.sbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px}
+.scount{font-weight:700;color:var(--mute)}
+.sdots{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin-top:12px}
+.sdots button{width:14px;height:14px;border-radius:50%;border:2px solid #0F766E;background:#fff;padding:0;cursor:pointer}
+.sdots button[aria-current="true"]{background:#0F766E}
+.sbtn:disabled{opacity:.4;cursor:default}
 .formbox{border:2px solid #d8dde4;border-radius:14px;overflow:hidden;background:#fff}
 .formbox iframe{display:block;width:100%;height:1400px;border:0}
 @media(prefers-reduced-motion:reduce){.meter span{transition:none}}
@@ -133,13 +156,16 @@ table.res th{background:#F4F1FF}
     ['experiment', '🧪', 'Virtual experiment'], ['summary', '📝', 'Summary'], ['terms', '🔤', 'Key words'],
     ['quiz', '❓', 'Quiz'], ['tips', '🎯', 'Exam tips'], ['facts', '💡', 'Fun facts']
   ];
-  var LESSON_SECTIONS = [['videos', '🎬', 'Videos'], ['form', '📝', 'Lesson quiz']];
+  var LESSON_SECTIONS = [
+    ['slides', '🖼️', 'Lesson slides'], ['videos', '🎬', 'Videos'], ['summary', '📝', 'Summary'], ['terms', '🔤', 'Key words'],
+    ['quiz', '❓', 'Practice quiz'], ['form', '📋', 'Class quiz'], ['tips', '🎯', 'Exam tips'], ['facts', '💡', 'Fun facts']
+  ];
   function sectionsFor(t) { return t.kind === 'lesson' ? LESSON_SECTIONS : SECTIONS; }
   var BEST_KEY = 'sci_best_v1', FILTER_KEY = 'sci_level_v1', WATCH_KEY = 'sci_watched_v1';
   function read(k, d) { try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } }
   function write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   var best = read(BEST_KEY, {}), watched = read(WATCH_KEY, {});
-  function watchedCount(t) { return t.videos.filter(function (v) { return watched[t.id + ':' + v]; }).length; }
+  function watchedCount(t) { return t.videos.filter(function (v) { return watched[t.id + ':' + v.id]; }).length; }
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
   function button(cls, text, fn) { var b = el('button', cls, text); b.type = 'button'; b.onclick = fn; return b; }
   function topic(id) { return T.filter(function (t) { return t.id === id; })[0]; }
@@ -171,8 +197,8 @@ table.res th{background:#F4F1FF}
         var row = el('div', 'row');
         row.appendChild(el('span', 'lv', t.level + ' · ' + THEMES[t.theme].name));
         if (t.kind === 'lesson') {
-          var w = watchedCount(t);
-          row.appendChild(el('span', 'st' + (w === t.videos.length ? ' done' : ''), w ? (w === t.videos.length ? '✓ ' : '') + 'Videos ' + w + '/' + t.videos.length : 'Start →'));
+          var w = watchedCount(t), lb = best[t.id];
+          row.appendChild(el('span', 'st' + (w === t.videos.length && lb === t.quiz.length ? ' done' : ''), !w && lb == null ? 'Start →' : 'Videos ' + w + '/' + t.videos.length + (lb == null ? '' : ' · Quiz ' + lb + '/' + t.quiz.length)));
         } else {
           var b = best[t.id];
           row.appendChild(el('span', 'st' + (b === t.quiz.length ? ' done' : ''), b == null ? 'Start →' : (b === t.quiz.length ? '✓ Quiz ' : 'Quiz ') + b + '/' + t.quiz.length));
@@ -203,7 +229,7 @@ table.res th{background:#F4F1FF}
       var d = button('door', null, function () { go('#t=' + t.id + '&s=' + s[0]); });
       d.appendChild(el('div', 'icon', s[1]));
       d.appendChild(el('h3', null, s[2]));
-      var sub = t.kind === 'lesson' ? { videos: t.videos.length + ' videos · ' + watchedCount(t) + ' watched', form: 'Answer the questions for this lesson' }[s[0]] : { experiment: t.sim, summary: t.summary.length + ' key points', terms: t.terms.length + ' flip cards', quiz: best[t.id] == null ? t.quiz.length + ' questions' : 'Best score: ' + best[t.id] + '/' + t.quiz.length, tips: 'Common mistakes to avoid', facts: t.facts.length + ' surprising facts' }[s[0]];
+      var sub = t.kind === 'lesson' ? { slides: t.slides.length + ' slides to go through', videos: t.videos.length + ' videos · ' + watchedCount(t) + ' watched', summary: t.summary.length + ' key points', terms: t.terms.length + ' flip cards', quiz: best[t.id] == null ? t.quiz.length + ' questions' : 'Best score: ' + best[t.id] + '/' + t.quiz.length, form: 'The class Google Form', tips: 'Common mistakes to avoid', facts: t.facts.length + ' surprising facts' }[s[0]] : { experiment: t.sim, summary: t.summary.length + ' key points', terms: t.terms.length + ' flip cards', quiz: best[t.id] == null ? t.quiz.length + ' questions' : 'Best score: ' + best[t.id] + '/' + t.quiz.length, tips: 'Common mistakes to avoid', facts: t.facts.length + ' surprising facts' }[s[0]];
       d.appendChild(el('p', null, sub));
       d.appendChild(el('span', 'enter', 'Open →'));
       grid.appendChild(d);
@@ -224,7 +250,7 @@ table.res th{background:#F4F1FF}
     app.appendChild(tabs);
     var p = el('section', 'panel'), S = sectionsFor(t).filter(function (s) { return s[0] === sec; })[0];
     p.appendChild(el('h2', null, S[1] + ' ' + S[2]));
-    ({ experiment: experiment, summary: summary, terms: terms, quiz: quiz, tips: tips, facts: facts, videos: videos, form: form })[sec](t, p);
+    ({ experiment: experiment, summary: summary, terms: terms, quiz: quiz, tips: tips, facts: facts, videos: videos, form: form, slides: slides })[sec](t, p);
     app.appendChild(p);
   }
   function experiment(t, p) {
@@ -233,14 +259,15 @@ table.res th{background:#F4F1FF}
     try { window.SCI_SIMS[t.id](box); } catch (e) { box.appendChild(el('p', null, 'This experiment could not start.')); }
   }
   function videos(t, p) {
-    p.appendChild(el('p', 'intro', 'Watch each video, then tick it off. When you have watched them all, do the lesson quiz.'));
+    p.appendChild(el('p', 'intro', 'Watch each video, then tick it off. When you have watched them all, try the practice quiz and the class quiz.'));
     var list = el('div', 'vids');
-    t.videos.forEach(function (id, i) {
-      var v = el('div', 'vid');
-      v.appendChild(el('h3', null, 'Video ' + (i + 1)));
+    t.videos.forEach(function (vd, i) {
+      var id = vd.id, v = el('div', 'vid');
+      v.appendChild(el('h3', null, 'Video ' + (i + 1) + ': ' + vd.title));
+      v.appendChild(el('p', 'by', 'by ' + vd.by));
       var fr = el('div', 'frame'), ifr = document.createElement('iframe');
       ifr.src = 'https://www.youtube-nocookie.com/embed/' + id + '?rel=0';
-      ifr.title = t.title + ', video ' + (i + 1);
+      ifr.title = vd.title;
       ifr.loading = 'lazy';
       ifr.allow = 'accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen';
       ifr.setAttribute('allowfullscreen', '');
@@ -254,7 +281,7 @@ table.res th{background:#F4F1FF}
       list.appendChild(v);
     });
     p.appendChild(list);
-    p.appendChild(button('sbtn', '📝 Go to the lesson quiz →', function () { go('#t=' + t.id + '&s=form'); }));
+    p.appendChild(button('sbtn', '❓ Try the practice quiz →', function () { go('#t=' + t.id + '&s=quiz'); }));
   }
   function form(t, p) {
     var link = el('a', 'formlink', 'Open the quiz in a new tab ↗'); link.href = t.form; link.target = '_blank'; link.rel = 'noopener';
@@ -264,6 +291,45 @@ table.res th{background:#F4F1FF}
     ifr.src = t.form + (t.form.indexOf('?') < 0 ? '?' : '&') + 'embedded=true';
     ifr.title = t.title + ' quiz'; ifr.loading = 'lazy';
     box.appendChild(ifr); p.appendChild(box);
+  }
+  // Slide deck: one slide at a time, with buttons, arrow keys and swipe.
+  var slideKeys = null;
+  document.addEventListener('keydown', function (e) { if (slideKeys && !e.altKey && !e.ctrlKey && !e.metaKey) slideKeys(e); });
+  function slides(t, p) {
+    var n = 0, N = t.slides.length;
+    var deck = el('div', 'deck'), card = el('div', 'slide'); card.setAttribute('aria-live', 'polite'); deck.appendChild(card);
+    var bar = el('div', 'sbar'), prev = button('sbtn', '← Back', function () { show(n - 1); }), count = el('span', 'scount'), next = button('sbtn', 'Next →', function () { show(n + 1); });
+    var dots = el('div', 'sdots');
+    t.slides.forEach(function (x, i) { var d = button(null, null, function () { show(i); }); d.setAttribute('aria-label', 'Slide ' + (i + 1) + ': ' + x.title); dots.appendChild(d); });
+    bar.appendChild(prev); bar.appendChild(count); bar.appendChild(next);
+    p.appendChild(deck); p.appendChild(bar); p.appendChild(dots);
+    function show(i) {
+      n = Math.max(0, Math.min(N - 1, i)); var x = t.slides[n];
+      card.textContent = '';
+      card.appendChild(el('div', 'kick', x.kicker || 'Slide ' + (n + 1)));
+      var h = el('h3'); if (x.emoji) h.appendChild(el('span', 'em', x.emoji)); h.appendChild(document.createTextNode(x.title)); card.appendChild(h);
+      if (x.points) { var ul = el('ul'); x.points.forEach(function (s) { ul.appendChild(el('li', null, s)); }); card.appendChild(ul); }
+      if (x.steps) { var st = el('ol', 'steps'); x.steps.forEach(function (s) { st.appendChild(el('li', null, s)); }); card.appendChild(st); }
+      if (x.cols) {
+        var cg = el('div', 'cols');
+        x.cols.forEach(function (c) { var b = el('div', 'col'); b.appendChild(el('b', null, c[0])); b.appendChild(el('p', null, c[1])); if (c[2]) b.appendChild(el('p', 'eg', c[2])); cg.appendChild(b); });
+        card.appendChild(cg);
+      }
+      if (x.note) card.appendChild(el('p', 'note', x.note));
+      count.textContent = (n + 1) + ' / ' + N;
+      prev.disabled = n === 0;
+      next.textContent = n === N - 1 ? 'Practice quiz →' : 'Next →';
+      Array.prototype.forEach.call(dots.children, function (d, k) { d.setAttribute('aria-current', k === n ? 'true' : 'false'); });
+    }
+    next.onclick = function () { if (n === N - 1) go('#t=' + t.id + '&s=quiz'); else show(n + 1); };
+    slideKeys = function (e) {
+      if (!document.body.contains(card)) { slideKeys = null; return; }
+      if (e.key === 'ArrowRight') { show(n + 1); e.preventDefault(); } else if (e.key === 'ArrowLeft') { show(n - 1); e.preventDefault(); }
+    };
+    var sx = null;
+    deck.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
+    deck.addEventListener('touchend', function (e) { if (sx == null) return; var dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 50) show(n + (dx < 0 ? 1 : -1)); });
+    show(0);
   }
   function summary(t, p) { var ol = el('ol', 'points'); t.summary.forEach(function (x) { ol.appendChild(el('li', null, x)); }); p.appendChild(ol); }
   function terms(t, p) {

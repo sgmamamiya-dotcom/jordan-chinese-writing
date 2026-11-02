@@ -14,9 +14,85 @@ window.SCI_TOPICS = [
   /* ---------------- SPSO lessons: videos + a Google Form quiz ----------------
      To add a lesson, copy this entry and change id, title, videos (YouTube ids) and form. */
   {
-    id: 'spso1', kind: 'lesson', emoji: '🏅', title: 'SPSO Lesson 1', level: 'SPSO', theme: 'spso',
-    videos: ['GyN2RhbhiEU', 'wVLaf10T0zI', 'NMM8vx9vDiE', 'TkvjDZseD4k'],
-    form: 'https://docs.google.com/forms/d/e/1FAIpQLSd_nKSsMQtVPS2jzNAFRVvBOGorOMH0kvakPJoEUT3GcYuK2w/viewform'
+    id: 'spso1', kind: 'lesson', emoji: '🏅', title: 'SPSO Week 1: What is Science?', level: 'SPSO', theme: 'spso',
+    videos: [
+      { id: 'GyN2RhbhiEU', title: 'What’s the difference between a scientific law and theory?', by: 'TED-Ed' },
+      { id: 'wVLaf10T0zI', title: 'What is Science?', by: 'Science Sessions' },
+      { id: 'NMM8vx9vDiE', title: 'Galileo Galilei – in a nutshell', by: 'NutshellEdu' },
+      { id: 'TkvjDZseD4k', title: 'The Nature of Science', by: 'Bozeman Science' }
+    ],
+    form: 'https://docs.google.com/forms/d/e/1FAIpQLSd_nKSsMQtVPS2jzNAFRVvBOGorOMH0kvakPJoEUT3GcYuK2w/viewform',
+    slides: [
+      { kicker: 'SPSO · Week 1', title: 'What is Science?', emoji: '🔬',
+        points: ['How scientists find things out', 'Explaining like a scientist', 'Two ways of reasoning', 'Laws and theories', 'Galileo: a scientist at work'] },
+      { title: 'Science is a process', emoji: '🧭',
+        points: ['Science is a way of finding out about the natural world using observation and evidence.', 'It is also the knowledge that this process builds up over time.', 'A scientific question must be testable: we can collect evidence to answer it.'] },
+      { title: 'The science process', steps: ['Question', 'Hypothesis', 'Experiment', 'Results', 'Conclusion'],
+        note: 'Real science is not a fixed recipe. Results often lead to new questions, and scientists loop back and test again.' },
+      { title: 'Explaining like a scientist: C-E-R',
+        cols: [['Claim', 'What you think is true', 'Plants need light to grow well.'], ['Evidence', 'Data that supports the claim', 'Plants in the light grew 8 cm; plants in the dark grew 2 cm.'], ['Reasoning', 'Why the evidence supports the claim', 'Plants use light to make food, so more light means more growth.']],
+        note: 'A hypothesis comes before the experiment. It is not one of the parts of a scientific explanation.' },
+      { title: 'Two ways of reasoning',
+        cols: [['Inductive', 'Many observations → a general rule', 'Every swan I have seen is white, so swans are probably white. (The rule could still be wrong!)'], ['Deductive', 'A general rule → a specific case', 'All birds lay eggs. A pigeon is a bird. So pigeons lay eggs. (Certain, if the rule is true.)']] },
+      { title: 'Scientific law vs scientific theory',
+        cols: [['Law', 'Describes WHAT happens', 'Often a rule or formula that predicts results. Example: the law of gravitation.'], ['Theory', 'Explains WHY or HOW it happens', 'A well-tested explanation backed by lots of evidence. Example: the particle theory of matter.']],
+        note: 'A theory does not “grow up” into a law. Laws and theories do different jobs.' },
+      { title: '“It’s just a theory”?', emoji: '🤔',
+        points: ['In everyday talk, a “theory” means a guess.', 'In science, a theory is a well-tested explanation supported by evidence.', 'Laws and theories can both be changed if strong new evidence appears. Science is always open to improvement.'] },
+      { title: 'Galileo Galilei (1564–1642)', emoji: '🔭',
+        points: ['Tested ideas with experiments and measurements, instead of simply trusting old books.', 'Rolled balls down ramps to study how objects speed up as they fall.', 'Used a telescope to discover moons going around Jupiter and to see the phases of Venus.', 'His evidence supported the idea that the Earth goes around the Sun.'] },
+      { title: 'Science subjects work together', emoji: '🧪',
+        points: ['Biology studies living things. Chemistry studies substances and how they change. Physics studies forces, energy, light and motion.', 'Forensic scientists use biology, chemistry AND physics to examine evidence from crime scenes.', 'A field that uses several subjects together is called interdisciplinary.'] },
+      { title: 'Recap', emoji: '✅',
+        points: ['Science is a process of finding out, using evidence.', 'Question → hypothesis → experiment → results → conclusion.', 'Scientific explanation = claim + evidence + reasoning.', 'Inductive: examples → rule. Deductive: rule → example.', 'Law = what happens. Theory = why it happens.'] }
+    ],
+    summary: [
+      'Science is a process of asking questions about the natural world and answering them with observations and evidence. It is also the knowledge this process has built up.',
+      'A typical science process: ask a question → form a hypothesis (a testable explanation or prediction) → do an experiment → record the results → draw a conclusion.',
+      'Real science is not a fixed recipe. New results lead to new questions, and experiments are repeated to check that the results are reliable.',
+      'A scientific explanation has three parts: a claim, the evidence for it, and the reasoning that links them (C-E-R). A hypothesis is not one of these parts.',
+      'Inductive reasoning goes from many specific observations to a general rule, which could still turn out to be wrong. Deductive reasoning goes from a general rule to a specific case.',
+      'A scientific law describes what happens, often as a rule that predicts results. A scientific theory explains why or how it happens and is supported by a lot of evidence.',
+      'Theories do not become laws. In science, “theory” does not mean a guess. Both laws and theories can change when strong new evidence appears.',
+      'Galileo Galilei helped start modern science by testing ideas with experiments and observations, such as rolling balls down ramps and studying the sky with a telescope.',
+      'Science subjects work together. Forensic science is interdisciplinary: it uses biology, chemistry and physics.'
+    ],
+    terms: [
+      ['Science', 'A process of finding out about the natural world using observation and evidence.'],
+      ['Hypothesis', 'A testable explanation or prediction, made before an experiment.'],
+      ['Evidence', 'Observations and data that support or go against a claim.'],
+      ['Claim', 'A statement of what you think is true, which you back up with evidence.'],
+      ['Reasoning', 'Explaining why the evidence supports the claim.'],
+      ['Inductive reasoning', 'Using many specific observations to reach a general rule.'],
+      ['Deductive reasoning', 'Using a general rule to reach a conclusion about a specific case.'],
+      ['Scientific law', 'Describes what happens in nature, often as a rule that predicts results.'],
+      ['Scientific theory', 'A well-tested explanation of why or how something happens.'],
+      ['Interdisciplinary', 'Using knowledge from more than one subject.']
+    ],
+    quiz: [
+      { q: 'Which best describes a hypothesis?', a: ['A testable explanation or prediction made before an experiment', 'The final answer to an experiment', 'A list of results', 'A fact that can never change'], c: 0, e: 'A hypothesis is tested by the experiment. The conclusion comes at the end.' },
+      { q: '“Every metal I have tested conducts electricity, so all metals probably conduct electricity.” What kind of reasoning is this?', a: ['Inductive reasoning', 'Deductive reasoning', 'A scientific law', 'Not reasoning at all'], c: 0, e: 'It goes from many specific observations to a general rule.' },
+      { q: '“All mammals breathe with lungs. A whale is a mammal. So a whale breathes with lungs.” What kind of reasoning is this?', a: ['Deductive reasoning', 'Inductive reasoning', 'A hypothesis', 'A guess'], c: 0, e: 'It starts from a general rule and applies it to one case.' },
+      { q: 'What does a scientific theory do?', a: ['Explains why or how something happens, backed by lots of evidence', 'Makes a guess with no evidence', 'Becomes a law once it is proven', 'Never changes'], c: 0, e: 'In science, a theory is a well-tested explanation, not a guess.' },
+      { q: 'Which is the main job of a scientific law?', a: ['To describe what happens, often predicting results', 'To explain why something happens', 'To give an opinion', 'To list the steps of an experiment'], c: 0, e: 'Laws describe what happens; theories explain why.' },
+      { q: 'Bryan claims: “Plants grow taller in sunlight.” Which of these is EVIDENCE for his claim?', a: ['Plants by the window grew 8 cm in two weeks, plants in a cupboard grew 2 cm', 'Plants are green', 'Sunlight is bright', 'Plants need water'], c: 0, e: 'Evidence is data from observations that supports the claim.' },
+      { q: 'Which question can be answered by a science experiment?', a: ['Does salt water freeze at a lower temperature than tap water?', 'Which colour is the most beautiful?', 'Is it rude to whistle indoors?', 'Which song is the best?'], c: 0, e: 'Science questions must be testable with measurements or observations.' },
+      { q: 'Why do scientists repeat their experiments?', a: ['To check that the results are reliable', 'To make the experiment longer', 'Because they forgot the results', 'To change the hypothesis every time'], c: 0, e: 'Getting similar results again makes them more trustworthy.' },
+      { q: 'A scientist’s results do not support her hypothesis. What should she do?', a: ['Accept the results, change the hypothesis and test again', 'Hide the results', 'Change the results to match', 'Stop doing science'], c: 0, e: 'Results that do not match are useful: they help improve the explanation.' },
+      { q: 'Galileo saw moons going around Jupiter through his telescope. Why was this important?', a: ['It showed that not everything in the sky goes around the Earth', 'It proved Jupiter is made of gas', 'It showed the Moon makes its own light', 'It proved the Earth is flat'], c: 0, e: 'If moons orbit Jupiter, the Earth cannot be the centre of everything.' }
+    ],
+    tips: [
+      'Know the order: hypothesis → experiment → results → conclusion.',
+      'A scientific explanation is Claim + Evidence + Reasoning. A hypothesis is NOT one of the three parts.',
+      'Inductive = from examples to a rule (“every… so probably…”). Deductive = from a rule to an example (“all… so this one…”).',
+      'Laws describe what happens; theories explain why. A theory never turns into a law.',
+      'Watch out for answers that call science “just a set of knowledge”: science is mainly a process of finding out using evidence.',
+      'A field that uses several science subjects (like forensic science using biology, chemistry and physics) is interdisciplinary.'
+    ],
+    facts: [
+      'Galileo improved the telescope until it could magnify about 20 times, and in 1610 he discovered the four largest moons of Jupiter.',
+      'The word “scientist” was only invented in the 1830s. Before that, people who studied nature were often called “natural philosophers”.'
+    ]
   },
 
   /* ---------------- Diversity ---------------- */
