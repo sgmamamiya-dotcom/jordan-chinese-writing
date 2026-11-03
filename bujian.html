@@ -96,6 +96,11 @@ button:focus-visible{outline:3px solid #8FB8FF;outline-offset:3px}
 .world.locked{opacity:.62;border-style:dashed;cursor:default}
 .world.locked:hover{transform:none;border-color:var(--glass-line)}
 .world.locked .sphere{filter:grayscale(.85) brightness(.8)}
+.zwrap{display:grid;gap:10px;grid-template-rows:1fr auto}
+.zpick{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;color:var(--ink-2);font-size:14px}
+.zpick .btn{min-height:40px;padding:0 14px;font-size:14px}
+.zpick select{font:inherit;font-size:16px;min-height:40px;border-radius:12px;padding:0 8px;background:rgba(255,255,255,.12);color:inherit;border:1px solid var(--glass-line)}
+.zpick option{color:#222}
 .note{margin:20px auto 0;max-width:40em;font-size:13.5px;line-height:1.8;color:var(--ink-2);text-align:center}
 .tog{border:1px solid var(--glass-line);background:var(--glass-2);color:var(--ink-2);border-radius:999px;padding:5px 14px;font-size:13px;font-weight:700;min-height:32px}
 .tog.on{color:var(--gold);border-color:rgba(255,210,94,.55)}
@@ -243,6 +248,7 @@ button:focus-visible{outline:3px solid #8FB8FF;outline-offset:3px}
 <div class="planet pl-purple" aria-hidden="true"></div>
 <div id="app"></div>
 
+<script src="bujian-zi.js"></script>
 <script>
 (function(){
 // ---- 星空 ----
@@ -363,6 +369,10 @@ var CHARS=[
 ['b3','底','dǐ','stl',['广','氐'],['厂','低','氏'],'到底','无论做什么事，我们只要坚持到{}，一定能成功。'],
 ['b3','功','gōng','lr',['工','力'],['王','刀','匚'],'成功','无论做什么事，我们只要坚持到底，一定能成{}。']
 ].map(function(a){return {lv:a[0],ch:a[1],py:a[2],st:a[3],parts:a[4],decoys:a[5],word:a[6],sent:a[7]};});
+// Bryan 的必考字（bryan/zi.html）：和必考字练习一样每 10 个字号一组，z0=1–10，z1=11–20……没有可拼部件的字不放进来。
+var ZI=(window.BJ_ZI||[]).map(function(a){return {lv:'z'+Math.floor((a[0]-1)/10),n:a[0],ch:a[1],py:a[2],st:a[3],parts:a[4],decoys:a[5],word:a[6],sent:a[7]};});
+var ZG=[];ZI.forEach(function(c){var g=+c.lv.slice(1);if(ZG.indexOf(g)<0)ZG.push(g);});
+CHARS=CHARS.concat(ZI);
 
 // 每个格子: [x%, y%, 宽%, 高%, 字号cqw]
 var STRUCT={
@@ -374,14 +384,16 @@ var STRUCT={
  tlb:{name:'上下结构',tip:'先放上面左右两个，再放下面',labels:['上左','上右','下'],slots:[[3,3,45,45,40],[52,3,45,45,40],[6,52,88,45,46]]},
  l2l:{name:'左右结构',tip:'左边先放上面和下面，再放右边',labels:['左上','左下','右'],slots:[[3,3,45,45,40],[3,52,45,45,40],[52,6,45,88,50]]},
  sbl:{name:'半包围结构',tip:'半包围：先放外面，再放里面',labels:['外','里'],slots:[[2,2,96,96,96],[36,6,60,60,56]],shell:'b-lb'},
- stl:{name:'半包围结构',tip:'半包围：先放外面，再放里面',labels:['外','里'],slots:[[2,2,96,96,96],[34,34,62,62,56]],shell:'b-lt'}
+ stl:{name:'半包围结构',tip:'半包围：先放外面，再放里面',labels:['外','里'],slots:[[2,2,96,96,96],[34,34,62,62,56]],shell:'b-lt'},
+ tbb:{name:'上下结构',tip:'先放上面，再放下面左右两个',labels:['上','下左','下右'],slots:[[6,3,88,45,46],[3,52,45,45,40],[52,52,45,45,40]]},
+ tmb:{name:'上中下结构',tip:'上中下结构：从上到下放三个部件',labels:['上','中','下'],slots:[[10,2,80,30,28],[10,35,80,30,28],[10,68,80,30,28]]}
 };
 
 var PLAYERS={
- bryan:{name:'Bryan',sub:'四年级 · 第十六课听写',cls:'w1',pv:'b1'},
+ bryan:{name:'Bryan',sub:'四年级 · 第十六课听写 · 必考字',cls:'w1',pv:'b1'},
  jordan:{name:'Jordan',sub:'小一 · 听写一、听写二',cls:'w2',pv:'w1'}
 };
-function playerOf(lv){return(lv==='b1'||lv==='b2'||lv==='b3')?'bryan':'jordan';}
+function playerOf(lv){return(typeof lv==='string'&&/^[bz]/.test(lv))?'bryan':'jordan';}
 function charsOf(p){return CHARS.filter(function(c){return playerOf(c.lv)===p;});}
 var S={view:'home',player:null,pinyin:true,sound:true,energy:0,streak:{n:0,last:''},mode:1,queue:[],i:0,results:[],review:[],q:null,gained:0};
 function lget(k){try{return localStorage.getItem(k);}catch(e){return null;}}
@@ -389,6 +401,7 @@ function lset(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 // 每个小朋友各自的能量、连续天数、复习星。旧版本（只有 Jordan 在用）的数据归到 Jordan。
 function loadPlayer(p){
   S.player=p;S.energy=0;S.streak={n:0,last:''};S.review=[];
+  S.zg=parseInt(lget('bjtx.'+p+'.zg')||'0',10);if(ZG.indexOf(S.zg)<0)S.zg=ZG[0]||0;
   var pre='bjtx.'+p+'.',old=(p==='jordan');
   var en=parseInt(lget(pre+'energy')||(old?lget('bjtx.energy'):null)||'0',10);if(en>0)S.energy=en;
   try{var st0=JSON.parse(lget(pre+'streak')||(old?lget('bjtx.streak'):null)||'null');if(st0&&typeof st0.n==='number'&&typeof st0.last==='string')S.streak=st0;}catch(e){}
@@ -401,7 +414,7 @@ var pl0=(kq&&PLAYERS[kq])?kq:lget('bjtx.player');
 if(pl0&&PLAYERS[pl0]){loadPlayer(pl0);}else{S.view='who';}
 function save(){
   lset('bjtx.pinyin',S.pinyin?'1':'0');lset('bjtx.sound',S.sound?'1':'0');
-  if(S.player){var pre='bjtx.'+S.player+'.';lset('bjtx.player',S.player);lset(pre+'energy',String(S.energy));lset(pre+'streak',JSON.stringify(S.streak));lset(pre+'review',JSON.stringify(S.review));}
+  if(S.player){var pre='bjtx.'+S.player+'.';lset('bjtx.player',S.player);lset(pre+'energy',String(S.energy));lset(pre+'streak',JSON.stringify(S.streak));lset(pre+'review',JSON.stringify(S.review));if(S.player==='bryan')lset(pre+'zg',String(S.zg));}
 }
 
 var app=document.getElementById('app');
@@ -549,6 +562,13 @@ function home(){
   function pick(lv){return CHARS.filter(function(c){return c.lv===lv;});}
   function prev(a){return a.slice(0,5).map(function(c){return c.ch;}).join('');}
   function world(cls,m,name,meta,pv){return '<button class="world '+cls+'" data-a="start" data-m="'+m+'"><span class="sphere"></span><span><span class="wname">'+name+'</span><span class="wmeta">'+meta+'</span><span class="wprev">'+pv+'</span></span></button>';}
+  function zw(){
+    if(!ZG.length)return '';
+    var z=pick('z'+S.zg),k=ZG.indexOf(S.zg),b=Math.min(350,S.zg*10+10);
+    return '<div class="zwrap">'+world('w2','z'+S.zg,'必考字 · 第 '+(S.zg+1)+' 组',z.length+' 个字 · 字号 '+(S.zg*10+1)+'–'+b,prev(z))+
+      '<div class="zpick" role="group" aria-label="选必考字的组"><button class="btn" data-a="zg" data-d="-1"'+(k<=0?' disabled':'')+'>‹ 上一组</button><label>第 <select data-a="zsel" aria-label="组">'+
+      ZG.map(function(g){return '<option value="'+g+'"'+(g===S.zg?' selected':'')+'>'+(g+1)+'</option>';}).join('')+'</select> 组</label><button class="btn" data-a="zg" data-d="1"'+(k>=ZG.length-1?' disabled':'')+'>下一组 ›</button></div></div>';
+  }
   var rv=S.review,voiceOk=('speechSynthesis' in window)&&ZH;
   var reviewW=rv.length?world('w3','review','复习星',rv.length+' 个字 · 没拿满三星的字在这里',rv.slice(0,5).join('')):
     '<div class="world w3 locked"><span class="sphere"></span><span><span class="wname">复习星</span><span class="wmeta">还没有字。看过答案或没拿满三星的字会飞到这里。</span></span></div>';
@@ -557,8 +577,8 @@ function home(){
     var b1=pick('b1'),b2=pick('b2'),b3=pick('b3');
     ws=world('w4','b1','词语 1–8',b1.length+' 个字 · 第十六课听写',prev(b1))+
        world('w5','b2','句子 9–13',b2.length+' 个字 · 第十六课听写',prev(b2))+
-       world('w1','b3','作文补药',b3.length+' 个字 · 默写：天下无难事……',prev(b3))+reviewW;
-    note='只放了单子上画线、并且能用部件拼出来的字。与、丑没有可拼的部件，请直接写在本子上。没画线的字也要在本子上写。';
+       world('w1','b3','作文补药',b3.length+' 个字 · 默写：天下无难事……',prev(b3))+zw()+reviewW;
+    note='必考字和「必考字练习」用同一个字库，也是每 10 个字号一组；'+(350-ZI.length)+' 个字（像「争、严、束」）没有好拼的部件，所以跳过了。第十六课只放了单子上画线、并且能用部件拼出来的字。与、丑没有可拼的部件，请直接写在本子上。没画线的字也要在本子上写。';
   }else{
     var k1=pick('w1'),k2=pick('w2'),l1=pick(1),l2=pick(2);
     ws=world('w4','w1','听写一',k1.length+' 个字 · 作文句子：她急得直冒冷汗……',prev(k1))+
@@ -655,6 +675,7 @@ function result(){
     '<div class="cells">'+cells+'</div>'+
     '<div class="actions" style="margin-top:6px">'+
       '<button class="btn cta" data-a="start" data-m="'+S.mode+'">再来一组</button>'+
+      (/^z/.test(S.mode)&&ZG.indexOf(S.zg)<ZG.length-1?'<button class="btn" data-a="znext">下一组 ›</button>':'')+
       (S.review.length&&S.mode!=='review'?'<button class="btn" data-a="start" data-m="review">练复习星（'+S.review.length+'）</button>':'')+
       '<button class="btn ghost" data-a="home">回首页</button>'+
     '</div>'+
@@ -680,6 +701,8 @@ app.addEventListener('click',function(e){
   else if(a==='pick'){loadPlayer(b.dataset.p);save();S.view='home';render();window.scrollTo(0,0);}
   else if(a==='sound'){S.sound=!S.sound;if(!S.sound){try{speechSynthesis.cancel();}catch(x){}}save();render();}
   else if(a==='pinyin'){S.pinyin=!S.pinyin;save();render();}
+  else if(a==='zg'){var k=ZG.indexOf(S.zg)+parseInt(b.dataset.d,10);if(k>=0&&k<ZG.length){S.zg=ZG[k];save();render();}}
+  else if(a==='znext'){var k2=ZG.indexOf(S.zg)+1;if(k2<ZG.length){S.zg=ZG[k2];save();startRound('z'+S.zg);}}
   else if(a==='tile')placeTile(parseInt(b.dataset.id,10));
   else if(a==='slot')tapSlot(parseInt(b.dataset.i,10));
   else if(a==='check')check();
@@ -694,6 +717,9 @@ app.addEventListener('click',function(e){
   }
 });
 
+app.addEventListener('change',function(e){
+  if(e.target.dataset&&e.target.dataset.a==='zsel'){S.zg=parseInt(e.target.value,10);save();render();}
+});
 render();
 })();
 </script>
