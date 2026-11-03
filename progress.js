@@ -6,11 +6,12 @@
   var KEY = 'sb_publishable_Tc5qBurC5SnTyNjB2jtA2A_jFs9T3og';
   var db = null;
   try { db = window.supabase.createClient(URL, KEY); } catch (e) { db = null; }
-  var pending = {}, timers = {}, listeners = [], status = db ? 'loading' : 'local', syncs = [];
+  var pending = {}, timers = {}, listeners = [], status = db ? 'loading' : 'local', syncs = [], lastErr = '';
 
   function setStatus(s) { status = s; listeners.forEach(function (f) { try { f(s); } catch (e) {} }); }
   function problem(err) {
     var msg = (err && (err.code + ' ' + err.message)) || '';
+    lastErr = (err && (err.code || err.message)) || '';
     return /42P01|PGRST20[45]|does not exist|schema cache|relation/i.test(msg) ? 'setup' : 'offline';
   }
   function push(k) {
@@ -30,7 +31,7 @@
     label: function (s) {
       return ({ loading: '☁️ 正在连接网上存档…', synced: '☁️ 进度已存到网上，换设备也能接着练', saving: '☁️ 正在保存…',
         offline: '⚠️ 暂时连不上网，进度先存在这台设备，联网后会自动上传', setup: '⚠️ 网上存档还没设置好，进度先存在这台设备',
-        local: '进度只存在这台设备' })[s || status];
+        local: '进度只存在这台设备' })[s || status] + ((s || status) === 'setup' || (s || status) === 'offline' ? (lastErr ? '（' + lastErr + '）' : '') : '');
     },
     onStatus: function (f) { listeners.push(f); f(status); },
     save: function (kid, app, data) {
