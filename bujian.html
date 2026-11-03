@@ -248,6 +248,8 @@ button:focus-visible{outline:3px solid #8FB8FF;outline-offset:3px}
 <div class="planet pl-purple" aria-hidden="true"></div>
 <div id="app"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="progress.js"></script>
 <script src="bujian-zi.js"></script>
 <script>
 (function(){
@@ -373,6 +375,7 @@ var CHARS=[
 var ZI=(window.BJ_ZI||[]).map(function(a){return {lv:'z'+Math.floor((a[0]-1)/10),n:a[0],ch:a[1],py:a[2],st:a[3],parts:a[4],decoys:a[5],word:a[6],sent:a[7]};});
 var ZG=[];ZI.forEach(function(c){var g=+c.lv.slice(1);if(ZG.indexOf(g)<0)ZG.push(g);});
 CHARS=CHARS.concat(ZI);
+var ZIBY={};ZI.forEach(function(c){ZIBY[c.ch]=c;});
 
 // 每个格子: [x%, y%, 宽%, 高%, 字号cqw]
 var STRUCT={
@@ -406,15 +409,48 @@ function loadPlayer(p){
   var en=parseInt(lget(pre+'energy')||(old?lget('bjtx.energy'):null)||'0',10);if(en>0)S.energy=en;
   try{var st0=JSON.parse(lget(pre+'streak')||(old?lget('bjtx.streak'):null)||'null');if(st0&&typeof st0.n==='number'&&typeof st0.last==='string')S.streak=st0;}catch(e){}
   try{var r=JSON.parse(lget(pre+'review')||(old?lget('bjtx.review'):null)||'[]');if(Array.isArray(r))S.review=r.filter(function(c){return charsOf(p).some(function(x){return x.ch===c;});});}catch(e){}
+  S.t=parseInt(lget(pre+'t')||'0',10)||0;
+  if(p==='bryan'){
+    // 必考字的错字统一放在「必考字练习」的错字本里（复习星也会显示它们）。
+    var mv=S.review.filter(function(ch){return ZIBY[ch];});
+    if(mv.length){var zs=readZi();mv.forEach(function(ch){zs.wrong[ZIBY[ch].n]=2;});writeZi(zs);S.review=S.review.filter(function(ch){return !ZIBY[ch];});save(true);}
+  }
+  cloudSync();
+}
+function snapshot(){return {energy:S.energy,streak:S.streak,review:S.review,zg:S.zg,_t:S.t};}
+// 网上存档：较新的那份为准。
+function cloudSync(){
+  if(!window.Progress||!S.player)return;
+  var p=S.player;
+  Progress.sync(p,'bujian',function(){return S.player===p?snapshot():null;},function(r){
+    if(S.player!==p)return;
+    if(typeof r.energy==='number')S.energy=r.energy;
+    if(r.streak&&typeof r.streak.n==='number')S.streak=r.streak;
+    if(Array.isArray(r.review))S.review=r.review;
+    if(typeof r.zg==='number'&&ZG.indexOf(r.zg)>=0)S.zg=r.zg;
+    S.t=r._t;save();if(S.view!=='play')render();
+  });
+  if(p==='bryan')Progress.sync('bryan','zi',function(){return readZi();},function(r){writeZi(r,true);if(S.view!=='play')render();});
+}
+// 「必考字练习」（bryan/zi.html）的进度，两个页面共用一个错字本。
+var ZIKEY='bryan_zi_v2';
+function readZi(){var z=null;try{z=JSON.parse(lget(ZIKEY)||'null');}catch(e){}z=z||{};z.done=z.done||{};z.wrong=z.wrong||{};z.stats=z.stats||{};return z;}
+// remote=true：只写进本机（从网上拿下来的）；否则记下修改时间并上传。
+function writeZi(z,remote){if(!remote){z._t=Date.now();if(window.Progress)Progress.save('bryan','zi',z);}lset(ZIKEY,JSON.stringify(z));}
+function reviewList(){
+  var r=S.review.slice();
+  if(S.player==='bryan'){var w=readZi().wrong;ZI.forEach(function(c){if(w[c.n]&&r.indexOf(c.ch)<0)r.push(c.ch);});}
+  return r;
 }
 var p0=lget('bjtx.pinyin');if(p0!==null)S.pinyin=(p0==='1');
 var sd0=lget('bjtx.sound');if(sd0!==null)S.sound=(sd0==='1');
 var kq=null;try{kq=new URLSearchParams(location.search).get('kid');}catch(e){}
 var pl0=(kq&&PLAYERS[kq])?kq:lget('bjtx.player');
 if(pl0&&PLAYERS[pl0]){loadPlayer(pl0);}else{S.view='who';}
-function save(){
+// changed=true：练习进度有变化，记下时间并上传到网上存档。
+function save(changed){
   lset('bjtx.pinyin',S.pinyin?'1':'0');lset('bjtx.sound',S.sound?'1':'0');
-  if(S.player){var pre='bjtx.'+S.player+'.';lset('bjtx.player',S.player);lset(pre+'energy',String(S.energy));lset(pre+'streak',JSON.stringify(S.streak));lset(pre+'review',JSON.stringify(S.review));if(S.player==='bryan')lset(pre+'zg',String(S.zg));}
+  if(S.player){var pre='bjtx.'+S.player+'.';if(changed){S.t=Date.now();if(window.Progress)Progress.save(S.player,'bujian',snapshot());}lset(pre+'t',String(S.t||0));lset('bjtx.player',S.player);lset(pre+'energy',String(S.energy));lset(pre+'streak',JSON.stringify(S.streak));lset(pre+'review',JSON.stringify(S.review));if(S.player==='bryan')lset(pre+'zg',String(S.zg));}
 }
 
 var app=document.getElementById('app');
@@ -449,7 +485,7 @@ var MASCOT='<svg viewBox="0 0 64 64" aria-hidden="true"><defs><radialGradient id
 function startRound(mode){
   S.mode=mode;
   var wk=(typeof mode==='string'&&mode!=='review'),pool;
-  if(mode==='review'){var seen={};pool=charsOf(S.player).filter(function(c){if(S.review.indexOf(c.ch)<0||seen[c.ch])return false;seen[c.ch]=1;return true;});}
+  if(mode==='review'){var seen={},rl=reviewList();pool=charsOf(S.player).filter(function(c){if(rl.indexOf(c.ch)<0||seen[c.ch])return false;seen[c.ch]=1;return true;});}
   else pool=CHARS.filter(function(c){return c.lv===mode;});
   S.queue=wk?pool:shuffle(pool).slice(0,10);S.i=0;S.results=[];S.gained=0;
   S.view='play';S.q=makeQ(S.queue[0]);render();window.scrollTo(0,0);
@@ -528,11 +564,18 @@ function solve(){
   q.solved=true;q.busy=false;q.bad=[];
   q.stars=q.revealed?1:Math.max(1,3-q.attempts-q.hints);
   S.results.push({ch:it.ch,stars:q.stars});
-  var idx=S.review.indexOf(it.ch);
-  if(q.stars<3){if(idx<0)S.review.push(it.ch);}
+  var idx=S.review.indexOf(it.ch),zc=S.player==='bryan'?ZIBY[it.ch]:null;
+  if(zc){
+    // 必考字：和「必考字练习」一样，错了放进错字本，再对两次才拿掉。
+    var zs=readZi(),st=zs.stats[zc.n]||(zs.stats[zc.n]={ok:0,bad:0});
+    if(q.stars<3){st.bad++;zs.wrong[zc.n]=2;}
+    else{st.ok++;if(zs.wrong[zc.n]){zs.wrong[zc.n]--;if(zs.wrong[zc.n]<=0)delete zs.wrong[zc.n];}}
+    writeZi(zs);if(idx>=0)S.review.splice(idx,1);
+  }
+  else if(q.stars<3){if(idx<0)S.review.push(it.ch);}
   else if(S.mode==='review'&&idx>=0){S.review.splice(idx,1);}
   q.gain=q.stars*5;S.gained+=q.gain;S.energy+=q.gain;touchStreak();
-  save();
+  save(true);
   q.msg={t:q.stars===3?'太棒了，一次拼对！':'拼对了！',k:'good'};
   render();
 }
@@ -569,7 +612,7 @@ function home(){
       '<div class="zpick" role="group" aria-label="选必考字的组"><button class="btn" data-a="zg" data-d="-1"'+(k<=0?' disabled':'')+'>‹ 上一组</button><label>第 <select data-a="zsel" aria-label="组">'+
       ZG.map(function(g){return '<option value="'+g+'"'+(g===S.zg?' selected':'')+'>'+(g+1)+'</option>';}).join('')+'</select> 组</label><button class="btn" data-a="zg" data-d="1"'+(k>=ZG.length-1?' disabled':'')+'>下一组 ›</button></div></div>';
   }
-  var rv=S.review,voiceOk=('speechSynthesis' in window)&&ZH;
+  var rv=reviewList(),voiceOk=('speechSynthesis' in window)&&ZH;
   var reviewW=rv.length?world('w3','review','复习星',rv.length+' 个字 · 没拿满三星的字在这里',rv.slice(0,5).join('')):
     '<div class="world w3 locked"><span class="sphere"></span><span><span class="wname">复习星</span><span class="wmeta">还没有字。看过答案或没拿满三星的字会飞到这里。</span></span></div>';
   var ws,note;
@@ -578,7 +621,7 @@ function home(){
     ws=world('w4','b1','词语 1–8',b1.length+' 个字 · 第十六课听写',prev(b1))+
        world('w5','b2','句子 9–13',b2.length+' 个字 · 第十六课听写',prev(b2))+
        world('w1','b3','作文补药',b3.length+' 个字 · 默写：天下无难事……',prev(b3))+zw()+reviewW;
-    note='必考字和「必考字练习」用同一个字库，也是每 10 个字号一组；'+(350-ZI.length)+' 个字（像「争、严、束」）没有好拼的部件，所以跳过了。第十六课只放了单子上画线、并且能用部件拼出来的字。与、丑没有可拼的部件，请直接写在本子上。没画线的字也要在本子上写。';
+    note='必考字和「必考字练习」用同一个字库，也是每 10 个字号一组，错字也共用一个错字本：这里拼错的字会进「必考字练习」的错字本，错字本里的字也会出现在复习星，要再拼对两次才拿掉。'+(350-ZI.length)+' 个字（像「争、严、束」）没有好拼的部件，所以跳过了。第十六课只放了单子上画线、并且能用部件拼出来的字。与、丑没有可拼的部件，请直接写在本子上。没画线的字也要在本子上写。';
   }else{
     var k1=pick('w1'),k2=pick('w2'),l1=pick(1),l2=pick(2);
     ws=world('w4','w1','听写一',k1.length+' 个字 · 作文句子：她急得直冒冷汗……',prev(k1))+
@@ -593,6 +636,7 @@ function home(){
     '<div class="steps"><div class="step c0"><b>听</b>听整句，看拼音</div><div class="step c1"><b>拼</b>把部件放进格子</div><div class="step c4"><b>写</b>在本子上写一遍</div></div></section>'+
   '<div class="worlds">'+ws+'</div>'+
   '<p class="note">'+note+'</p>'+
+  '<p class="note" id="cloud">'+(window.Progress?Progress.label():'进度只存在这台设备')+'</p>'+
   '<p class="note">'+(voiceOk?'声音来自设备自带的中文语音，偶尔会读错，每题都有完整句子和拼音可以对照。':'这台设备没有找到中文语音，请看句子和拼音。')+'<br>'+tog()+'</p>';
 }
 
@@ -676,7 +720,7 @@ function result(){
     '<div class="actions" style="margin-top:6px">'+
       '<button class="btn cta" data-a="start" data-m="'+S.mode+'">再来一组</button>'+
       (/^z/.test(S.mode)&&ZG.indexOf(S.zg)<ZG.length-1?'<button class="btn" data-a="znext">下一组 ›</button>':'')+
-      (S.review.length&&S.mode!=='review'?'<button class="btn" data-a="start" data-m="review">练复习星（'+S.review.length+'）</button>':'')+
+      (reviewList().length&&S.mode!=='review'?'<button class="btn" data-a="start" data-m="review">练复习星（'+reviewList().length+'）</button>':'')+
       '<button class="btn ghost" data-a="home">回首页</button>'+
     '</div>'+
   '</section>';
@@ -701,8 +745,8 @@ app.addEventListener('click',function(e){
   else if(a==='pick'){loadPlayer(b.dataset.p);save();S.view='home';render();window.scrollTo(0,0);}
   else if(a==='sound'){S.sound=!S.sound;if(!S.sound){try{speechSynthesis.cancel();}catch(x){}}save();render();}
   else if(a==='pinyin'){S.pinyin=!S.pinyin;save();render();}
-  else if(a==='zg'){var k=ZG.indexOf(S.zg)+parseInt(b.dataset.d,10);if(k>=0&&k<ZG.length){S.zg=ZG[k];save();render();}}
-  else if(a==='znext'){var k2=ZG.indexOf(S.zg)+1;if(k2<ZG.length){S.zg=ZG[k2];save();startRound('z'+S.zg);}}
+  else if(a==='zg'){var k=ZG.indexOf(S.zg)+parseInt(b.dataset.d,10);if(k>=0&&k<ZG.length){S.zg=ZG[k];save(true);render();}}
+  else if(a==='znext'){var k2=ZG.indexOf(S.zg)+1;if(k2<ZG.length){S.zg=ZG[k2];save(true);startRound('z'+S.zg);}}
   else if(a==='tile')placeTile(parseInt(b.dataset.id,10));
   else if(a==='slot')tapSlot(parseInt(b.dataset.i,10));
   else if(a==='check')check();
@@ -717,8 +761,9 @@ app.addEventListener('click',function(e){
   }
 });
 
+if(window.Progress)Progress.onStatus(function(){var c=document.getElementById('cloud');if(c)c.textContent=Progress.label();});
 app.addEventListener('change',function(e){
-  if(e.target.dataset&&e.target.dataset.a==='zsel'){S.zg=parseInt(e.target.value,10);save();render();}
+  if(e.target.dataset&&e.target.dataset.a==='zsel'){S.zg=parseInt(e.target.value,10);save(true);render();}
 });
 render();
 })();
