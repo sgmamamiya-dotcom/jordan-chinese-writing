@@ -1,4 +1,4 @@
-// Saves learning progress online (Supabase table "progress", see supabase/progress.sql) and keeps a copy on the device.
+// Saves learning progress online (Supabase table "learning_progress", see supabase/learning_progress.sql) and keeps a copy on the device.
 // Each page keeps its own data object with a _t timestamp (ms) that it bumps on every change.
 // On load, the newer of the device copy and the online copy wins, so the last device used carries over to the next.
 (function () {
@@ -19,7 +19,7 @@
     delete pending[k];
     var p = k.split('/');
     setStatus('saving');
-    db.from('progress').upsert({ kid: p[0], app: p[1], data: data, updated_at: new Date().toISOString() }, { onConflict: 'kid,app' })
+    db.from('learning_progress').upsert({ kid: p[0], app: p[1], data: data, updated_at: new Date().toISOString() }, { onConflict: 'kid,app' })
       .then(function (res) { if (res.error) throw res.error; if (!Object.keys(pending).length) setStatus('synced'); })
       .catch(function (e) { if (!pending[k]) pending[k] = data; setStatus(problem(e)); });
   }
@@ -45,7 +45,7 @@
     sync: function (kid, app, getLocal, apply) {
       if (syncs.every(function (s) { return s[0] !== kid || s[1] !== app; })) syncs.push([kid, app, getLocal, apply]);
       if (!db) return Promise.resolve();
-      return db.from('progress').select('data').eq('kid', kid).eq('app', app).maybeSingle().then(function (res) {
+      return db.from('learning_progress').select('data').eq('kid', kid).eq('app', app).maybeSingle().then(function (res) {
         if (res.error) throw res.error;
         if (!pending[kid + '/' + app]) setStatus('synced');
         var remote = res.data ? res.data.data : null, local = getLocal();

@@ -135,7 +135,7 @@ const isDone = i => { const d = state.done[ids[i]]; return !!d && d.size === day
 const rangeOf = d => d[0].n + '–' + d[d.length - 1].n;
 
 /* ---------- storage ----------
-   Saved on this device and online (Supabase table "progress", kid 'bryan', app 'zi'; see progress.js).
+   Saved on this device and online (Supabase table "learning_progress", kid 'bryan', app 'zi'; see progress.js).
    部件听写 (bujian.html) reads and writes the same 错字本. */
 const KEY = 'bryan_zi_v2';
 let mem = null;
