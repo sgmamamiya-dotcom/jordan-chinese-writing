@@ -28,7 +28,10 @@
   var P = window.Progress = {
     status: function () { return status; },
     // Short Chinese line describing where progress is saved.
-    label: function (s) {
+    label: function (s, lang) {
+      if (lang === 'en') return ({ loading: '☁️ Connecting to online save…', synced: '☁️ Progress is saved online. Carry on from any device.', saving: '☁️ Saving…',
+        offline: '⚠️ Can’t reach the internet. Progress is kept on this device and will upload when you’re back online.', setup: '⚠️ Online save isn’t set up yet. Progress is kept on this device.',
+        local: 'Progress is kept on this device only.' })[s || status] + ((s || status) === 'setup' || (s || status) === 'offline' ? (lastErr ? ' (' + lastErr + ')' : '') : '');
       return ({ loading: '☁️ 正在连接网上存档…', synced: '☁️ 进度已存到网上，换设备也能接着练', saving: '☁️ 正在保存…',
         offline: '⚠️ 暂时连不上网，进度先存在这台设备，联网后会自动上传', setup: '⚠️ 网上存档还没设置好，进度先存在这台设备',
         local: '进度只存在这台设备' })[s || status] + ((s || status) === 'setup' || (s || status) === 'offline' ? (lastErr ? '（' + lastErr + '）' : '') : '');

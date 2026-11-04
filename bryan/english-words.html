@@ -55,6 +55,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,textarea:focus-visible
 .mode span{color:var(--mute);font-size:15px}
 .mode .best{margin-top:auto;padding-top:8px;font-size:13px;font-weight:700;color:var(--purple)}
 
+.cloud{color:var(--mute,#666);font-size:13px;text-align:center;margin:18px 0 0}
 .tips{background:var(--yellow-soft);border-radius:18px;padding:14px 18px;margin-top:22px}
 .tips h3{margin-top:0}
 .tips ol{margin:0;padding-left:20px}
@@ -155,6 +156,7 @@ textarea{width:100%;min-height:96px;font:inherit;font-size:18px;border:3px solid
       <li><b>Don't overdo it.</b> One great word per sentence is enough. A sentence stuffed with fancy words sounds strange.</li>
     </ol>
   </div>
+  <p class="cloud" id="cloud"></p>
 </section>
 
 <!-- WORD BANK -->
@@ -230,6 +232,8 @@ textarea{width:100%;min-height:96px;font:inherit;font-size:18px;border:3px solid
 </section>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../progress.js"></script>
 <script>
 (function () {
   // ---------- word lists (a P4-friendly selection, grouped like the book) ----------
@@ -515,58 +519,55 @@ textarea{width:100%;min-height:96px;font:inherit;font-size:18px;border:3px solid
 
   function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
-  // ---------- saving: localStorage on this device, copied to Supabase ----------
-  var SB_URL = 'https://uscpgatqeeqejbwnvyoh.supabase.co';   // Supabase → Project Settings → API → Project URL
-  var SB_KEY = 'sb_publishable_Tc5qBurC5SnTyNjB2jtA2A_jFs9T3og';              // Supabase → Project Settings → API → anon / publishable key
+  // ---------- saving: localStorage on this device, copied online ----------
+  // Online copy: Supabase table learning_progress (kid 'bryan', app 'english'), the same as the Chinese pages (../progress.js).
+  // The older table "progress" (one row per key) is only read on page open, to bring over progress saved there before.
+  var SB_URL = 'https://uscpgatqeeqejbwnvyoh.supabase.co';
+  var SB_KEY = 'sb_publishable_Tc5qBurC5SnTyNjB2jtA2A_jFs9T3og';
   var STUDENT = 'bryan';
   var SYNC_KEYS = ['bryan_bbw_best_v1', 'bryan_bbw_stars_v1', 'bryan_bbw_missed_v1', 'bryan_bbw_trans_v1', 'bryan_bbw_drafts_v1'];
   var TS_KEY = 'bryan_bbw_sync_ts_v1'; // when each key last changed on this device
-  var SB_ON = SB_URL.indexOf('YOUR-') < 0;
-  var pending = {}, pushTimer = null;
+  var T_KEY = 'bryan_bbw_t_v1';        // when anything last changed on this device (ms)
 
   function load(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
-  function put(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function put(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function stamp() {
+    var t = load(T_KEY, 0);
+    if (!t) { var ts = load(TS_KEY, {}); Object.keys(ts).forEach(function (k) { var v = Date.parse(ts[k]) || 0; if (v > t) t = v; }); }
+    return t;
+  }
+  function snapshot() { var d = { _t: stamp() }; SYNC_KEYS.forEach(function (k) { d[k] = load(k, null); }); return d; }
   function save(k, v) {
     put(k, v);
     var ts = load(TS_KEY, {}); ts[k] = new Date().toISOString(); put(TS_KEY, ts);
-    pending[k] = 1; clearTimeout(pushTimer); pushTimer = setTimeout(push, 1500);
+    put(T_KEY, Date.now());
+    if (window.Progress) Progress.save(STUDENT, 'english', snapshot());
   }
-  function sb(path, opts) {
-    opts = opts || {};
-    opts.headers = Object.assign({ apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' }, opts.headers);
-    return fetch(SB_URL + '/rest/v1/' + path, opts);
+  function cloud() {
+    if (!window.Progress) return;
+    Progress.sync(STUDENT, 'english', snapshot, function (r) {
+      SYNC_KEYS.forEach(function (k) { if (k in r) put(k, r[k]); });
+      put(T_KEY, r._t);
+      renderBest();
+    });
   }
-  // Sends changed keys to Supabase. Failed keys stay queued for the next try.
-  function push(keepalive) {
-    var keys = Object.keys(pending); if (!SB_ON || !keys.length) return;
-    pending = {};
-    var ts = load(TS_KEY, {});
-    var rows = keys.map(function (k) { return { student: STUDENT, key: k, value: load(k, null), updated_at: ts[k] || new Date().toISOString() }; });
-    sb('progress?on_conflict=student,key', { method: 'POST', keepalive: !!keepalive,
-      headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(rows) })
-      .then(function (r) { if (!r.ok) throw r; })
-      .catch(function () { keys.forEach(function (k) { pending[k] = 1; }); });
-  }
-  // On page open: take whichever copy is newer, Supabase or this device.
+  // On page open: bring over anything newer from the old table, then sync with the online save.
   function pull() {
-    if (!SB_ON) return;
-    sb('progress?student=eq.' + STUDENT + '&select=key,value,updated_at')
+    fetch(SB_URL + '/rest/v1/progress?student=eq.' + STUDENT + '&select=key,value,updated_at', { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } })
       .then(function (r) { if (!r.ok) throw r; return r.json(); })
       .then(function (rows) {
-        var ts = load(TS_KEY, {}), remote = {};
-        rows.forEach(function (row) { remote[row.key] = row; });
-        SYNC_KEYS.forEach(function (k) {
-          var row = remote[k], lt = ts[k] ? Date.parse(ts[k]) : 0, rt = row ? Date.parse(row.updated_at) : 0;
-          if (row && rt > lt) { put(k, row.value); ts[k] = row.updated_at; }
-          else if (localStorage.getItem(k) != null && (!row || lt > rt)) { if (!ts[k]) ts[k] = new Date().toISOString(); pending[k] = 1; }
+        var ts = load(TS_KEY, {}), t = load(T_KEY, 0), changed = false;
+        rows.forEach(function (row) {
+          if (SYNC_KEYS.indexOf(row.key) < 0) return;
+          var lt = ts[row.key] ? Date.parse(ts[row.key]) : 0, rt = Date.parse(row.updated_at) || 0;
+          if (rt > lt) { put(row.key, row.value); ts[row.key] = row.updated_at; if (rt > t) t = rt; changed = true; }
         });
-        put(TS_KEY, ts);
-        push();
-        renderBest();
+        if (changed) { put(TS_KEY, ts); put(T_KEY, t); renderBest(); }
       })
-      .catch(function () {});
+      .catch(function () {})
+      .then(cloud);
   }
-  window.addEventListener('pagehide', function () { clearTimeout(pushTimer); push(true); });
+  if (window.Progress) Progress.onStatus(function () { var c = document.getElementById('cloud'); if (c) c.textContent = Progress.label(null, 'en'); });
 
   // Finds strong and boring words in a piece of writing.
   function scan(text) {
