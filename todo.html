@@ -35,6 +35,14 @@
 .t{font-family:var(--display);font-weight:800;font-size:23px;line-height:1.2;overflow-wrap:anywhere}
 .note{margin:4px 0 0;color:var(--mute);font-size:16px}
 .go{display:inline-block;margin-top:8px;font-weight:700;color:var(--purple)}
+.fold summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;background:var(--card);border:3px solid var(--ink);border-radius:20px;padding:14px 16px}
+.fold summary::-webkit-details-marker{display:none}
+.fold summary h2{font-size:24px}
+.fold summary .sub{margin:2px 0 0;grid-column:1/-1}
+.fold summary .tog{font-weight:700;white-space:nowrap}
+.fold summary .tog::after{content:" ▾"}
+.fold[open] summary .tog::after{content:" ▴"}
+.fold[open] summary{margin-bottom:14px}
 .empty{margin-top:28px;padding:22px;border:3px dashed var(--ink);border-radius:20px;text-align:center;color:var(--mute)}
 .foot{margin-top:36px;color:var(--mute);font-size:15px}
 @media(prefers-reduced-motion:reduce){.bar span{transition:none}}
@@ -82,7 +90,10 @@ var GROUPS = [
   { id: 'exam29', date: '2026-10-29', title: 'Thursday 29 Oct', sub: 'Bryan · Science exam' },
   // showFrom: the group stays hidden until that day (for reminders set up in advance).
   { id: 'nov10', date: '2026-11-10', showFrom: '2026-11-10', title: 'Tuesday 10 Nov', sub: 'Reminder for tomorrow' },
-  { id: 'week', sort: '2026-10-15~', title: 'No exact due date', sub: 'Jordan’s home-learning tasks and other ClassDojo work' }
+  { id: 'week', sort: '2026-10-15~', title: 'No exact due date', sub: 'Jordan’s home-learning tasks and other ClassDojo work' },
+  // fold: a long list shown folded at the end; its ticks are counted on its own, not in the progress bar at the top.
+  { id: 'read-a', sort: '~1', fold: true, title: '📚 Reading list A · Mysteries', sub: 'Term 1 · Read at least 1 short story and 1 book of detective fiction. Another book by an author you like is fine, but check with your teacher first. Tick a book when you have finished it.' },
+  { id: 'read-b', sort: '~2', fold: true, title: '📚 Reading list B · Fiction', sub: 'Terms 2–4 · Tick a book when you have finished it.' }
 ];
 
 var TASKS = [
@@ -152,6 +163,77 @@ var TASKS = [
     title: 'My Animal Mini Book',
     note: 'Choose an animal you like (not a giraffe). Find some fun facts about it and write them in your four-page booklet. Keep each fact short and easy to read. You may also draw or add a picture of your animal. Finish by Wednesday 14 Oct (the PSLE marking days).' }
 ];
+
+/* School reading list (Extensive Reading Programme). Each book is a task in the folded reading-list groups. */
+var BOOKS = {
+  'read-a': [['Jessica Alejandro', 'Extraordinary Losers: The Lunchbox Thief'],
+    ['A. J. Low', 'Sherlock Sam and the Missing Heirloom in Katong'],
+    ['Steve Brezenoff', 'Museum Mysteries: The Case of the Stolen Sculpture'],
+    ['Agatha Christie', 'The A.B.C. Murders'],
+    ['Agatha Christie', 'Murder on the Orient Express'],
+    ['Agatha Christie', 'Elephants Can Remember'],
+    ['Agatha Christie', 'The Murder of Roger Ackroyd'],
+    ['Agatha Christie', 'The Murder on the Links'],
+    ['Wilkie Collins', 'The Moonstone'],
+    ['E. L. Konigsburg', 'From the Mixed-Up Files of Mrs. Basil E. Frankweiler'],
+    ['Philip Pullman', 'The Adventures of the New Cut Gang'],
+    ['Radhika Puri', 'The Fibonacci Revelation'],
+    ['Ellen Raskin', 'The Tattooed Potato and Other Clues'],
+    ['Anthony Read', 'The Baker Street Boys: The Case of the Haunted Horrors'],
+    ['Donald Thomas', 'Sherlock Holmes and the Ghosts of Bly: And Other New Adventures of the Great Detective'],
+    ['June Thomson', 'The Secret Notebooks of Sherlock Holmes']],
+  'read-b': [['Lloyd Alexander', 'The Book of Three'],
+    ['Lloyd Alexander', 'The Black Cauldron'],
+    ['Lloyd Alexander', 'The Castle of Llyr'],
+    ['Lloyd Alexander', 'Taran Wanderer'],
+    ['Lloyd Alexander', 'The High King'],
+    ['Natalie Babbitt', 'Tuck Everlasting'],
+    ['L. Frank Baum', 'The Wizard of Oz'],
+    ['Kimberly Brubaker Bradley', 'The War that Saved My Life'],
+    ['Susan Cooper', 'The Dark is Rising'],
+    ['Christopher Paul Curtis', 'Bud, Not Buddy'],
+    ['Natasha Farrant', 'Voyage of the Sparrowhawk'],
+    ['Nicholas Fiske', 'Trillions'],
+    ['Cornelia Funke', 'Inkheart'],
+    ['Cornelia Funke', 'The Thief Lord'],
+    ['Washington Irving', 'The Legend of Sleepy Hollow'],
+    ['Diana Wynne Jones', 'Howl’s Moving Castle'],
+    ['Diana Wynne Jones', 'Castle in the Air'],
+    ['Thanhha Lai', 'Inside Out and Back Again'],
+    ['Elizabeth Laird', 'The Garbage King'],
+    ['Ursula Le Guin', 'A Wizard of Earthsea'],
+    ['Madeleine L’Engle', 'A Wrinkle in Time'],
+    ['Madeleine L’Engle', 'A Circle of Quiet'],
+    ['C. S. Lewis', 'The Lion, the Witch and the Wardrobe (and the Narnia series)'],
+    ['Jack London', 'The Call of the Wild'],
+    ['Lois Lowry', 'Gathering Blue'],
+    ['Lois Lowry', 'Messenger'],
+    ['Lois Lowry', 'Son'],
+    ['Patricia MacLachlan', 'Journey'],
+    ['Margaret Mahy', 'The Haunting'],
+    ['Yoko Ogawa', 'The Housekeeper and the Professor'],
+    ['Sara Pennypacker', 'Pax'],
+    ['Katherine Paterson', 'The Great Gilly Hopkins'],
+    ['Philippa Pearce', 'Tom’s Midnight Garden'],
+    ['Philip Pullman', 'The Firework-Maker’s Daughter'],
+    ['Louis Sachar', 'Holes'],
+    ['Brian Selznick', 'The Invention of Hugo Cabret'],
+    ['Ian Serraillier', 'The Silver Sword'],
+    ['Elizabeth George Speare', 'The Witch of Blackbird Pond'],
+    ['Elizabeth George Speare', 'The Sign of the Beaver'],
+    ['Armstrong Sperry', 'Call It Courage'],
+    ['Rebecca Stead', 'When You Reach Me'],
+    ['Robert Louis Stevenson', 'Treasure Island'],
+    ['Trenton Lee Stewart', 'The Mysterious Benedict Society'],
+    ['Gertrude Chandler Warner', 'The Boxcar Children (Original)'],
+    ['Elizabeth Winthrop', 'The Castle in the Attic'],
+    ['Ovidia Yu', 'The Mudskipper']]
+};
+Object.keys(BOOKS).forEach(function (g) {
+  BOOKS[g].forEach(function (b, i) {
+    TASKS.push({ id: 'b-' + g + '-' + (i < 9 ? '0' : '') + (i + 1), kid: 'bryan', group: g, subject: 'Reading · ' + b[0], title: b[1] });
+  });
+});
 
 /* Weekly routine: only show preparation tasks relevant to the next 7 days. */
 var ROUTINE = [
@@ -301,26 +383,42 @@ var ROUTINE = [
     return row;
   }
 
+  var openFold = {};
   function render() {
     var board = document.getElementById('board');
     board.textContent = '';
-    var visible = tasks.filter(shown);
+    var folded = {};
+    groups.forEach(function (g) { if (g.fold) folded[g.id] = true; });
+    var all = tasks.filter(shown), visible = all.filter(function (t) { return !folded[t.group]; });
     var done = visible.filter(function (t) { return checked[t.id]; }).length;
 
     document.getElementById('count').textContent =
       visible.length && done === visible.length ? 'All done! 🎉' : done + ' of ' + visible.length + ' done';
     document.getElementById('fill').style.width = visible.length ? Math.round(done / visible.length * 100) + '%' : '0';
 
-    if (!visible.length) {
+    if (!all.length) {
       board.appendChild(el('div', 'empty', 'Nothing here yet.'));
       return;
     }
     groups.forEach(function (g) {
-      var list = visible.filter(function (t) { return t.group === g.id; });
+      var list = all.filter(function (t) { return t.group === g.id; });
       if (!list.length) return;
-      var sec = el('section', 'day');
-      sec.appendChild(el('h2', null, g.title));
-      sec.appendChild(el('p', 'sub', g.sub));
+      var sec;
+      if (g.fold) {
+        sec = el('details', 'day fold');
+        if (openFold[g.id]) sec.open = true;
+        sec.addEventListener('toggle', function () { openFold[g.id] = sec.open; });
+        var sum = el('summary');
+        var read = list.filter(function (t) { return checked[t.id]; }).length;
+        sum.appendChild(el('h2', null, g.title));
+        sum.appendChild(el('span', 'tog', read + ' of ' + list.length + ' read'));
+        sum.appendChild(el('p', 'sub', g.sub));
+        sec.appendChild(sum);
+      } else {
+        sec = el('section', 'day');
+        sec.appendChild(el('h2', null, g.title));
+        sec.appendChild(el('p', 'sub', g.sub));
+      }
       var wrap = el('div', 'list');
       list.forEach(function (t) { wrap.appendChild(makeTask(t)); });
       sec.appendChild(wrap);
