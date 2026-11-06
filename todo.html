@@ -92,8 +92,8 @@ var GROUPS = [
   { id: 'nov10', date: '2026-11-10', showFrom: '2026-11-10', title: 'Tuesday 10 Nov', sub: 'Reminder for tomorrow' },
   { id: 'week', sort: '2026-10-15~', title: 'No exact due date', sub: 'Jordan’s home-learning tasks and other ClassDojo work' },
   // fold: a long list shown folded at the end; its ticks are counted on its own, not in the progress bar at the top.
-  { id: 'read-a', sort: '~1', fold: true, title: '📚 Reading list A · Mysteries', sub: 'Term 1 · Read at least 1 short story and 1 book of detective fiction. Another book by an author you like is fine, but check with your teacher first. Tick a book when you have finished it.' },
-  { id: 'read-b', sort: '~2', fold: true, title: '📚 Reading list B · Fiction', sub: 'Terms 2–4 · Tick a book when you have finished it.' }
+  { id: 'read-a', sort: '~1', fold: true, title: '📚 Reading list A · Mysteries', sub: 'For Term 1 of 2027, but start reading now. Read at least 1 short story and 1 book of detective fiction. Another book by an author you like is fine, but check with your teacher first. Tick a book when you have finished it.' },
+  { id: 'read-b', sort: '~2', fold: true, title: '📚 Reading list B · Fiction', sub: 'For Terms 2–4 of 2027, but start reading now. Tick a book when you have finished it.' }
 ];
 
 var TASKS = [
@@ -387,23 +387,38 @@ var ROUTINE = [
   function render() {
     var board = document.getElementById('board');
     board.textContent = '';
-    var folded = {};
-    groups.forEach(function (g) { if (g.fold) folded[g.id] = true; });
-    var all = tasks.filter(shown), visible = all.filter(function (t) { return !folded[t.group]; });
+    // Reading lists and groups whose day has passed are folded away and left out of the progress bar.
+    var folded = {}, past = {};
+    groups.forEach(function (g) { if (g.fold) folded[g.id] = true; else if ((g.date || g.sort) < todayKey) past[g.id] = true; });
+    var all = tasks.filter(shown), visible = all.filter(function (t) { return !folded[t.group] && !past[t.group]; });
     var done = visible.filter(function (t) { return checked[t.id]; }).length;
 
     document.getElementById('count').textContent =
-      visible.length && done === visible.length ? 'All done! 🎉' : done + ' of ' + visible.length + ' done';
+      !visible.length ? 'Nothing due 🎉' : done === visible.length ? 'All done! 🎉' : done + ' of ' + visible.length + ' done';
     document.getElementById('fill').style.width = visible.length ? Math.round(done / visible.length * 100) + '%' : '0';
 
     if (!all.length) {
       board.appendChild(el('div', 'empty', 'Nothing here yet.'));
       return;
     }
+    if (!visible.length) board.appendChild(el('div', 'empty', 'Nothing due right now.'));
+    var earlier = el('details', 'day fold'), earlierN = 0, earlierDone = 0;
+    if (openFold.earlier) earlier.open = true;
+    earlier.addEventListener('toggle', function () { openFold.earlier = earlier.open; });
     groups.forEach(function (g) {
       var list = all.filter(function (t) { return t.group === g.id; });
       if (!list.length) return;
       var sec;
+      if (past[g.id]) {
+        sec = el('section', 'day');
+        sec.appendChild(el('h2', null, g.title));
+        sec.appendChild(el('p', 'sub', g.sub));
+        var pw = el('div', 'list');
+        list.forEach(function (t) { pw.appendChild(makeTask(t)); if (checked[t.id]) earlierDone++; });
+        earlierN += list.length;
+        sec.appendChild(pw); earlier.appendChild(sec);
+        return;
+      }
       if (g.fold) {
         sec = el('details', 'day fold');
         if (openFold[g.id]) sec.open = true;
@@ -424,6 +439,14 @@ var ROUTINE = [
       sec.appendChild(wrap);
       board.appendChild(sec);
     });
+    if (earlierN) {
+      var es = el('summary');
+      es.appendChild(el('h2', null, '🗂️ Earlier tasks'));
+      es.appendChild(el('span', 'tog', earlierDone + ' of ' + earlierN + ' ticked'));
+      es.appendChild(el('p', 'sub', 'Tasks from days that have passed. Open to look back or tick anything left.'));
+      earlier.insertBefore(es, earlier.firstChild);
+      board.appendChild(earlier);
+    }
   }
 
   document.querySelectorAll('.kids button').forEach(function (b) {
