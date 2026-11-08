@@ -878,6 +878,107 @@ window.SCI_TOPICS = [
       'The appendix may store helpful gut bacteria, which can repopulate the intestine after an illness.'
     ]
   },
+  {
+    id: 'spso10', kind: 'lesson', emoji: '❤️', title: 'SPSO Lesson 10: The Circulatory System', level: 'SPSO', theme: 'spso',
+    videos: [
+      { id: 'zsSfb9RMryc', title: 'Blood Flow Through the Heart Explained', by: 'Teach PE' },
+      { id: 'gExUCrpAKyQ', title: 'Platelets and Blood Clotting', by: 'FuseSchool' },
+      { id: 'xfZhb6lmxjk', title: 'Why do blood types matter?', by: 'TED-Ed' },
+      { id: 'wtVxXhbf4Ck', title: 'Rh-null: the rarest blood type on Earth (“golden blood”)', by: 'Hashem Al-Ghaili' },
+      { id: 'CoRSTXSIg6U', title: 'The Man with the Most Valuable Blood on Earth', by: 'Doctor Mike' },
+      { id: 'DMrMjZAF3XI', title: 'What Makes Blood Plasma So Expensive?', by: 'Business Insider' },
+      { id: 'u7k6sqTxOCU', title: 'Heart Disease', by: 'FuseSchool' },
+      { id: '3_PYnWVoUzM', title: 'What happens during a heart attack?', by: 'TED-Ed' }
+    ],
+    form: 'https://docs.google.com/forms/d/e/1FAIpQLSdF_VFF9GQonADf_8hV-wmdKgrx3pIpEVZyBr8eXc7511V8Tw/viewform',
+    slides: [
+      { kicker: 'SPSO · Lesson 10', title: 'The Circulatory System', emoji: '❤️',
+        points: ['The heart and its four chambers', 'The path of blood through the body', 'Arteries, veins and capillaries', 'What blood is made of', 'Blood groups and “golden blood”', 'Heart disease and heart attacks'] },
+      { title: 'The heart', emoji: '🫀',
+        cols: [['Four chambers', 'Two atria on top, two ventricles below', 'Atria receive blood; ventricles pump it out. The left ventricle has the thickest wall, because it pumps blood to the whole body.'], ['Valves', 'One-way doors', 'They stop blood flowing backwards.'], ['“Lub-dub”', 'The heartbeat sound', 'It is the sound of the valves snapping shut, not blood hitting anything.']] },
+      { title: 'The path of blood', emoji: '🔄',
+        steps: ['Body → vena cava', 'Right atrium', 'Right ventricle', 'Pulmonary artery → lungs', 'Pulmonary vein', 'Left atrium', 'Left ventricle', 'Aorta → body'],
+        note: 'This is a double circulation: blood passes through the heart twice on each full trip. The right side pumps deoxygenated blood to the lungs; the left side pumps oxygenated blood to the body.' },
+      { title: 'Blood vessels', emoji: '🩸',
+        cols: [['Arteries', 'Carry blood AWAY from the heart', 'Thick, muscular, elastic walls to withstand high pressure.'], ['Veins', 'Carry blood back TO the heart', 'Thinner walls, low pressure, and valves to stop backflow.'], ['Capillaries', 'Tiny vessels linking arterioles to venules', 'Walls only one cell thick, in dense networks, so substances diffuse in and out easily. They have no elastic tissue.']],
+        note: 'Watch out: the pulmonary artery carries deoxygenated blood, and the pulmonary vein carries oxygenated blood. The names are about direction (away from or to the heart), not oxygen.' },
+      { title: 'What is blood made of?', emoji: '🧫',
+        cols: [['Plasma (about 55%)', 'Yellowish liquid', 'Carries dissolved food, hormones, waste, carbon dioxide (as hydrogencarbonate ions) and proteins such as fibrinogen and antibodies.'], ['Red blood cells', 'Contain haemoglobin', 'Carry oxygen. Oxygen is carried by red cells, not dissolved in the plasma.'], ['White blood cells and platelets', 'Defence and repair', 'White cells fight germs; platelets help blood clot.']],
+        note: 'Blood rich in oxygen is bright red. When the oxygen is given to the cells, it becomes darker red. (It is never blue!)' },
+      { title: 'Blood clotting', emoji: '🩹',
+        steps: ['A blood vessel is cut', 'Platelets stick to the wound', 'Fibrinogen turns into fibrin threads', 'Threads trap blood cells into a clot', 'A scab forms'],
+        note: 'Clotting stops bleeding and keeps germs out. People with haemophilia lack a clotting factor, so they can bleed for a long time.' },
+      { title: 'Blood groups', emoji: '🅰️',
+        cols: [['A, B, AB, O', 'Depend on antigens (markers) on red blood cells', 'Your plasma has antibodies against the markers you do NOT have.'], ['Matching for transfusion', 'Wrong blood makes red cells clump', 'Someone with group B can receive B or O, but not A or AB.'], ['Special donors', 'O negative: universal donor', 'AB positive: universal recipient (of red cells).']],
+        note: 'The Rh factor adds + or −. Most people are Rh positive.' },
+      { title: '“Golden blood” and plasma', emoji: '✨',
+        points: ['Rh-null blood has NONE of the Rh antigens. Fewer than about 50 people in the world are known to have it, so donations are incredibly scarce. It is not gold in colour!', 'Plasma is used to make medicines, e.g. clotting factors and antibodies. Collecting and processing it is slow and expensive.', 'Australian donor James Harrison gave plasma over 1,100 times. His rare antibodies helped make a medicine that protected over 2 million babies.'] },
+      { title: 'Blood pressure', emoji: '🩺',
+        points: ['Measured in millimetres of mercury (mm Hg), written like 120/80.', 'The top number (systolic) is the pressure when the heart squeezes.', 'The bottom number (diastolic) is the pressure when the heart relaxes. About 80 mm Hg is normal for a healthy adult.', 'High blood pressure strains the heart and blood vessels.'] },
+      { title: 'Heart disease and heart attacks', emoji: '⚠️',
+        points: ['The heart muscle gets its own blood from the coronary arteries.', 'Fatty deposits (plaque) can build up and narrow them. If a clot blocks one, part of the heart muscle is starved of oxygen: a heart attack.', 'Risks: smoking, a high-fat diet, little exercise, being overweight and high blood pressure.', 'A healthy diet and regular exercise keep the heart strong.'] },
+      { title: 'Hearts in the animal kingdom', emoji: '🐟',
+        cols: [['Fish', '2 chambers', 'A single circulation: heart → gills → body.'], ['Amphibians (e.g. salamanders)', '3 chambers', 'Most reptiles also have 3 (crocodiles have 4).'], ['Birds and mammals', '4 chambers', 'Squid and octopuses have THREE hearts: two pump blood through the gills, one to the body.']],
+        note: 'Snake venom is mostly made of large molecules that travel through the lymphatic system before reaching the blood. That is why first aid says: keep the person still and bandage the limb.' },
+      { title: 'Recap', emoji: '✅',
+        points: ['Heart: 4 chambers and valves; “lub-dub” is the valves closing.', 'Right side → lungs (pulmonary artery); left side → body (aorta).', 'Arteries: thick, elastic, away from the heart. Veins: valves, to the heart. Capillaries: one cell thick.', 'Plasma carries dissolved substances; red cells carry oxygen.', 'Blood groups must match in a transfusion.', 'Blocked coronary arteries cause heart attacks.'] }
+    ],
+    summary: [
+      'The human heart has four chambers: two atria (receiving) and two ventricles (pumping). Valves keep blood flowing one way, and the “lub-dub” sound is the valves closing.',
+      'Humans have a double circulation. The right side of the heart pumps deoxygenated blood through the pulmonary artery to the lungs. The left side pumps oxygenated blood through the aorta to the body.',
+      'Arteries carry blood away from the heart and have thick, muscular, elastic walls for high pressure. Veins carry blood to the heart and have valves.',
+      'Capillaries link arterioles to venules, form dense networks in organs, and have walls only one cell thick for easy diffusion. They do not contain elastic tissue.',
+      'Plasma carries dissolved nutrients, hormones, carbon dioxide (as hydrogencarbonate ions), urea and proteins such as fibrinogen. Oxygen is carried mainly by haemoglobin in red blood cells, not by the plasma.',
+      'Blood becomes darker red as its oxygen is given to the body’s cells and replaced by carbon dioxide.',
+      'Platelets and fibrinogen help blood clot: fibrinogen forms fibrin threads that trap blood cells.',
+      'The ABO blood groups depend on antigens on red blood cells. A person with group B can receive groups B and O, but not A or AB. O negative is the universal donor.',
+      'Rh-null (“golden blood”) lacks all Rh antigens. Only a few dozen people worldwide are known to have it, so donations are extremely scarce.',
+      'Normal blood pressure for a healthy adult is about 120/80 mm Hg: systolic (heart squeezing) over diastolic (heart relaxing).',
+      'Heart disease: fatty plaque narrows the coronary arteries; a blockage starves heart muscle of oxygen and causes a heart attack.',
+      'Fish have 2-chambered hearts, amphibians 3, and birds and mammals 4. Squid and octopuses have three hearts. Snake venom spreads mainly through the lymphatic system.'
+    ],
+    terms: [
+      ['Atrium', 'An upper chamber of the heart that receives blood.'],
+      ['Ventricle', 'A lower chamber of the heart that pumps blood out.'],
+      ['Valve', 'A flap that lets blood flow in one direction only.'],
+      ['Aorta', 'The largest artery, carrying oxygenated blood from the heart to the body.'],
+      ['Pulmonary artery', 'Carries deoxygenated blood from the right ventricle to the lungs.'],
+      ['Pulmonary vein', 'Carries oxygenated blood from the lungs to the left atrium.'],
+      ['Artery', 'A thick-walled vessel carrying blood away from the heart.'],
+      ['Vein', 'A vessel with valves carrying blood back to the heart.'],
+      ['Capillary', 'A tiny vessel with a wall one cell thick, where substances are exchanged.'],
+      ['Plasma', 'The liquid part of blood.'],
+      ['Haemoglobin', 'The red protein in red blood cells that carries oxygen.'],
+      ['Platelets', 'Cell fragments that help blood clot.'],
+      ['Antigen', 'A marker on the surface of a cell; decides your blood group.'],
+      ['Blood pressure', 'The push of blood on vessel walls, e.g. 120/80 mm Hg.'],
+      ['Coronary arteries', 'Arteries that supply the heart muscle itself with blood.']
+    ],
+    quiz: [
+      { q: 'What makes the “lub-dub” sound of the heartbeat?', a: ['Valves closing', 'Blood hitting the valves', 'Blood going the wrong way', 'Air in the heart'], c: 0, e: 'The two sounds are two sets of valves snapping shut.' },
+      { q: 'Which vessel carries deoxygenated blood from the right ventricle to the lungs?', a: ['Pulmonary artery', 'Pulmonary vein', 'Aorta', 'Vena cava'], c: 0, e: 'Arteries carry blood away from the heart, even when it is deoxygenated.' },
+      { q: 'Which statement about capillaries is WRONG?', a: ['They have elastic tissue to withstand high pressure', 'Their walls are one cell thick', 'They form dense networks in organs', 'They link arterioles to venules'], c: 0, e: 'Elastic walls belong to arteries. Capillaries are thin for easy diffusion.' },
+      { q: 'Which of these is NOT usually carried by the plasma?', a: ['Oxygen', 'Hormones', 'Hydrogencarbonate ions', 'Fibrinogen'], c: 0, e: 'Oxygen is carried by haemoglobin in red blood cells.' },
+      { q: 'A patient has blood group B. Which donor blood is NOT suitable?', a: ['A and AB', 'B and O', 'B only', 'O only'], c: 0, e: 'Group B plasma has anti-A antibodies, which would attack A and AB red cells.' },
+      { q: 'What is special about “golden blood” (Rh-null)?', a: ['It lacks all Rh antigens and is extremely rare', 'It is gold in colour', 'Everyone in Singapore has it', 'It cannot clot'], c: 0, e: 'Only a few dozen people in the world are known to have it.' },
+      { q: 'What does the diastolic blood pressure measure?', a: ['Pressure when the heart relaxes', 'Pressure when the heart squeezes', 'Heart rate', 'Amount of oxygen'], c: 0, e: 'It is the lower number, normally about 80 mm Hg.' },
+      { q: 'What causes a heart attack?', a: ['A coronary artery is blocked, so heart muscle lacks oxygen', 'The heart stops making blood', 'Too many white blood cells', 'Drinking water'], c: 0, e: 'Plaque and a clot block the supply of oxygen-rich blood to the heart muscle.' },
+      { q: 'How many hearts does a squid have?', a: ['Three', 'One', 'Two', 'Four'], c: 0, e: 'Two pump blood to the gills and one pumps it to the rest of the body.' },
+      { q: 'Why does blood become darker red as it travels around the body?', a: ['Its oxygen is given to the cells and replaced by carbon dioxide', 'It gets dirty', 'It starts to clot', 'It cools down'], c: 0, e: 'Oxygenated haemoglobin is bright red; deoxygenated haemoglobin is darker red.' }
+    ],
+    tips: [
+      'Arteries = Away from the heart. Veins return blood to the heart. (Not about oxygen!)',
+      'Trace blood flow in order: vena cava → right atrium → right ventricle → pulmonary artery → lungs → pulmonary vein → left atrium → left ventricle → aorta.',
+      'Compare vessels by wall thickness, elastic tissue, valves and pressure.',
+      'Blood groups: think “which antibodies are in the patient’s plasma?”',
+      'Look for traps: the squid statement in the class quiz is incorrect, because squid have three hearts, not two.'
+    ],
+    facts: [
+      'Your heart beats about 100,000 times a day, and your blood vessels laid end to end would wrap around Earth more than twice.',
+      'Blood makes a full trip around your body in about one minute.',
+      'Octopus blood is blue, because it uses copper instead of iron to carry oxygen.'
+    ]
+  },
   /* ---------------- Diversity ---------------- */
   {
     id: 'living', emoji: '🌱', title: 'Living and Non-living Things', level: 'P3', theme: 'diversity',
