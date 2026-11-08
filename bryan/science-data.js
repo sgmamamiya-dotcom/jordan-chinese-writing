@@ -495,6 +495,106 @@ window.SCI_TOPICS = [
       'Linnaeus named over 12,000 species of plants and animals, including our own: Homo sapiens, “wise human”.'
     ]
   },
+  {
+    id: 'spso6', kind: 'lesson', emoji: '🌿', title: 'SPSO Lesson 6: Ecology', level: 'SPSO', theme: 'spso',
+    videos: [
+      { id: 'c6AR8FoS-k0', title: 'Exploring Pulau Ubin’s ecology: more than just a place to escape to', by: 'The Straits Times' },
+      { id: 'ZiULxLLP32s', title: 'Coral Reefs 101', by: 'National Geographic' },
+      { id: 'mLbDbmmV6Qc', title: 'Eutrophication Explained', by: 'Atlas Pro' },
+      { id: 'ZHCgA-n5wRw', title: 'Are Microplastics in Our Water Becoming a Macroproblem?', by: 'National Geographic' },
+      { id: 'e6rglsLy1Ys', title: 'Air Pollution 101', by: 'National Geographic' },
+      { id: 'cw3uNW8HPrU', title: 'What if Carbon Sequestration Became the New Normal?', by: 'CLEAR Center at UC Davis' },
+      { id: 'DWWU-8_4wu0', title: 'NEWater: A Singapore Success Story', by: 'PUB Singapore' }
+    ],
+    form: 'https://docs.google.com/forms/d/e/1FAIpQLSdyYt_HN1YdGPLODmeIzXGDDjgnADeqmKNPFb9TfurMXcX3nQ/viewform',
+    slides: [
+      { kicker: 'SPSO · Lesson 6', title: 'Ecology', emoji: '🌿',
+        points: ['What ecology studies', 'Food chains, food webs and energy flow', 'Biomagnification', 'Eutrophication and microplastics', 'Air pollution and the greenhouse effect', 'Coral reefs, Pulau Ubin and NEWater: ecology in Singapore'] },
+      { title: 'What is ecology?', emoji: '🔎',
+        cols: [['Ecology', 'The study of how organisms interact with each other and their environment', 'Ecologists ask: who eats whom, who lives where, and why?'], ['Biotic factors', 'The living parts of an ecosystem', 'Plants, animals, fungi, bacteria.'], ['Abiotic factors', 'The non-living parts', 'Light, temperature, water, air, soil. They affect how organisms grow and reproduce.']],
+        note: 'Organism → population (one species) → community (all species) → ecosystem (community + environment).' },
+      { title: 'Food chains', emoji: '🔗',
+        steps: ['Producer (plant)', 'Primary consumer (herbivore)', 'Secondary consumer', 'Tertiary consumer (top predator)'],
+        note: 'Example: plants → grasshopper → frog → snake → eagle. Each arrow means “is eaten by”. Decomposers (bacteria, fungi) break down dead things at every level.' },
+      { title: 'Energy flows one way', emoji: '⚡',
+        points: ['Energy enters an ecosystem as sunlight, captured by producers.', 'Only about 10% of the energy at one level passes to the next. The rest is used for living or lost as heat.', 'So energy is greatest at the bottom (producers) and least at the top (top predators). This is why food chains are short.', 'Energy flow is one-way (unidirectional): it cannot flow back to the sun or to the plants.'] },
+      { title: 'Biomagnification', emoji: '🔺',
+        points: ['Some substances cannot be broken down (non-biodegradable), e.g. the pesticide DDT and mercury.', 'They build up in the bodies of animals that eat them.', 'At each higher level, animals eat many contaminated organisms, so the amount increases up the food chain.', 'Top predators such as eagles and big fish end up with the most. DDT once made eagle eggshells so thin they broke.'] },
+      { title: 'Eutrophication', emoji: '🟢',
+        steps: ['Fertiliser washes into a lake', 'Algae grow very fast (algal bloom)', 'Algae die; bacteria decompose them', 'Bacteria use up the oxygen', 'Fish die'],
+        note: 'Eutrophic lakes have lots of nutrients, frequent blooms of blue-green algae and HIGH productivity at first, but the water ends up with too little oxygen.' },
+      { title: 'Microplastics', emoji: '🧴',
+        points: ['Tiny plastic pieces smaller than 5 mm, from broken-down bottles and bags, synthetic clothes and tyre dust.', 'They are found in oceans, rivers, tap water, sea salt and even inside animals.', 'Small animals eat them, and they pass up food chains.', 'Using less single-use plastic is one of the best ways to help.'] },
+      { title: 'Air pollution and the greenhouse effect', emoji: '🏭',
+        cols: [['Air pollution', 'Harmful substances in the air', 'Smoke, fine dust (PM2.5), sulfur dioxide from vehicles, factories and burning, e.g. haze from forest fires.'], ['Greenhouse effect', 'Gases trap heat and keep Earth warm', 'Without it, Earth would be about −18 °C. Carbon dioxide and methane are greenhouse gases.'], ['Global warming', 'Too much greenhouse gas', 'Burning fuels adds CO₂, so Earth warms, ice melts and sea levels rise.']] },
+      { title: 'Carbon sequestration', emoji: '🌳',
+        points: ['Carbon sequestration means capturing carbon dioxide and storing it so it does not warm the planet.', 'Natural stores: forests, soils, oceans, mangroves and seagrass.', 'Mangroves can store several times more carbon per hectare than many rainforests, in their mud.', 'Scientists are also testing machines and farming methods that pull CO₂ out of the air.'] },
+      { title: 'Coral reefs', emoji: '🪸',
+        points: ['Corals are animals: tiny polyps that build limestone skeletons.', 'Algae living inside them make food by photosynthesis and give corals their colours.', 'Coral reefs cover less than 1% of the ocean floor but are home to about a quarter of all marine species.', 'When the sea gets too warm, corals push out their algae and turn white (coral bleaching).'] },
+      { title: 'Ecology in Singapore', emoji: '🇸🇬',
+        cols: [['Pulau Ubin', 'Mangroves, coastal forest and Chek Jawa wetlands', 'Home to wild boars, hornbills, mudskippers and horseshoe crabs.'], ['Coral reefs', 'Southern islands', 'Singapore’s waters have over 250 kinds of hard coral.'], ['NEWater', 'Used water cleaned to be ultra-pure', 'Microfiltration, reverse osmosis and UV light. One of Singapore’s four “national taps”.']] },
+      { title: 'Animals to know', emoji: '🐧',
+        cols: [['Amphibians', 'Salamanders, frogs and toads', 'Moist skin; most lay eggs in water.'], ['Birds that cannot fly', 'Ostrich, emu, kiwi', 'They are still birds: feathers, beaks, eggs. A bat is a mammal, not a bird.'], ['Polar bears and penguins', 'Never meet in the wild', 'Polar bears live in the Arctic (north); penguins live in the southern hemisphere, mostly around Antarctica.']] },
+      { title: 'Recap', emoji: '✅',
+        points: ['Ecology: organisms interacting with each other and the environment (biotic + abiotic).', 'Energy flows one way; most at the producers, least at the top.', 'Biomagnification: toxins increase up the food chain.', 'Eutrophication: nutrients → algal bloom → no oxygen → fish die.', 'Greenhouse gases keep Earth warm; too much causes global warming.', 'Protect habitats like coral reefs and mangroves.'] }
+    ],
+    summary: [
+      'Ecology is the scientific study of how organisms interact with each other and with their environment.',
+      'An ecosystem has biotic (living) and abiotic (non-living) parts. Abiotic factors such as light, temperature and water affect how organisms grow and reproduce.',
+      'A food chain shows who eats whom, starting with a producer. Each feeding level is a trophic level. Decomposers break down dead organisms and return nutrients to the soil.',
+      'Energy enters as sunlight and flows in one direction only. About 10% passes to the next level, so energy is greatest at the bottom (producers) and least at the top.',
+      'Biomagnification: non-biodegradable substances such as DDT and mercury build up in increasing amounts at each higher level of a food chain.',
+      'Eutrophication: extra nutrients (e.g. fertiliser) cause algal blooms, often of blue-green algae. When the algae die, decomposers use up the oxygen and fish die. Eutrophic lakes have high, not low, productivity.',
+      'Microplastics are plastic pieces smaller than 5 mm. They are now found in water, soil, food and animals, and can pass up food chains.',
+      'Air pollution comes from vehicles, factories and burning. Greenhouse gases keep Earth warm, but extra carbon dioxide from burning fuels causes global warming.',
+      'Carbon sequestration captures and stores carbon dioxide, naturally in forests, soils, oceans and mangroves, or with new technology.',
+      'Coral reefs are built by tiny animals (polyps) that live with algae. They support about a quarter of marine species and are harmed by warming seas (bleaching) and pollution.',
+      'Singapore examples: Pulau Ubin’s mangroves and Chek Jawa wetlands, coral reefs around the southern islands, and NEWater, which recycles used water into ultra-pure water.',
+      'Amphibians include salamanders, frogs and toads. Ostriches, emus and kiwis are flightless birds; bats are mammals. Polar bears (Arctic) and penguins (southern hemisphere) never meet in the wild.'
+    ],
+    terms: [
+      ['Ecology', 'The study of how organisms interact with each other and their environment.'],
+      ['Ecosystem', 'A community of living things together with their non-living environment.'],
+      ['Biotic / Abiotic', 'Living / non-living parts of an ecosystem.'],
+      ['Producer', 'An organism that makes its own food, usually by photosynthesis.'],
+      ['Consumer', 'An organism that eats other organisms.'],
+      ['Decomposer', 'A bacterium or fungus that breaks down dead organisms.'],
+      ['Trophic level', 'A feeding level in a food chain.'],
+      ['Food web', 'Many food chains linked together.'],
+      ['Biomagnification', 'The build-up of toxins in increasing amounts at higher levels of a food chain.'],
+      ['Eutrophication', 'Too many nutrients in water, causing algal blooms and loss of oxygen.'],
+      ['Microplastics', 'Plastic pieces smaller than 5 mm.'],
+      ['Greenhouse effect', 'Gases in the air trapping heat and keeping Earth warm.'],
+      ['Carbon sequestration', 'Capturing carbon dioxide and storing it away.'],
+      ['Coral bleaching', 'Corals turning white when stressed by warm water and losing their algae.'],
+      ['NEWater', 'Singapore’s ultra-clean water made by purifying used water.']
+    ],
+    quiz: [
+      { q: 'Which of these is an abiotic factor?', a: ['Temperature', 'Grass', 'Bacteria', 'A frog'], c: 0, e: 'Abiotic means non-living: light, temperature, water, soil and air.' },
+      { q: 'In the food chain grass → grasshopper → frog → snake, which has the most energy available?', a: ['Grass', 'Grasshopper', 'Frog', 'Snake'], c: 0, e: 'Energy is greatest at the producer level. Only about 10% passes up each level.' },
+      { q: 'Why does energy flow in only one direction?', a: ['Energy is lost as heat at each level and cannot go back', 'Animals refuse to share', 'Plants make energy from nothing', 'Decomposers send it back to the sun'], c: 0, e: 'Energy is used up and lost as heat; it is not recycled. Nutrients are recycled, energy is not.' },
+      { q: 'A lake has DDT in its water. Which animal will have the highest amount of DDT in its body?', a: ['The fish-eating eagle at the top', 'Tiny plankton', 'Small fish', 'Water plants'], c: 0, e: 'Biomagnification: the toxin builds up at each level, so the top predator has the most.' },
+      { q: 'What starts eutrophication in a lake?', a: ['Too many nutrients, such as fertiliser', 'Too much oxygen', 'Too many fish', 'Cold weather'], c: 0, e: 'Nutrients cause an algal bloom; decomposing algae then use up the oxygen.' },
+      { q: 'Microplastics are plastic pieces smaller than…', a: ['5 mm', '5 cm', '50 cm', '5 m'], c: 0, e: 'They are often too small to see easily, so they spread everywhere.' },
+      { q: 'Which gas is mostly responsible for global warming caused by burning fuels?', a: ['Carbon dioxide', 'Oxygen', 'Nitrogen', 'Helium'], c: 0, e: 'Burning coal, oil and gas releases carbon dioxide, a greenhouse gas.' },
+      { q: 'What is coral bleaching?', a: ['Corals turning white when warm water makes them lose their algae', 'People painting reefs white', 'Corals growing extra fast', 'Sand covering the reef'], c: 0, e: 'Without their algae, corals lose their colour and main food source.' },
+      { q: 'Which animal is NOT a bird?', a: ['Bat', 'Ostrich', 'Kiwi', 'Emu'], c: 0, e: 'Bats are mammals: they have fur and feed their young milk. Ostriches, kiwis and emus are flightless birds.' },
+      { q: 'How is NEWater made?', a: ['By purifying used water with filters, reverse osmosis and UV light', 'By melting ice from mountains', 'By collecting rain only', 'By boiling sea water'], c: 0, e: 'Used water is cleaned in stages until it is ultra-pure.' }
+    ],
+    tips: [
+      'Food chain arrows point to the eater (“is eaten by”), showing the direction of energy flow.',
+      'Energy: most at the bottom (producers), least at the top. Toxins (biomagnification): least at the bottom, most at the top.',
+      'Eutrophication in steps: nutrients → algal bloom → algae die → decomposers use oxygen → fish die.',
+      'Do not mix up the greenhouse effect (natural, keeps Earth warm) with global warming (too much of it).',
+      'A flightless bird is still a bird; a flying bat is still a mammal. Classify by features, not by whether it flies.',
+      'In “which is NOT…” questions, check every option before choosing.'
+    ],
+    facts: [
+      'Chek Jawa on Pulau Ubin was due to be reclaimed in 2001, but it was saved after volunteers showed how rich its wildlife was.',
+      'A great whale stores tonnes of carbon in its body. When it dies and sinks to the seabed, that carbon can stay locked away for hundreds of years.',
+      'NEWater is so pure that it is mainly used by wafer-fabrication factories, which need cleaner water than drinking water.'
+    ]
+  },
   /* ---------------- Diversity ---------------- */
   {
     id: 'living', emoji: '🌱', title: 'Living and Non-living Things', level: 'P3', theme: 'diversity',
