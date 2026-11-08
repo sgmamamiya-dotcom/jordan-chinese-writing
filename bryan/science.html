@@ -204,7 +204,7 @@ table.res th{background:#F4F1FF}
         var c = button('topic', null, function () { go('#t=' + t.id); });
         c.style.setProperty('--c', THEMES[t.theme].color);
         var row = el('div', 'row');
-        row.appendChild(el('span', 'lv', t.level + ' · ' + THEMES[t.theme].name));
+        row.appendChild(el('span', 'lv', t.kind === 'lesson' ? THEMES[t.theme].name + ' · Lesson' : t.level + ' · ' + THEMES[t.theme].name));
         if (t.kind === 'lesson') {
           var w = watchedCount(t), lb = best[t.id];
           row.appendChild(el('span', 'st' + (w === t.videos.length && lb === t.quiz.length ? ' done' : ''), !w && lb == null ? 'Start →' : 'Videos ' + w + '/' + t.videos.length + (lb == null ? '' : ' · Quiz ' + lb + '/' + t.quiz.length)));
