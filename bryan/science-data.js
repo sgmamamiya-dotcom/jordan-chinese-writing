@@ -14,7 +14,7 @@ window.SCI_TOPICS = [
   /* ---------------- SPSO lessons: videos + a Google Form quiz ----------------
      To add a lesson, copy this entry and change id, title, videos (YouTube ids) and form. */
   {
-    id: 'spso1', kind: 'lesson', emoji: '🏅', title: 'SPSO Week 1: What is Science?', level: 'SPSO', theme: 'spso',
+    id: 'spso1', kind: 'lesson', emoji: '🏅', title: 'SPSO Lesson 1: What is Science?', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'GyN2RhbhiEU', title: 'What’s the difference between a scientific law and theory?', by: 'TED-Ed' },
       { id: 'wVLaf10T0zI', title: 'What is Science?', by: 'Science Sessions' },
@@ -23,7 +23,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSd_nKSsMQtVPS2jzNAFRVvBOGorOMH0kvakPJoEUT3GcYuK2w/viewform',
     slides: [
-      { kicker: 'SPSO · Week 1', title: 'What is Science?', emoji: '🔬',
+      { kicker: 'SPSO · Lesson 1', title: 'What is Science?', emoji: '🔬',
         points: ['How scientists find things out', 'Explaining like a scientist', 'Two ways of reasoning', 'Laws and theories', 'Galileo: a scientist at work'] },
       { title: 'Science is a process', emoji: '🧭',
         points: ['Science is a way of finding out about the natural world using observation and evidence.', 'It is also the knowledge that this process builds up over time.', 'A scientific question must be testable: we can collect evidence to answer it.'] },
@@ -95,7 +95,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso2', kind: 'lesson', emoji: '⚛️', title: 'SPSO Week 2: Matter and Elements', level: 'SPSO', theme: 'spso',
+    id: 'spso2', kind: 'lesson', emoji: '⚛️', title: 'SPSO Lesson 2: Matter and Elements', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'xazQRcSCRaY', title: 'The 2,400-year search for the atom', by: 'TED-Ed' },
       { id: 'z6vwS0fue6E', title: 'Brownian Motion: Explaining Life’s Randomness', by: 'SciToons' },
@@ -117,7 +117,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLScw2NHw_ya71gJl5QltQbndibNQKnTAXNe2r6M_VGgnGTLONQ/viewform',
     slides: [
-      { kicker: 'SPSO · Week 2', title: 'Matter and Elements', emoji: '⚛️',
+      { kicker: 'SPSO · Lesson 2', title: 'Matter and Elements', emoji: '⚛️',
         points: ['The long search for the atom', 'Evidence that particles are always moving', 'How hot and how cold can things get?', 'More states of matter than solid, liquid and gas', 'Elements and the periodic table'] },
       { title: 'The 2,400-year search for the atom', emoji: '🔍',
         steps: ['Democritus: “atomos”', 'Dalton: atomic theory', 'Thomson: electrons', 'Rutherford: nucleus', 'Bohr: electron shells'],
@@ -197,6 +197,95 @@ window.SCI_TOPICS = [
     ]
   },
 
+  {
+    id: 'spso3', kind: 'lesson', emoji: '🧬', title: 'SPSO Lesson 3: Living Things', level: 'SPSO', theme: 'spso',
+    videos: [
+      { id: 'rgZhDoPgzK8', title: 'What Biologists Do (Crash Course Biology #3)', by: 'CrashCourse' },
+      { id: 'de1hiS_XjWg', title: 'The mysterious origins of life on Earth', by: 'TED-Ed' },
+      { id: 'NNijmxsKGbc', title: 'What Was the Miller–Urey Experiment?', by: 'Stated Clearly' },
+      { id: 'yAXnYcUjn5k', title: 'Insights into cell membranes via dish detergent', by: 'TED-Ed' },
+      { id: 'qYv3tbyquWk', title: 'Introduction to Photosynthesis', by: 'Frank Gregorio' }
+    ],
+    form: 'https://docs.google.com/forms/d/e/1FAIpQLSevOCDJqhvV_g_2eyaEKRyEjpDC5BDpEkwkE7MPl9KBmOjODA/viewform',
+    slides: [
+      { kicker: 'SPSO · Lesson 3', title: 'Living Things', emoji: '🧬',
+        points: ['What makes something alive?', 'Earth 4 billion years ago', 'The Miller–Urey experiment', 'From molecules to the first cells', 'Cell membranes and photosynthesis', 'Are viruses alive?'] },
+      { title: 'What makes something alive? MRS GREN', emoji: '🌱',
+        cols: [['M · R · S', 'Movement, Respiration, Sensitivity', 'Living things move, release energy from food, and respond to changes around them.'], ['G · R', 'Growth, Reproduction', 'They grow and develop, and make more of their own kind.'], ['E · N', 'Excretion, Nutrition', 'They get rid of waste and need food (nutrients) to stay alive.']],
+        note: 'Living things are made of one or more cells.' },
+      { title: 'Growing means building', emoji: '🏗️',
+        points: ['To grow, an organism must take in materials from its environment (food, water, carbon dioxide…).', 'These materials must be changed (transformed) before they can be used to build new cells and tissues. Food is digested; plants turn CO₂ and water into sugar.', 'Organisms follow patterns (instructions in their DNA) to build their structures.', 'Plants keep developing after the embryo stage (post-embryonic development): a tree keeps making new leaves, branches and flowers all its life.'] },
+      { title: 'Earth 4 billion years ago', emoji: '🌋',
+        cols: [['Hot', 'Much hotter than today', 'Volcanoes everywhere, many meteorite impacts and lightning storms.'], ['Poisonous air', 'No free oxygen', 'The air was mostly water vapour, carbon dioxide, nitrogen, and gases such as methane and ammonia. Lots of greenhouse gases kept it warm.'], ['No life yet', 'No ozone layer', 'Strong ultraviolet light reached the surface. The first signs of life appear about 3.5–3.8 billion years ago.']] },
+      { title: 'The Miller–Urey experiment (1952)', emoji: '⚡',
+        steps: ['Gases: water, methane, ammonia, hydrogen', 'Electric sparks (like lightning)', 'Cool and collect', 'Organic molecules form'],
+        note: 'Stanley Miller and Harold Urey made amino acids (the building blocks of proteins) from simple gases, plus substances such as hydrogen cyanide and urea. Sugars like glucose were not produced.' },
+      { title: 'From molecules to the first cells', emoji: '🪜',
+        steps: ['Small organic molecules (amino acids, bases)', 'Join into big molecules (proteins, nucleic acids)', 'Wrapped in membranes (protocells)', 'Molecules that copy themselves (inheritance)'],
+        note: 'The first cells had no nucleus. A nucleus came much later, so “DNA kept inside a nucleus” was not needed for the first life.' },
+      { title: 'Cell membranes', emoji: '🫧',
+        points: ['Every cell is wrapped in a thin cell membrane that keeps its inside different from the outside.', 'The membrane is made of fatty molecules (lipids) in two layers, with water-loving heads and water-fearing tails.', 'Dish detergent breaks up grease, and it breaks up cell membranes too. This is how scientists get DNA out of cells (try it with strawberries!).', 'On early Earth, fatty molecules could form tiny bubbles on their own: possibly the first “cell walls” for life.'] },
+      { title: 'Photosynthesis', emoji: '☀️',
+        points: ['Plants, algae and some bacteria make their own food using light energy.', 'Carbon dioxide + water → (light, chlorophyll) → glucose + oxygen', 'Chlorophyll, the green pigment in chloroplasts, traps the light energy.', 'Tiny ocean bacteria (cyanobacteria) that photosynthesised filled the air with oxygen over hundreds of millions of years, making life like ours possible.'] },
+      { title: 'Are viruses alive?', emoji: '🦠',
+        cols: [['Like living things', 'They have DNA or RNA and can evolve', 'They change over time, which is why we need new flu vaccines.'], ['Unlike living things', 'They are not made of cells', 'They do not feed, grow or respire on their own.'], ['The key reason', 'They cannot reproduce on their own', 'A virus must get inside a living host cell and use it to make copies of itself.']] },
+      { title: 'What biologists do', emoji: '🔬',
+        points: ['Biologists study living things, from molecules and cells to whole ecosystems.', 'They ask questions, observe, form hypotheses and test them, just like in Lesson 1.', 'Their work helps us make medicines, grow food and protect the environment.'] },
+      { title: 'Recap', emoji: '✅',
+        points: ['Living things: MRS GREN, and made of cells.', 'Growth needs materials from outside, transformed before use.', 'Early Earth: hot, poisonous air with lots of greenhouse gases, no oxygen and no life.', 'Miller–Urey: lightning + simple gases → amino acids.', 'First cells: molecules → big molecules → membranes → self-copying.', 'Photosynthesis makes food and oxygen. Viruses need a host cell to reproduce.'] }
+    ],
+    summary: [
+      'Living things show seven characteristics (MRS GREN): movement, respiration, sensitivity, growth, reproduction, excretion and nutrition. They are made of one or more cells.',
+      'To grow, an organism must take in materials from its environment, and these must be transformed (for example, digested or made into sugar) before they can build new tissues.',
+      'Organisms follow patterns, coded in their DNA, to build their structures. Plants keep developing new organs after the embryo stage (post-embryonic development).',
+      'About 4 billion years ago, Earth was much hotter, with volcanoes, lightning and meteorite impacts. The air had no free oxygen, contained poisonous gases and had lots of greenhouse gases. There was no life yet.',
+      'In 1952, Stanley Miller and Harold Urey passed electric sparks through water, methane, ammonia and hydrogen. They made amino acids and other organic molecules such as hydrogen cyanide and urea, but not sugars like glucose.',
+      'Scientists think life arose in stages: small organic molecules formed; they joined into large molecules such as proteins and nucleic acids; these were packaged inside membranes; and molecules that could copy themselves made inheritance possible.',
+      'The first cells had no nucleus, so DNA inside a nucleus was not a necessary condition for the first life.',
+      'A cell membrane is a double layer of fatty molecules that separates the inside of a cell from its surroundings. Detergent breaks it apart, which is how DNA can be extracted from cells.',
+      'Photosynthesis: plants use light energy, trapped by chlorophyll, to turn carbon dioxide and water into glucose and oxygen. Photosynthesising bacteria gave Earth its oxygen-rich air.',
+      'Viruses are usually called non-living because they cannot reproduce on their own: they must use a host cell. They are not cells, but they do contain DNA or RNA and can evolve.'
+    ],
+    terms: [
+      ['Organism', 'A living thing.'],
+      ['MRS GREN', 'Movement, Respiration, Sensitivity, Growth, Reproduction, Excretion, Nutrition: the characteristics of living things.'],
+      ['Cell', 'The basic unit of life. All living things are made of one or more cells.'],
+      ['Organic molecule', 'A carbon-based molecule found in living things, e.g. amino acids, sugars, fats.'],
+      ['Amino acid', 'A small molecule that joins with others to build proteins.'],
+      ['Nucleic acid', 'A large molecule that carries genetic information: DNA or RNA.'],
+      ['Miller–Urey experiment', 'A 1952 experiment that made amino acids from simple gases and electric sparks, imitating early Earth.'],
+      ['Protocell', 'A simple bubble with a membrane around chemicals: a possible step towards the first cells.'],
+      ['Cell membrane', 'The thin, fatty layer around a cell that controls what goes in and out.'],
+      ['Photosynthesis', 'Using light energy to make glucose and oxygen from carbon dioxide and water.'],
+      ['Chlorophyll', 'The green substance in plants that traps light energy for photosynthesis.'],
+      ['Virus', 'A tiny particle of DNA or RNA in a protein coat that can only reproduce inside a host cell.']
+    ],
+    quiz: [
+      { q: 'Which of these is NOT one of the characteristics of living things (MRS GREN)?', a: ['Being made of metal', 'Respiration', 'Sensitivity', 'Excretion'], c: 0, e: 'MRS GREN: movement, respiration, sensitivity, growth, reproduction, excretion, nutrition.' },
+      { q: 'A seedling grows into a plant. What must happen to the materials it takes in?', a: ['They must be changed before they can build new tissues', 'They are used exactly as they are', 'They are stored but never used', 'They are passed out as waste'], c: 0, e: 'Plants turn CO₂ and water into sugar, then into new cells. Materials are always transformed before they are built in.' },
+      { q: 'What was Earth like 4 billion years ago?', a: ['Very hot, with no free oxygen in the air', 'Cool, with lots of oxygen', 'Covered in forests', 'Just like today'], c: 0, e: 'Early Earth was hot and volcanic, and its air had no free oxygen.' },
+      { q: 'In the Miller–Urey experiment, what did the electric sparks stand for?', a: ['Lightning', 'Sunlight', 'Volcanoes', 'Rain'], c: 0, e: 'The sparks gave energy, like lightning storms on early Earth.' },
+      { q: 'Which molecules did the Miller–Urey experiment famously produce?', a: ['Amino acids', 'Glucose', 'DNA', 'Whole cells'], c: 0, e: 'Amino acids, the building blocks of proteins. It did not make sugars like glucose, DNA or cells.' },
+      { q: 'Put these steps towards the first cells in order: (1) molecules inside membranes, (2) small organic molecules, (3) large molecules like proteins.', a: ['2 → 3 → 1', '1 → 2 → 3', '3 → 2 → 1', '2 → 1 → 3'], c: 0, e: 'Small molecules form first, then join into large ones, which are later packaged inside membranes.' },
+      { q: 'Why does dish detergent help scientists extract DNA from cells?', a: ['It breaks apart the fatty cell membranes', 'It makes DNA glow', 'It feeds the cells', 'It turns DNA into protein'], c: 0, e: 'Membranes are made of fatty molecules, and detergent breaks up fat, so the cell opens and releases its DNA.' },
+      { q: 'What are the products of photosynthesis?', a: ['Glucose and oxygen', 'Carbon dioxide and water', 'Oxygen and carbon dioxide', 'Glucose and carbon dioxide'], c: 0, e: 'Carbon dioxide + water → glucose + oxygen, using light energy.' },
+      { q: 'Where did most of the oxygen in Earth’s air come from?', a: ['Photosynthesis by bacteria and plants', 'Volcanoes', 'Lightning', 'Meteorites'], c: 0, e: 'Photosynthesising bacteria (cyanobacteria), then algae and plants, slowly filled the air with oxygen.' },
+      { q: 'Why are viruses usually called non-living?', a: ['They cannot reproduce on their own', 'They cannot change over time', 'They have no DNA or RNA', 'They cannot be destroyed'], c: 0, e: 'A virus must invade a host cell to make copies of itself. Viruses do have DNA or RNA and can evolve.' }
+    ],
+    tips: [
+      'Learn MRS GREN: you can be asked to explain why something is or is not living.',
+      'Early Earth: hot, no free oxygen, poisonous gases and MORE greenhouse gases than today.',
+      'Miller–Urey made amino acids, not glucose, DNA or cells.',
+      'Photosynthesis: name both the reactants (carbon dioxide, water) and the products (glucose, oxygen), plus light and chlorophyll.',
+      'Viruses: the key reason they are “non-living” is that they cannot reproduce without a host cell.',
+      'Watch for “NOT” and “FALSE” in questions: underline them before choosing.'
+    ],
+    facts: [
+      'The oldest signs of life are about 3.5 billion years old: layered rocks called stromatolites, built by mats of bacteria.',
+      'Stanley Miller kept his old samples. In 2008, scientists tested them with modern equipment and found more than 20 amino acids.',
+      'You can see your own DNA at home: mash strawberries with salt water and detergent, then add cold rubbing alcohol, and white strands of DNA appear.'
+    ]
+  },
   /* ---------------- Diversity ---------------- */
   {
     id: 'living', emoji: '🌱', title: 'Living and Non-living Things', level: 'P3', theme: 'diversity',
