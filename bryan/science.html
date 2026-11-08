@@ -140,6 +140,11 @@ table.res th{background:#F4F1FF}
 .sdots button{width:14px;height:14px;border-radius:50%;border:2px solid #0F766E;background:#fff;padding:0;cursor:pointer}
 .sdots button[aria-current="true"]{background:#0F766E}
 .sbtn:disabled{opacity:.4;cursor:default}
+.act{border:2px solid #d8dde4;border-radius:14px;padding:12px 14px;margin-bottom:14px;background:#fff}
+.act h3{font-family:var(--display);font-weight:800;font-size:20px;margin:0}
+.act .by{margin:0 0 6px;color:var(--mute);font-size:14px}
+.actframe{position:relative;aspect-ratio:16/10;border-radius:12px;overflow:hidden;background:#000;margin:8px 0}
+.actframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .formbox{border:2px solid #d8dde4;border-radius:14px;overflow:hidden;background:#fff}
 .formbox iframe{display:block;width:100%;height:1400px;border:0}
 @media(prefers-reduced-motion:reduce){.meter span{transition:none}}
@@ -160,10 +165,10 @@ table.res th{background:#F4F1FF}
     ['quiz', '❓', 'Quiz'], ['tips', '🎯', 'Exam tips'], ['facts', '💡', 'Fun facts']
   ];
   var LESSON_SECTIONS = [
-    ['slides', '🖼️', 'Lesson slides'], ['videos', '🎬', 'Videos'], ['summary', '📝', 'Summary'], ['terms', '🔤', 'Key words'],
+    ['slides', '🖼️', 'Lesson slides'], ['videos', '🎬', 'Videos'], ['play', '🕹️', 'Try it yourself'], ['summary', '📝', 'Summary'], ['terms', '🔤', 'Key words'],
     ['quiz', '❓', 'Practice quiz'], ['form', '📋', 'Class quiz'], ['tips', '🎯', 'Exam tips'], ['facts', '💡', 'Fun facts']
   ];
-  function sectionsFor(t) { return t.kind === 'lesson' ? LESSON_SECTIONS : SECTIONS.filter(function (s) { return s[0] !== 'experiment' || window.SCI_SIMS[t.id]; }); }
+  function sectionsFor(t) { return t.kind === 'lesson' ? LESSON_SECTIONS.filter(function (s) { return s[0] !== 'play' || t.activities; }) : SECTIONS.filter(function (s) { return s[0] !== 'experiment' || window.SCI_SIMS[t.id]; }); }
   var BEST_KEY = 'sci_best_v1', FILTER_KEY = 'sci_level_v1', WATCH_KEY = 'sci_watched_v1';
   function read(k, d) { try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } }
   function write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
@@ -233,7 +238,7 @@ table.res th{background:#F4F1FF}
       var d = button('door', null, function () { go('#t=' + t.id + '&s=' + s[0]); });
       d.appendChild(el('div', 'icon', s[1]));
       d.appendChild(el('h3', null, s[2]));
-      var sub = t.kind === 'lesson' ? { slides: t.slides.length + ' slides to go through', videos: t.videos.length + ' videos · ' + watchedCount(t) + ' watched', summary: t.summary.length + ' key points', terms: t.terms.length + ' flip cards', quiz: best[t.id] == null ? t.quiz.length + ' questions' : 'Best score: ' + best[t.id] + '/' + t.quiz.length, form: 'The class Google Form', tips: 'Common mistakes to avoid', facts: t.facts.length + ' surprising facts' }[s[0]] : { experiment: t.sim, summary: t.summary.length + ' key points', terms: t.terms.length + ' flip cards', quiz: best[t.id] == null ? t.quiz.length + ' questions' : 'Best score: ' + best[t.id] + '/' + t.quiz.length, tips: 'Common mistakes to avoid', facts: t.facts.length + ' surprising facts' }[s[0]];
+      var sub = t.kind === 'lesson' ? { slides: t.slides.length + ' slides to go through', play: (t.activities || []).length + ' interactive activities', videos: t.videos.length + ' videos · ' + watchedCount(t) + ' watched', summary: t.summary.length + ' key points', terms: t.terms.length + ' flip cards', quiz: best[t.id] == null ? t.quiz.length + ' questions' : 'Best score: ' + best[t.id] + '/' + t.quiz.length, form: 'The class Google Form', tips: 'Common mistakes to avoid', facts: t.facts.length + ' surprising facts' }[s[0]] : { experiment: t.sim, summary: t.summary.length + ' key points', terms: t.terms.length + ' flip cards', quiz: best[t.id] == null ? t.quiz.length + ' questions' : 'Best score: ' + best[t.id] + '/' + t.quiz.length, tips: 'Common mistakes to avoid', facts: t.facts.length + ' surprising facts' }[s[0]];
       d.appendChild(el('p', null, sub));
       d.appendChild(el('span', 'enter', 'Open →'));
       grid.appendChild(d);
@@ -254,7 +259,7 @@ table.res th{background:#F4F1FF}
     app.appendChild(tabs);
     var p = el('section', 'panel'), S = sectionsFor(t).filter(function (s) { return s[0] === sec; })[0];
     p.appendChild(el('h2', null, S[1] + ' ' + S[2]));
-    ({ experiment: experiment, summary: summary, terms: terms, quiz: quiz, tips: tips, facts: facts, videos: videos, form: form, slides: slides })[sec](t, p);
+    ({ experiment: experiment, summary: summary, terms: terms, quiz: quiz, tips: tips, facts: facts, videos: videos, form: form, slides: slides, play: play })[sec](t, p);
     app.appendChild(p);
   }
   function experiment(t, p) {
@@ -286,6 +291,24 @@ table.res th{background:#F4F1FF}
     });
     p.appendChild(list);
     p.appendChild(button('sbtn', '❓ Try the practice quiz →', function () { go('#t=' + t.id + '&s=quiz'); }));
+  }
+  // Interactive activities from other websites: a card each, embedded when the site allows it.
+  function play(t, p) {
+    p.appendChild(el('p', 'intro', 'Try these online activities. They are needed for some questions in the class quiz.'));
+    t.activities.forEach(function (a) {
+      var box = el('div', 'act');
+      box.appendChild(el('h3', null, a.title));
+      box.appendChild(el('p', 'by', a.by));
+      box.appendChild(el('p', null, a.what));
+      if (a.embed) {
+        var fr = el('div', 'actframe'), ifr = document.createElement('iframe');
+        ifr.src = a.url; ifr.title = a.title; ifr.loading = 'lazy'; ifr.allow = 'fullscreen'; ifr.setAttribute('allowfullscreen', '');
+        fr.appendChild(ifr); box.appendChild(fr);
+      }
+      var link = el('a', 'formlink', (a.embed ? 'Open full screen' : 'Open the activity') + ' ↗'); link.href = a.url; link.target = '_blank'; link.rel = 'noopener';
+      box.appendChild(link);
+      p.appendChild(box);
+    });
   }
   function form(t, p) {
     var link = el('a', 'formlink', 'Open the quiz in a new tab ↗'); link.href = t.form; link.target = '_blank'; link.rel = 'noopener';

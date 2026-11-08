@@ -94,6 +94,108 @@ window.SCI_TOPICS = [
       'The word “scientist” was only invented in the 1830s. Before that, people who studied nature were often called “natural philosophers”.'
     ]
   },
+  {
+    id: 'spso2', kind: 'lesson', emoji: '⚛️', title: 'SPSO Week 2: Matter and Elements', level: 'SPSO', theme: 'spso',
+    videos: [
+      { id: 'xazQRcSCRaY', title: 'The 2,400-year search for the atom', by: 'TED-Ed' },
+      { id: 'z6vwS0fue6E', title: 'Brownian Motion: Explaining Life’s Randomness', by: 'SciToons' },
+      { id: '1xxsgnEvEfE', title: 'What’s the Hottest Hot and Coldest Cold?', by: 'Be Smart' },
+      { id: '-CCjNfyvEEs', title: 'Journey to Absolute Zero', by: 'JG Online' },
+      { id: 'AVEGJZxglIg', title: 'Plasma, the Most Common Phase of Matter in the Universe', by: 'SciShow' },
+      { id: '3mfr5FO6Oko', title: 'Bose–Einstein Condensate: Fifth State of Matter', by: 'Hemant Gupta' },
+      { id: 'nAJgchCI3kg', title: 'Liquid Crystals', by: 'National Science Foundation' },
+      { id: 'O-48znAg7VE', title: 'Solving the puzzle of the periodic table', by: 'TED-Ed' },
+      { id: 'fPnwBITSmgU', title: 'The genius of Mendeleev’s periodic table', by: 'TED-Ed' },
+      { id: 'uPkEGAHo78o', title: 'Periodic Table Explained: Introduction', by: 'AtomicSchool' },
+      { id: 'xgC5zgr6Hdc', title: 'How does a superconductor work? (optional, for quiz questions 7 and 8)', by: 'Scitic short' }
+    ],
+    activities: [
+      { title: 'Dalton’s Playhouse', by: 'Visionlearning', url: 'https://www.visionlearning.com/library/animations/daltons_playhouse/',
+        what: 'Re-run famous experiments from the history of chemistry. Compare the total mass before and after each reaction. This is for question 5 of the class quiz.' },
+      { title: 'Diffusion', by: 'PhET, University of Colorado', url: 'https://phet.colorado.edu/sims/html/diffusion/latest/diffusion_en.html', embed: true,
+        what: 'Remove the divider and watch two gases spread out. Change the temperature, the mass of the particles and how many there are. Which changes make diffusion faster? This is for question 6 of the class quiz.' }
+    ],
+    form: 'https://docs.google.com/forms/d/e/1FAIpQLScw2NHw_ya71gJl5QltQbndibNQKnTAXNe2r6M_VGgnGTLONQ/viewform',
+    slides: [
+      { kicker: 'SPSO · Week 2', title: 'Matter and Elements', emoji: '⚛️',
+        points: ['The long search for the atom', 'Evidence that particles are always moving', 'How hot and how cold can things get?', 'More states of matter than solid, liquid and gas', 'Elements and the periodic table'] },
+      { title: 'The 2,400-year search for the atom', emoji: '🔍',
+        steps: ['Democritus: “atomos”', 'Dalton: atomic theory', 'Thomson: electrons', 'Rutherford: nucleus', 'Bohr: electron shells'],
+        note: 'Around 400 BC, Democritus guessed that matter is made of tiny pieces that cannot be cut (“atomos”). It took until about 1800 for John Dalton to support the idea with evidence from experiments.' },
+      { title: 'Dalton’s atomic theory (about 1803)', emoji: '🧱',
+        points: ['All matter is made of tiny particles called atoms.', 'Atoms of the same element are alike; atoms of different elements are different.', 'Atoms join in fixed ratios to make compounds, e.g. water is always H₂O.', 'In a chemical reaction, atoms are rearranged. They are not created or destroyed.'] },
+      { title: 'Mass is conserved', emoji: '⚖️',
+        cols: [['Law', 'Conservation of mass', 'In a closed container, the total mass before a reaction equals the total mass after it.'], ['Who', 'Antoine Lavoisier', 'Called the “father of modern chemistry”. He weighed everything very carefully, before and after.'], ['Why', 'Atoms are rearranged', 'No atoms are lost or gained, so the total mass stays the same.']],
+        note: 'If a reaction gives off a gas and the container is open, the gas escapes, so it looks like mass was lost. In a sealed container, the mass stays the same.' },
+      { title: 'Particles never stop moving', emoji: '🔬',
+        points: ['Brownian motion: tiny specks (e.g. from pollen) in water jiggle about randomly.', 'In 1905, Einstein explained it: invisible water molecules keep bumping into the specks from all sides.', 'This was strong evidence that atoms and molecules really exist.', 'Diffusion: particles spread out from where there are many to where there are few.', 'Diffusion is faster at a higher temperature, with a bigger difference in concentration, and with lighter particles.'] },
+      { title: 'How hot? How cold?', emoji: '🌡️',
+        cols: [['Temperature', 'How fast particles move', 'Hotter means the particles move faster.'], ['Absolute zero', '0 K = −273.15 °C', 'The coldest possible temperature, where particles have the least possible motion. It can be approached but never quite reached.'], ['Very hot', 'Trillions of degrees', 'Particle colliders have briefly made matter trillions of degrees hot.']] },
+      { title: 'More states of matter', emoji: '✨',
+        cols: [['Plasma', 'A gas so hot that electrons are pulled off its atoms', 'Made of ions and free electrons. Conducts electricity very well. Found in the Sun, stars, lightning and neon signs.'], ['Bose–Einstein condensate', 'Atoms cooled to a tiny fraction above absolute zero', 'The atoms act together like one “super atom”. First made in 1995.'], ['Liquid crystal', 'Flows like a liquid, but its molecules line up like a crystal', 'Used in LCD screens: an electric field changes how the molecules line up.']] },
+      { title: 'Strange things at very low temperatures', emoji: '🧊',
+        points: ['Superfluid: a liquid with no viscosity (no friction) at very low temperature. Liquid helium below about −271 °C can even creep up the walls of its container.', 'Superconductor: a material with zero electrical resistance when cooled below a certain temperature.', 'Superconductors push magnetic fields out, so a magnet can float above one.', 'Examples: mercury (the first, found in 1911), niobium–titanium in MRI scanners, and YBCO, which works with liquid nitrogen.'] },
+      { title: 'The periodic table', emoji: '🗂️',
+        points: ['An element is a pure substance that cannot be broken down into simpler substances. There are 118 known elements.', 'In 1869, Mendeleev arranged the elements by atomic mass and put elements with similar properties in the same column.', 'He left gaps and predicted elements not yet found, such as gallium and germanium. When they were discovered, they matched his predictions.', 'Today the elements are arranged by atomic number (the number of protons).'] },
+      { title: 'Reading the table', emoji: '🧭',
+        cols: [['Rows', 'Periods', 'Argon is in period 3 (row 3), at the end of the row.'], ['Columns', 'Groups', 'Elements in a group behave alike. Copper, silver and gold are all in group 11.'], ['Metals vs non-metals', 'Most elements are metals', 'Metals are on the left and in the middle. Non-metals, including hydrogen, are at the top right.']] },
+      { title: 'Recap', emoji: '✅',
+        points: ['Dalton: matter is made of atoms that are rearranged, not created or destroyed, in reactions.', 'Lavoisier: mass is conserved in a closed system.', 'Brownian motion and diffusion show that particles are always moving.', 'Plasma, Bose–Einstein condensates, liquid crystals and superfluids are unusual states of matter.', 'Mendeleev’s table grouped similar elements and predicted missing ones.'] }
+    ],
+    summary: [
+      'Around 400 BC, Democritus suggested that matter is made of tiny, uncuttable pieces called “atomos”. Around 1800, John Dalton used experiments to support the idea, in his atomic theory.',
+      'Dalton’s atomic theory: all matter is made of atoms; atoms of one element are alike; atoms join in fixed ratios to form compounds; in reactions, atoms are rearranged but not created or destroyed.',
+      'Later scientists found that atoms have smaller parts: electrons (Thomson), a tiny dense nucleus (Rutherford) and electrons in shells (Bohr).',
+      'Antoine Lavoisier, the “father of modern chemistry”, showed that mass is conserved: in a closed system, the total mass before a reaction equals the total mass after it.',
+      'An element cannot be broken down into simpler substances. A compound is two or more elements chemically joined in a fixed ratio. Both elements and compounds are pure substances.',
+      'Brownian motion is the random jiggling of tiny specks in a liquid or gas, caused by molecules bumping into them. Einstein explained it in 1905, giving strong evidence that molecules exist.',
+      'Diffusion is the spreading of particles from a region where there are more of them to a region where there are fewer. It is faster at a higher temperature, with a bigger concentration difference and with lighter particles.',
+      'Temperature measures how fast particles move. Absolute zero (0 K, −273.15 °C) is the coldest possible temperature.',
+      'Besides solid, liquid and gas, there are other states of matter: plasma (ions and free electrons, found in stars and lightning), Bose–Einstein condensates (atoms near absolute zero acting as one), and liquid crystals (used in LCD screens).',
+      'At very low temperatures, superfluids flow with no viscosity, and superconductors carry electricity with zero resistance.',
+      'In 1869, Mendeleev arranged the elements into a periodic table, grouping elements with similar properties and leaving gaps for elements still to be discovered. Rows are periods, columns are groups, and most elements are metals.'
+    ],
+    terms: [
+      ['Atom', 'The smallest particle of an element that still has the properties of that element.'],
+      ['Element', 'A pure substance that cannot be broken down into simpler substances, e.g. oxygen, copper.'],
+      ['Compound', 'A pure substance made of two or more elements chemically joined in a fixed ratio, e.g. water.'],
+      ['Conservation of mass', 'In a closed system, the total mass stays the same during a chemical reaction.'],
+      ['Brownian motion', 'The random jiggling of tiny specks in a liquid or gas, caused by molecules hitting them.'],
+      ['Diffusion', 'The spreading of particles from where there are more of them to where there are fewer.'],
+      ['Absolute zero', '0 K or −273.15 °C: the coldest possible temperature.'],
+      ['Plasma', 'A very hot state of matter made of ions and free electrons. It conducts electricity well.'],
+      ['Bose–Einstein condensate', 'A state of matter made by cooling atoms to almost absolute zero, so they act like one big atom.'],
+      ['Liquid crystal', 'A substance that flows like a liquid but whose molecules line up like a crystal. Used in LCD screens.'],
+      ['Superfluid', 'A liquid that flows with no viscosity (no friction), found at very low temperatures.'],
+      ['Superconductor', 'A material with zero electrical resistance below a certain very low temperature.'],
+      ['Period / Group', 'A row / a column of the periodic table. Elements in the same group have similar properties.']
+    ],
+    quiz: [
+      { q: 'Who first suggested that matter is made of tiny pieces that cannot be cut, about 2,400 years ago?', a: ['Democritus', 'John Dalton', 'Isaac Newton', 'Dmitri Mendeleev'], c: 0, e: 'Democritus called them “atomos”, meaning uncuttable. Dalton gave the idea experimental support around 1800.' },
+      { q: '10 g of iron and 6 g of sulfur react completely in a sealed tube. What is the mass of the product?', a: ['16 g', '10 g', '4 g', 'Less than 16 g, because some atoms are destroyed'], c: 0, e: 'Mass is conserved: atoms are rearranged, not destroyed, so 10 g + 6 g = 16 g.' },
+      { q: 'What causes Brownian motion?', a: ['Molecules of the liquid bumping into the tiny specks', 'The specks are alive and swimming', 'Light pushing the specks', 'Magnetism in the water'], c: 0, e: 'Invisible, fast-moving molecules hit the specks unevenly from all sides, making them jiggle.' },
+      { q: 'Which change makes a gas diffuse more slowly?', a: ['Lowering the temperature', 'Using lighter particles', 'Making the concentration difference bigger', 'Heating the gas'], c: 0, e: 'At a lower temperature, particles move more slowly, so they spread out more slowly.' },
+      { q: 'What is absolute zero?', a: ['−273.15 °C, the coldest possible temperature', '0 °C, the freezing point of water', '−100 °C', 'The temperature of outer space near the Sun'], c: 0, e: '0 K = −273.15 °C. It can be approached but never quite reached.' },
+      { q: 'Which statement about plasma is NOT correct?', a: ['LCD screens are made of plasma', 'Plasma is made of ions and free electrons', 'Lightning is plasma', 'Plasma conducts electricity well'], c: 0, e: 'LCD screens use liquid crystals, not plasma. (Old “plasma TVs” were a different technology.)' },
+      { q: 'A Bose–Einstein condensate is made by…', a: ['cooling atoms to almost absolute zero', 'heating a gas until electrons come off', 'dissolving salt in water', 'squeezing a liquid very hard'], c: 0, e: 'Near absolute zero, the atoms lose almost all their motion and start to act together like one big atom.' },
+      { q: 'A superconductor is a material that…', a: ['has zero electrical resistance when cooled enough', 'conducts heat but not electricity', 'is a very good insulator', 'only works at very high temperatures'], c: 0, e: 'Below its critical temperature, current flows with no resistance, and a magnet can float above it.' },
+      { q: 'Why was Mendeleev’s periodic table so impressive?', a: ['He left gaps and correctly predicted elements not yet discovered', 'He discovered all the elements himself', 'He arranged elements in alphabetical order', 'He proved that atoms have a nucleus'], c: 0, e: 'For example, he predicted “eka-silicon”, later found as germanium, with almost exactly the properties he described.' },
+      { q: 'Which statement about the periodic table is correct?', a: ['Most elements are metals', 'Hydrogen is a metal', 'Argon is in row 4', 'Copper, silver and gold are in different groups'], c: 0, e: 'About three-quarters of elements are metals. Hydrogen is a non-metal, argon is in period 3, and copper, silver and gold are all in group 11.' }
+    ],
+    tips: [
+      'Element vs compound: an element cannot be broken down; a compound can, by a chemical reaction. Both are pure substances.',
+      'When mass seems to change in a reaction, look for a gas escaping (or entering) an open container.',
+      'Diffusion factors: temperature, concentration difference and particle mass. Name all three.',
+      'Do not mix up plasma and liquid crystals: LCD = Liquid Crystal Display.',
+      'Absolute zero is −273 °C (0 K), not 0 °C.',
+      'Periods are rows (across); groups are columns (down). Remember: “Groups go down.”'
+    ],
+    facts: [
+      'Over 99% of the visible matter in the universe is plasma, because stars are made of it.',
+      'The Large Hadron Collider has made matter over 5 trillion °C hot, hotter than the centre of the Sun by hundreds of thousands of times.',
+      'Lavoisier named oxygen and hydrogen, and wrote one of the first lists of elements.'
+    ]
+  },
 
   /* ---------------- Diversity ---------------- */
   {
