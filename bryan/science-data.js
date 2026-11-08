@@ -286,6 +286,112 @@ window.SCI_TOPICS = [
       'You can see your own DNA at home: mash strawberries with salt water and detergent, then add cold rubbing alcohol, and white strands of DNA appear.'
     ]
   },
+  {
+    id: 'spso4', kind: 'lesson', emoji: '🧂', title: 'SPSO Lesson 4: Chemicals and Chemical Bonds', level: 'SPSO', theme: 'spso',
+    videos: [
+      { id: 'TYEYEIuTmGQ', title: 'Atomic Structure and Electrons', by: 'Whats Up Dude' },
+      { id: 'hePb00CqvP0', title: 'The Periodic Table: Atomic Radius, Ionization Energy, and Electronegativity', by: 'Professor Dave Explains' },
+      { id: 'qNaBMvJXdJ4', title: 'Noble Gases: the Gases in Group 18', by: 'FuseSchool' },
+      { id: 'NgD9yHSJ29I', title: 'How atoms bond (for class quiz question 2)', by: 'TED-Ed' },
+      { id: 'lP_EsVY4CVg', title: 'Chemical Bonds: Ionic and Covalent', by: 'Ysci' },
+      { id: 'ji_25I_q4LQ', title: 'Making table salt using sodium metal and chlorine gas', by: 'NileRed' },
+      { id: 'X7b8_9wAREE', title: 'Alloy metals and their components', by: 'Study’n’Learn' },
+      { id: 'eHCuJjIBIpY', title: 'Techniques in Separating Mixtures (with actual laboratory videos)', by: 'Science Simplified' },
+      { id: 'XfSopnqrHOs', title: 'Chromatography', by: 'Quick Biochemistry Basics' },
+      { id: 'rz4Dd1I_fX0', title: 'The Periodic Table Song (2018 Update!)', by: 'AsapSCIENCE' }
+    ],
+    activities: [
+      { title: 'Build an Atom', by: 'PhET, University of Colorado', url: 'https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_en.html', embed: true,
+        what: 'Drag protons, neutrons and electrons into the atom. Watch how the element, the charge and the mass change. Try to build a neutral carbon atom, then a sodium ion (Na⁺).' }
+    ],
+    form: 'https://docs.google.com/forms/d/e/1FAIpQLSdWVR7LyXh1fnNFGyCmvr78pvk1905UQqhfrD1oGFHJ56uczQ/viewform',
+    slides: [
+      { kicker: 'SPSO · Lesson 4', title: 'Chemicals and Chemical Bonds', emoji: '🧂',
+        points: ['Inside an atom', 'Reading the periodic table', 'Noble gases: the “happy” atoms', 'Ionic and covalent bonds', 'Elements, compounds, mixtures and alloys', 'Separating mixtures'] },
+      { title: 'Inside an atom', emoji: '⚛️',
+        cols: [['Proton', 'Positive (+), in the nucleus', 'The number of protons decides which element it is (the atomic number).'], ['Neutron', 'No charge, in the nucleus', 'Adds mass. Protons + neutrons = mass number.'], ['Electron', 'Negative (−), in shells around the nucleus', 'Shells fill up as 2, then 8, then 8. A neutral atom has as many electrons as protons.']],
+        note: 'The electrons in the outermost shell are called valence electrons. They decide how an atom bonds.' },
+      { title: 'Reading the periodic table', emoji: '🗂️',
+        cols: [['Period (row)', 'Number of electron shells', 'Sodium is in period 3, so it has 3 shells: 2, 8, 1.'], ['Group (column)', 'Same number of valence electrons', 'Group 1 elements have 1 outer electron; group 17 have 7.'], ['Trends', 'Across a row, atoms get smaller and hold electrons more tightly', 'Down a group, atoms get bigger and lose outer electrons more easily.']] },
+      { title: 'Noble gases (group 18)', emoji: '🎈',
+        points: ['Helium, neon, argon, krypton, xenon and radon.', 'Their outer shell is full: 8 valence electrons (helium has 2, which fills its only shell).', 'A full outer shell makes them very stable, so they hardly react. They exist as single atoms.', 'Uses: helium in balloons, neon in glowing signs, argon inside light bulbs and for welding.'] },
+      { title: 'Why atoms bond', emoji: '🤝',
+        points: ['Most atoms do not have a full outer shell.', 'They become stable, like a noble gas, by losing, gaining or sharing electrons.', 'This is the “octet rule”: atoms tend to end up with 8 electrons in their outer shell.', 'The way they do it gives two main kinds of bond: ionic and covalent.'] },
+      { title: 'Ionic bond: giving and taking', emoji: '🧲',
+        steps: ['Na (2,8,1) gives away 1 electron', 'Cl (2,8,7) takes 1 electron', 'Na⁺ (2,8) and Cl⁻ (2,8,8)', 'Opposite charges attract'],
+        note: 'Both ions now have 8 electrons in their outer shell. Millions of Na⁺ and Cl⁻ ions stack into a cubic crystal: table salt. Ionic bonds usually form between a metal and a non-metal.' },
+      { title: 'Covalent bond: sharing', emoji: '🫱🏻‍🫲🏽',
+        points: ['Non-metal atoms share pairs of electrons so that each gets a full outer shell.', 'Methane (CH₄): carbon shares one pair with each of 4 hydrogen atoms (4 covalent bonds).', 'Water (H₂O) and carbon dioxide (CO₂) are covalent too.', 'Some elements exist as molecules of two atoms (diatomic): H₂, N₂, O₂, Cl₂. Oxygen gas is O₂, held by a double covalent bond.'] },
+      { title: 'A compound is totally different from its elements', emoji: '🔥',
+        cols: [['Sodium', 'Soft, shiny metal', 'Reacts violently with water.'], ['Chlorine', 'Green, poisonous gas', 'Was even used as a weapon.'], ['Sodium chloride', 'Table salt', 'Safe to eat! The compound has completely new properties.']] },
+      { title: 'Elements, compounds, mixtures', emoji: '🧪',
+        cols: [['Element', 'One kind of atom', 'Cannot be broken down into simpler substances. A pure substance.'], ['Compound', 'Elements chemically bonded in a fixed ratio', 'e.g. water H₂O, salt NaCl, cane sugar (sucrose) C₁₂H₂₂O₁₁. Also a pure substance.'], ['Mixture', 'Substances mixed but not chemically joined', 'Can be separated by physical methods, e.g. salt water, air.']],
+        note: 'Allotropes are different forms of the same element: diamond, graphite and buckyballs (carbon); white, red and black phosphorus.' },
+      { title: 'Alloys', emoji: '⚙️',
+        points: ['An alloy is a mixture of a metal with other elements.', 'Steel = iron + carbon (stronger). Stainless steel = iron + chromium + nickel (does not rust). Brass = copper + zinc. Bronze = copper + tin.', 'Different-sized atoms stop the layers of metal atoms sliding easily, so alloys are usually harder and stronger.', 'Many alloys resist rusting and corrosion better than the pure metal.'] },
+      { title: 'Separating mixtures', emoji: '🧫',
+        cols: [['Filtration / sieving', 'Insoluble solid from a liquid, or big bits from small', 'Sand from water.'], ['Evaporation / distillation', 'Using boiling', 'Salt from salt water (evaporation); pure water from sea water (distillation).'], ['Chromatography', 'Separating dyes', 'Different dyes travel up the paper at different speeds, so ink splits into colours.']],
+        note: 'Magnets pull out iron; a separating funnel separates oil and water.' },
+      { title: 'Recap', emoji: '✅',
+        points: ['Atoms: protons and neutrons in the nucleus, electrons in shells (2, 8, 8).', 'Period = number of shells; group = number of valence electrons.', 'Noble gases have full outer shells, so they are unreactive.', 'Ionic bond: electrons transferred (metal + non-metal). Covalent bond: electrons shared (non-metals).', 'Compounds are pure and have new properties. Mixtures and alloys are not chemically joined.', 'Separate mixtures by filtration, evaporation, distillation, magnets or chromatography.'] }
+    ],
+    summary: [
+      'An atom has a nucleus of protons (positive) and neutrons (no charge), with electrons (negative) in shells around it. The first shell holds 2 electrons, the next ones 8.',
+      'The number of protons (the atomic number) decides the element. In a neutral atom, the number of electrons equals the number of protons.',
+      'In the periodic table, the period (row) number is the number of electron shells, and elements in the same group (column) have the same number of valence (outer) electrons.',
+      'Across a period, atoms get smaller and hold their electrons more tightly. Down a group, atoms get larger and lose outer electrons more easily.',
+      'Noble gases (group 18) have full outer shells (8 valence electrons; helium has 2). This makes them very stable and unreactive.',
+      'Atoms bond to get a full outer shell. In an ionic bond, a metal gives electrons to a non-metal, forming oppositely charged ions that attract, e.g. Na⁺ and Cl⁻ in sodium chloride, which forms cubic crystals.',
+      'In a covalent bond, non-metal atoms share pairs of electrons, e.g. methane (CH₄), water and oxygen gas (O₂, a diatomic molecule).',
+      'A compound has properties very different from the elements that form it: sodium (a reactive metal) and chlorine (a poisonous gas) make table salt.',
+      'Elements and compounds are pure substances. Cane sugar (sucrose) is a compound. A mixture contains substances that are not chemically joined and can be separated by physical methods.',
+      'Allotropes are different forms of the same element, e.g. diamond, graphite and buckyballs (carbon), and white, red and black phosphorus.',
+      'An alloy is a metal mixed with other elements, e.g. steel, stainless steel, brass and bronze. Alloys are usually harder and stronger, and often resist rust better than pure metals.',
+      'Mixtures can be separated by sieving, filtration, evaporation, distillation, magnetic separation, a separating funnel or chromatography.'
+    ],
+    terms: [
+      ['Proton', 'A positive particle in the nucleus. Its number decides the element.'],
+      ['Neutron', 'A particle with no charge in the nucleus.'],
+      ['Electron', 'A tiny negative particle moving in shells around the nucleus.'],
+      ['Valence electrons', 'The electrons in an atom’s outermost shell.'],
+      ['Period / Group', 'A row (number of shells) / a column (number of valence electrons) of the periodic table.'],
+      ['Noble gas', 'A group 18 element with a full outer shell, so it hardly reacts.'],
+      ['Ion', 'An atom that has lost or gained electrons, so it has a charge, e.g. Na⁺, Cl⁻.'],
+      ['Ionic bond', 'The attraction between oppositely charged ions formed when electrons are transferred.'],
+      ['Covalent bond', 'A bond in which two atoms share a pair of electrons.'],
+      ['Diatomic molecule', 'A molecule made of two atoms, e.g. O₂, H₂, Cl₂.'],
+      ['Compound', 'Two or more elements chemically bonded in a fixed ratio. A pure substance.'],
+      ['Mixture', 'Substances mixed together but not chemically joined.'],
+      ['Allotropes', 'Different forms of the same element, e.g. diamond and graphite.'],
+      ['Alloy', 'A metal mixed with other elements to improve its properties, e.g. steel.'],
+      ['Chromatography', 'A way of separating a mixture of dyes on paper using a solvent.']
+    ],
+    quiz: [
+      { q: 'Which particle decides which element an atom is?', a: ['Proton', 'Neutron', 'Electron', 'Ion'], c: 0, e: 'The number of protons is the atomic number. Change it and you get a different element.' },
+      { q: 'Sodium is in period 3. What does that tell you?', a: ['It has 3 electron shells', 'It has 3 valence electrons', 'It has 3 protons', 'It is the third metal'], c: 0, e: 'The period number is the number of shells: sodium is 2, 8, 1.' },
+      { q: 'Why are noble gases so unreactive?', a: ['Their outer shell is full', 'They have no electrons', 'They are very heavy', 'They are always hot'], c: 0, e: 'A full outer shell (8 electrons; 2 for helium) is very stable, so they do not need to bond.' },
+      { q: 'What happens when sodium and chlorine form an ionic bond?', a: ['Sodium gives 1 electron to chlorine', 'They share a pair of electrons', 'Chlorine gives 1 electron to sodium', 'They swap protons'], c: 0, e: 'Na (2,8,1) loses one electron to become Na⁺; Cl (2,8,7) gains it to become Cl⁻.' },
+      { q: 'Which substance has covalent bonds?', a: ['Water (H₂O)', 'Sodium chloride', 'A copper wire', 'Neon gas'], c: 0, e: 'Hydrogen and oxygen are non-metals that share electrons. Salt is ionic, copper is metallic and neon does not bond.' },
+      { q: 'Which is a compound?', a: ['Cane sugar (sucrose)', 'Oxygen gas', 'Salt water', 'Brass'], c: 0, e: 'Sucrose is carbon, hydrogen and oxygen chemically bonded in a fixed ratio. Oxygen is an element; salt water and brass are mixtures.' },
+      { q: 'Diamond and graphite are both made of only carbon. They are called…', a: ['allotropes', 'alloys', 'isotopes', 'compounds'], c: 0, e: 'Allotropes are different forms of the same element.' },
+      { q: 'Why is steel used instead of pure iron for bridges?', a: ['The alloy is harder and stronger', 'It is a pure element', 'It is lighter than air', 'It conducts no electricity'], c: 0, e: 'Carbon atoms in steel stop the iron layers sliding, making it stronger.' },
+      { q: 'How would you get pure water from sea water?', a: ['Distillation', 'Filtration', 'Using a magnet', 'Chromatography'], c: 0, e: 'Boil the sea water and cool the steam: the salt is left behind.' },
+      { q: 'Black ink splits into blue, red and yellow bands on wet filter paper. This method is…', a: ['chromatography', 'evaporation', 'sieving', 'decanting'], c: 0, e: 'Different dyes travel at different speeds up the paper.' }
+    ],
+    tips: [
+      'Draw electron shells as 2, 8, 8 and count the outer shell carefully.',
+      'Ionic = transfer (metal + non-metal); covalent = sharing (non-metal + non-metal).',
+      'Compounds ARE pure substances. Mixtures and alloys are not compounds.',
+      'Period number = number of shells; group number tells you the outer electrons.',
+      'In true/false questions, look for one word that makes the whole statement wrong (e.g. “not”, “always”).',
+      'Learn one example for each separation method: filtration (sand), distillation (sea water), chromatography (ink).'
+    ],
+    facts: [
+      'A grain of table salt contains about a billion billion sodium and chloride ions arranged in tiny cubes. Look at salt under a magnifying glass to see the cube shapes.',
+      'Buckminsterfullerene (C₆₀), the “buckyball”, is a carbon molecule shaped exactly like a football.',
+      'Helium was discovered in the Sun (from its light) before it was found on Earth. Its name comes from “helios”, Greek for Sun.'
+    ]
+  },
   /* ---------------- Diversity ---------------- */
   {
     id: 'living', emoji: '🌱', title: 'Living and Non-living Things', level: 'P3', theme: 'diversity',
