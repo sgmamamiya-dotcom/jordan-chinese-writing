@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Circuit Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito+Sans:wght@400;700&display=swap">
+<link rel="stylesheet" href="../hub.css">
+<style>
+[hidden]{display:none!important}
+.wrap{max-width:820px}
+.lead{color:var(--mute);margin:0 0 18px}
+.chapter{font-family:var(--display);font-weight:800;font-size:22px;margin:26px 0 10px;display:flex;align-items:center;gap:8px}
+.levels{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:12px}
+.lv{appearance:none;text-align:left;font:inherit;color:var(--ink);background:var(--card);border:3px solid var(--ink);border-radius:18px;padding:12px 14px;box-shadow:0 6px 0 var(--ink);cursor:pointer;display:grid;gap:2px}
+.lv:hover{transform:translateY(2px);box-shadow:0 4px 0 var(--ink)}
+.lv .n{font-weight:700;font-size:13px;color:var(--mute)}
+.lv b{font-family:var(--display);font-size:19px;line-height:1.15}
+.lv .st{color:#E0A526;letter-spacing:2px;font-size:15px}
+.lv .st .off{color:#D8D2EA}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.back{background:none;border:0;font:inherit;padding:0;cursor:pointer}
+.tag{display:inline-block;font-weight:700;font-size:13px;color:#fff;background:#0F766E;border-radius:999px;padding:2px 10px}
+.tag.t2{background:#B45309}.tag.t3{background:#7A4CE0}.tag.t4{background:#CF3F3F}.tag.t5{background:#2A6FC9}
+h1.lt{font-size:clamp(26px,5vw,36px);margin:6px 0 4px}
+.mission{background:var(--card);border:3px solid var(--ink);border-radius:18px;padding:12px 16px;margin:10px 0 12px;font-size:17px}
+.mission b{font-family:var(--display)}
+.board{background:#FBFAFF;border:3px solid var(--ink);border-radius:20px;overflow:hidden;touch-action:manipulation}
+.board svg{display:block;width:100%;height:auto;max-height:62vh}
+.slot{cursor:pointer}
+.slot:hover .hl{stroke:#C4B5FD}
+.flow{stroke:#FFC93C;stroke-width:4;stroke-dasharray:3 12;stroke-linecap:round;fill:none;animation:run linear infinite}
+@keyframes run{to{stroke-dashoffset:-30}}
+@media(prefers-reduced-motion:reduce){.flow{animation:none;stroke-dasharray:none;opacity:.6}}
+.shake{animation:sh .3s}
+@keyframes sh{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.tool{font:700 15px var(--body);min-height:48px;padding:0 14px;border-radius:14px;border:3px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:6px}
+.tool[aria-pressed=true]{background:var(--ink);color:#fff}
+.tool .c{font-size:12px;background:#EFE9FF;color:var(--ink);border-radius:999px;padding:0 7px}
+.tool:disabled{opacity:.4;cursor:default}
+.status{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.pill{font-weight:700;font-size:14px;border-radius:999px;padding:3px 12px;border:2px solid var(--ink);background:#fff}
+.pill.on{background:#FFF3BF}.pill.dim{background:#FFF9E3}.pill.off{background:#EEE;color:#666}.pill.warn{background:#FBE7E7;border-color:#CF3F3F;color:#9B1C1C}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.btn{font:700 16px var(--body);min-height:48px;padding:0 20px;border-radius:999px;border:3px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer}
+.btn.go{background:var(--yellow)}
+.btn:disabled{opacity:.45;cursor:default}
+.fb{border-radius:16px;padding:12px 16px;margin:10px 0;font-size:16px;background:#F4F1FF}
+.fb.good{background:#E5F5EA}.fb.bad{background:#FBE7E7}
+.fb h3{font-family:var(--display);margin:0 0 4px;font-size:20px}
+.hint{background:#FFF6D6;border-radius:14px;padding:10px 14px;margin:8px 0;font-size:16px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.chip{font:700 15px var(--body);min-height:44px;padding:6px 14px;border-radius:14px;border:2px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer;text-align:left}
+.chip[aria-pressed=true]{background:#0F766E;border-color:#0F766E;color:#fff}
+.chip.right{background:#2E8B57;border-color:#2E8B57;color:#fff}
+.chip.wrong{background:#CF3F3F;border-color:#CF3F3F;color:#fff}
+.answer{min-height:52px;border:2px dashed #B9B0DA;border-radius:14px;padding:10px 12px;background:#fff;font-size:16px}
+.answer .ph{color:var(--mute)}
+table.res{border-collapse:collapse;width:100%;font-size:15px;background:#fff;margin:8px 0}
+table.res td,table.res th{border:1px solid #DCD5F2;padding:6px 8px;text-align:left}
+.stars{font-size:28px;color:#E0A526;letter-spacing:4px}
+.stars .off{color:#D8D2EA}
+.cloud{color:var(--mute);font-size:13px;text-align:center;margin-top:24px}
+.key{font-size:14px;color:var(--mute);margin:6px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../progress.js"></script>
+<script>
+(function () {
+  'use strict';
+  /* ================= physics =================
+     Nodes sit on a grid; each edge between two neighbouring nodes can hold one part.
+     The circuit is solved with nodal analysis (simple classroom model):
+     wire and closed switch 0.01 ohm, bulb 1 ohm, cell 1.5 V with 0.1 ohm inside, materials as listed. */
+  var V = 1.5, RIN = 0.1, PBASE = Math.pow(V / (RIN + 1), 2); // one cell + one bulb = brightness 1
+  var MAT = {
+    key: ['🔑', 'iron key', 50], coin: ['🪙', 'copper coin', 50], spoon: ['🥄', 'steel spoon', 50], foil: ['🧻', 'aluminium foil', 50],
+    pencil: ['✏️', 'pencil lead (graphite)', 0.8], ruler: ['📏', 'plastic ruler', 0], eraser: ['🧽', 'rubber eraser', 0],
+    wood: ['🪵', 'wooden stick', 0], string: ['🧵', 'cotton string', 0], glass: ['🥛', 'glass rod', 0]
+  };
+  function ends(key, C) {
+    var p = key.slice(1).split(',').map(Number), c = p[0], r = p[1];
+    return [r * C + c, key[0] === 'h' ? r * C + c + 1 : (r + 1) * C + c];
+  }
+  function solve(G, J) {
+    var n = J.length, A = G.map(function (row, i) { return row.concat([J[i]]); });
+    for (var i = 0; i < n; i++) {
+      var p = i; for (var k = i + 1; k < n; k++) if (Math.abs(A[k][i]) > Math.abs(A[p][i])) p = k;
+      var t = A[i]; A[i] = A[p]; A[p] = t;
+      for (k = i + 1; k < n; k++) { var f = A[k][i] / A[i][i]; if (!f) continue; for (var j = i; j <= n; j++) A[k][j] -= f * A[i][j]; }
+    }
+    var v = new Array(n);
+    for (i = n - 1; i >= 0; i--) { var s = A[i][n]; for (j = i + 1; j < n; j++) s -= A[i][j] * v[j]; v[i] = s / A[i][i]; }
+    return v;
+  }
+  function conductance(p) {
+    if (p.t === 'wire') return 100;
+    if (p.t === 'switch') return p.open ? 0 : 100;
+    if (p.t === 'bulb') return p.blown ? 0 : 1;
+    if (p.t === 'mat' || p.t === 'clip') return p.mat ? MAT[p.mat][2] : 0;
+    if (p.t === 'battery') return 1 / RIN;
+    return 0;
+  }
+  // Returns current (a -> b) for every part, brightness for bulbs, and whether there is a short circuit.
+  function simulate(parts, C, R) {
+    var n = C * R, G = [], J = [], i;
+    for (i = 0; i < n; i++) { G.push(new Array(n).fill(0)); J.push(0); G[i][i] = 1e-6; }
+    Object.keys(parts).forEach(function (k) {
+      var p = parts[k], g = conductance(p); if (!g) return;
+      var e = ends(k, C), a = e[0], b = e[1];
+      G[a][a] += g; G[b][b] += g; G[a][b] -= g; G[b][a] -= g;
+      if (p.t === 'battery') { var s = (p.dir || 1) * V * g; J[b] += s; J[a] -= s; }
+    });
+    var v = solve(G, J), out = { cur: {}, bright: {}, short: false };
+    Object.keys(parts).forEach(function (k) {
+      var p = parts[k], g = conductance(p), e = ends(k, C), I = 0;
+      if (g) I = p.t === 'battery' ? (p.dir || 1) * V * g - (v[e[1]] - v[e[0]]) * g : (v[e[0]] - v[e[1]]) * g;
+      out.cur[k] = I;
+      if (p.t === 'bulb') out.bright[k] = p.blown ? 0 : I * I / PBASE;
+      if (p.t === 'battery' && Math.abs(I) > 5) out.short = true;
+    });
+    return out;
+  }
+
+  /* ================= levels ================= */
+  // parts: [edge, type, options]. Edges: 'h c,r' joins node (c,r) to (c+1,r); 'v c,r' joins (c,r) to (c,r+1).
+  // Cells: dir 1 puts + at the right/bottom end, -1 at the left/top end.
+  function P(e, t, o) { var p = { e: e, t: t, lock: true }; for (var k in o || {}) p[k] = o[k]; return p; }
+  var L = [
+    { ch: 'Closed circuits', id: 'c1', type: 'build', title: 'Light it up', grid: [4, 2],
+      text: 'The bulb is not lit. Add wires to make a complete loop so bulb A lights up.',
+      parts: [P('v0,0', 'battery', { dir: -1, name: 'Cell' }), P('v3,0', 'bulb', { name: 'A' }), P('h0,0', 'wire'), P('h1,0', 'wire'), P('h2,0', 'wire')],
+      tools: { wire: 3 },
+      goal: function (T) { return T().lit('A') ? '' : 'Bulb A is still not lit. Is there a complete path from the + end, through the bulb, back to the − end?'; },
+      hints: ['Electric current only flows in a closed circuit: a complete loop with no gaps.', 'Look at the bottom row. Is there a path from the bulb back to the cell?', 'Choose Wire and tap all three empty gaps on the bottom row.'],
+      learn: 'A bulb lights up only when it is part of a closed circuit: an unbroken path from one end of the cell, through the bulb, back to the other end.' },
+    { ch: 'Closed circuits', id: 'c2', type: 'fix', title: 'Something is in the way', grid: [4, 2],
+      text: 'All the wires are joined, but bulb A will not light up. Find the problem and fix it.',
+      parts: [P('v0,0', 'battery', { dir: -1, name: 'Cell' }), P('v3,0', 'bulb', { name: 'A' }), P('h0,0', 'wire'), P('h1,0', 'wire'), P('h2,0', 'wire'), P('h0,1', 'wire'), P('h1,1', 'mat', { mat: 'ruler', lock: false }), P('h2,1', 'wire')],
+      tools: { wire: 1, erase: true },
+      goal: function (T) { return T().lit('A') ? '' : 'Bulb A is still not lit.'; },
+      hints: ['Not everything lets electricity pass through.', 'Look at the plastic ruler on the bottom row. Plastic is an electrical insulator.', 'Use the Eraser to take away the ruler, then put a wire in the gap.'],
+      learn: 'Plastic is an electrical insulator: it does not allow electricity to pass through, so the circuit was an open circuit.' },
+    { ch: 'Conductors and insulators', id: 'm1', type: 'sort', title: 'Test the materials', grid: [4, 2],
+      text: 'Put each object into the gap (the clip) and see if bulb A lights up. Test every object, then answer the question.',
+      parts: [P('v0,0', 'battery', { dir: -1, name: 'Cell' }), P('v3,0', 'bulb', { name: 'A' }), P('h0,0', 'wire'), P('h1,0', 'wire'), P('h2,0', 'wire'), P('h0,1', 'wire'), P('h1,1', 'clip', { mat: null }), P('h2,1', 'wire')],
+      mats: ['key', 'ruler', 'coin', 'pencil', 'eraser', 'spoon', 'wood', 'foil'],
+      hints: ['If the bulb lights up when an object is in the clip, the object lets electricity flow through it.', 'Metals are good electrical conductors. Watch the pencil lead carefully: the bulb is dim, but it is still lit.', 'Conductors: iron key, copper coin, pencil lead (graphite), steel spoon, aluminium foil.'],
+      learn: 'Electrical conductors (metals, and graphite in pencil lead) allow electricity to flow through them. Electrical insulators (plastic, rubber, wood) do not.' },
+    { ch: 'Switches', id: 's1', type: 'build', title: 'Add a switch', grid: [4, 2],
+      text: 'Put a switch in the gap so that the switch can turn bulb A on and off.',
+      parts: [P('v0,0', 'battery', { dir: -1, name: 'Cell' }), P('v3,0', 'bulb', { name: 'A' }), P('h0,0', 'wire'), P('h1,0', 'wire'), P('h2,0', 'wire'), P('h0,1', 'wire'), P('h2,1', 'wire')],
+      tools: { wire: 1, switch: 1, erase: true },
+      goal: function (T) {
+        var sw = T.switches(); if (!sw.length) return 'There is no switch, so the bulb can never be turned off.';
+        if (!T({ all: 'closed' }).lit('A')) return 'With the switch closed, bulb A should light up.';
+        if (T({ all: 'open' }).lit('A')) return 'With the switch open, bulb A should go off.';
+        return '';
+      },
+      hints: ['A switch opens and closes a gap in the circuit.', 'The gap is on the bottom row. A wire there would keep the bulb on all the time.', 'Choose Switch, tap the gap, then tap the switch to open and close it.'],
+      learn: 'An open switch makes a gap, so the circuit becomes an open circuit and the bulb goes off. A closed switch completes the circuit.' },
+    { ch: 'Cells and brightness', id: 'b1', type: 'build', title: 'Make it brighter', grid: [5, 2],
+      text: 'Use two cells to make bulb A brighter than with one cell.',
+      parts: [P('v4,0', 'bulb', { name: 'A' }), P('h0,0', 'wire'), P('h1,0', 'wire'), P('h2,0', 'wire'), P('h3,0', 'wire'), P('v0,0', 'wire'), P('h0,1', 'wire'), P('h3,1', 'wire')],
+      tools: { battery: 2, erase: true },
+      goal: function (T) {
+        var r = T(); if (r.short) return 'Short circuit!';
+        if (r.bright('A') > 1.6) return '';
+        if (r.lit('A')) return 'Bulb A is lit, but only as bright as with one cell. Are both cells working together?';
+        return 'Bulb A is not lit. Check that the cells fill both gaps and face the same way (+ next to −).';
+      },
+      hints: ['Put the cells one after the other (in series) in the two gaps.', 'Cells must face the same way: the + end of one cell touches the − end of the next.', 'Tap a cell again to turn it around.'],
+      learn: 'More cells in series (facing the same way) give a bigger push, so more current flows and the bulb is brighter. Cells facing opposite ways cancel each other out.' },
+    { ch: 'Cells and brightness', id: 'b2', type: 'predict', title: 'Which way round?', grid: [5, 2],
+      parts: [P('v4,0', 'bulb', { name: 'A' }), P('h0,0', 'wire'), P('h1,0', 'wire'), P('h2,0', 'wire'), P('h3,0', 'wire'), P('v0,0', 'wire'), P('h0,1', 'wire'), P('h1,1', 'battery', { dir: 1, name: 'Cell 1' }), P('h2,1', 'battery', { dir: -1, name: 'Cell 2' }), P('h3,1', 'wire')],
+      steps: [
+        { q: 'Look at the + ends of Cell 1 and Cell 2. Will bulb A light up?', act: {} },
+        { q: 'Now Cell 2 is turned around. Will bulb A light up?', act: { flip: ['Cell 2'] } }
+      ],
+      learn: 'Two cells facing opposite ways push current in opposite directions and cancel out, so no current flows. Facing the same way, they push together and the bulb is brighter.' },
+    { ch: 'Series and parallel', id: 'p1', type: 'predict', title: 'Bulbs in a line', grid: [4, 2],
+      parts: [P('v0,0', 'battery', { dir: -1, name: 'Cell' }), P('h0,0', 'wire'), P('h1,0', 'bulb', { name: 'A' }), P('h2,0', 'bulb', { name: 'B' }), P('v3,0', 'wire'), P('h0,1', 'wire'), P('h1,1', 'switch', { name: 'S', open: true }), P('h2,1', 'wire')],
+      steps: [
+        { q: 'Switch S is going to be closed. Which bulbs will light up?', act: { close: ['S'] } },
+        { q: 'Bulb A fuses (its filament breaks). Which bulbs will light up now?', act: { blow: ['A'] } }
+      ],
+      learn: 'Bulbs A and B are in series: there is only one path for the current. Both are dimmer than one bulb alone, and if one bulb fuses the circuit is broken, so the other goes off too.' },
+    { ch: 'Series and parallel', id: 'p2', type: 'build', title: 'Two bright bulbs', grid: [4, 3],
+      text: 'Use two bulbs and two wires so that both bulbs light up as brightly as one bulb on its own.',
+      parts: [P('v0,0', 'battery', { dir: -1, name: 'Cell' }), P('v0,1', 'wire'), P('h0,0', 'wire'), P('h1,0', 'wire'), P('h2,0', 'wire'), P('h0,2', 'wire'), P('h1,2', 'wire'), P('h2,2', 'wire')],
+      tools: { bulb: 2, wire: 2, erase: true },
+      goal: function (T) {
+        var r = T(), b = r.bulbs();
+        if (r.short) return 'Short circuit! A wire is joining the top and bottom directly.';
+        if (b.length < 2) return 'Use both bulbs.';
+        var lit = b.filter(function (k) { return r.brightOf(k) > 0.05; });
+        if (lit.length < 2) return 'Both bulbs must light up.';
+        if (b.some(function (k) { return r.brightOf(k) < 0.6; })) return 'Both bulbs light up, but they are dim. Are they in series (one after the other)?';
+        return '';
+      },
+      hints: ['If the bulbs are one after the other, they share one path and are dim.', 'Give each bulb its own path from the top wire to the bottom wire.', 'Put a bulb and a wire down one column, and the other bulb and wire down another column.'],
+      learn: 'Bulbs in parallel each have their own path to the cell, so each one is as bright as a single bulb.' },
+    { ch: 'Series and parallel', id: 'p3', type: 'predict', title: 'Separate paths', grid: [4, 3],
+      parts: [P('v0,0', 'battery', { dir: -1, name: 'Cell' }), P('v0,1', 'wire'), P('h0,0', 'wire'), P('h1,0', 'wire'), P('h2,0', 'wire'), P('h0,2', 'wire'), P('h1,2', 'switch', { name: 'S', open: true }), P('h2,2', 'wire'), P('v2,0', 'bulb', { name: 'A' }), P('v2,1', 'wire'), P('v3,0', 'bulb', { name: 'B' }), P('v3,1', 'wire')],
+      steps: [
+        { q: 'Switch S is going to be closed. Which bulbs will light up?', act: { close: ['S'] } },
+        { q: 'Bulb A fuses. Which bulbs will light up now?', act: { blow: ['A'] } }
+      ],
+      learn: 'In a parallel circuit, each bulb is on its own path. If bulb A fuses, the path through bulb B is still a closed circuit, so B stays lit.' },
+    { ch: 'Switches', id: 's2', type: 'build', title: 'One switch for each bulb', grid: [4, 3],
+      text: 'Add two switches so that each switch controls only one bulb.',
+      parts: [P('v0,0', 'battery', { dir: -1, name: 'Cell' }), P('v0,1', 'wire'), P('h0,0', 'wire'), P('h1,0', 'wire'), P('h2,0', 'wire'), P('h0,2', 'wire'), P('h1,2', 'wire'), P('h2,2', 'wire'), P('v2,0', 'bulb', { name: 'A' }), P('v3,0', 'bulb', { name: 'B' })],
+      tools: { switch: 2, wire: 2, erase: true },
+      goal: function (T) {
+        var sw = T.switches(); if (sw.length < 2) return 'Use two switches.';
+        var all = T({ all: 'closed' }); if (!all.lit('A') || !all.lit('B')) return 'With both switches closed, both bulbs should light up.';
+        var o = {}; o[sw[0]] = true; var x = T({ all: 'closed', open: o }); o = {}; o[sw[1]] = true; var y = T({ all: 'closed', open: o });
+        var xa = [x.lit('A'), x.lit('B')], ya = [y.lit('A'), y.lit('B')];
+        var ok = (xa[0] !== xa[1]) && (ya[0] !== ya[1]) && xa[0] !== ya[0];
+        return ok ? '' : 'Try opening one switch at a time. Each switch should turn off only one bulb.';
+      },
+      hints: ['A switch controls the bulbs on its own path.', 'Each bulb has its own column. The switch for a bulb must be in the same column.', 'Put one switch under bulb A and the other under bulb B.'],
+      learn: 'A switch in a branch of a parallel circuit controls only the bulb in that branch. A switch in the main path controls everything.' },
+    { ch: 'Short circuits', id: 'x1', type: 'fix', title: 'The sneaky wire', grid: [4, 2],
+      text: 'Bulb A will not light up and the cell is getting hot. Find the problem and fix it.',
+      parts: [P('v0,0', 'battery', { dir: -1, name: 'Cell' }), P('v3,0', 'bulb', { name: 'A' }), P('h0,0', 'wire'), P('h1,0', 'wire'), P('h2,0', 'wire'), P('h0,1', 'wire'), P('h1,1', 'wire'), P('h2,1', 'wire'), P('v2,0', 'wire', { lock: false })],
+      tools: { erase: true },
+      goal: function (T) { var r = T(); return r.short ? 'There is still a short circuit.' : r.lit('A') ? '' : 'Bulb A is still not lit.'; },
+      hints: ['Electric current takes the easiest path.', 'One wire gives the current a shortcut that skips bulb A.', 'Erase the wire standing up next to bulb A.'],
+      learn: 'A wire across a bulb makes a short circuit: the current flows through the wire instead of the bulb. The bulb does not light up and the cell runs down quickly and gets hot.' },
+    { ch: 'Short circuits', id: 'x2', type: 'predict', title: 'Main switch and branch switch', grid: [4, 3],
+      parts: [P('v0,0', 'battery', { dir: -1, name: 'Cell' }), P('v0,1', 'wire'), P('h0,0', 'wire'), P('h1,0', 'wire'), P('h2,0', 'wire'), P('h0,2', 'wire'), P('h1,2', 'switch', { name: 'S1', open: true }), P('h2,2', 'wire'), P('v2,0', 'bulb', { name: 'A' }), P('v2,1', 'switch', { name: 'S2', open: true }), P('v3,0', 'bulb', { name: 'B' }), P('v3,1', 'wire')],
+      steps: [
+        { q: 'S1 is going to be closed. S2 stays open. Which bulbs will light up?', act: { close: ['S1'] } },
+        { q: 'Now S2 is closed too. Which bulbs will light up?', act: { close: ['S2'] } },
+        { q: 'Now S1 is opened (S2 stays closed). Which bulbs will light up?', act: { open: ['S1'] } }
+      ],
+      learn: 'S1 is in the main path, so it controls both bulbs. S2 is only in the branch with bulb A, so it controls only bulb A.' },
+    { ch: 'Explain like an examiner', id: 'e1', type: 'oeq', title: 'Why did B go off?', grid: [4, 2],
+      parts: [P('v0,0', 'battery', { dir: -1, name: 'Cell' }), P('h0,0', 'wire'), P('h1,0', 'bulb', { name: 'A', blown: true }), P('h2,0', 'bulb', { name: 'B' }), P('v3,0', 'wire'), P('h0,1', 'wire'), P('h1,1', 'switch', { name: 'S' }), P('h2,1', 'wire')],
+      q: 'Bulb A fused. Explain why bulb B did not light up even though switch S was closed.',
+      chips: [
+        ['open', 'The circuit became an open circuit', 1], ['break', 'because there was a break in the circuit at bulb A.', 1], ['nocur', 'No electric current could flow through bulb B.', 1],
+        ['used', 'Bulb B used up all the electricity.', 0, 'Bulbs do not use up current: the same current flows all the way round a series circuit.'],
+        ['flat', 'The battery was flat.', 0, 'Nothing in the question says the battery was flat. Bulb B went off because of bulb A.'],
+        ['both', 'Bulb B also fused.', 0, 'Only bulb A fused. Bulb B is fine, but no current reaches it.']
+      ],
+      model: 'The circuit became an open circuit because there was a break at bulb A. No electric current could flow through bulb B, so it did not light up.',
+      hints: ['Examiners look for the words “open circuit” and “electric current”.', 'Say what happened to the circuit, then what happened to the current through bulb B.', 'Choose the three chips about the open circuit, the break at bulb A, and the current.'],
+      learn: 'A full answer links cause and effect: break at bulb A → open circuit → no electric current through bulb B → bulb B does not light up.' },
+    { ch: 'Explain like an examiner', id: 'e2', type: 'oeq', title: 'Why did B stay on?', grid: [4, 3],
+      parts: [P('v0,0', 'battery', { dir: -1, name: 'Cell' }), P('v0,1', 'wire'), P('h0,0', 'wire'), P('h1,0', 'wire'), P('h2,0', 'wire'), P('h0,2', 'wire'), P('h1,2', 'switch', { name: 'S' }), P('h2,2', 'wire'), P('v2,0', 'bulb', { name: 'A', blown: true }), P('v2,1', 'wire'), P('v3,0', 'bulb', { name: 'B' }), P('v3,1', 'wire')],
+      q: 'Bulb A fused, but bulb B stayed lit. Explain why.',
+      chips: [
+        ['own', 'Bulb B is on a separate path from bulb A (they are in parallel).', 1], ['closed', 'The path through bulb B is still a closed circuit,', 1], ['cur', 'so electric current can still flow through bulb B.', 1],
+        ['more', 'Bulb B gets the electricity that bulb A did not use.', 0, 'Current is not “left over” for B. B is lit because its own path is still closed.'],
+        ['switch', 'Switch S is open.', 0, 'If S (in the main path) were open, both bulbs would be off.'],
+        ['series', 'Bulbs A and B are in series.', 0, 'In series, B would go off too. These bulbs are in parallel.']
+      ],
+      model: 'Bulb B is on a separate path from bulb A. The path through bulb B is still a closed circuit, so electric current can still flow through bulb B and it stays lit.',
+      hints: ['What kind of circuit is this: series or parallel?', 'Say which path bulb B is on, and whether that path is still closed.', 'Choose the three chips about the separate path, the closed circuit and the current.'],
+      learn: 'In parallel circuits, explain using the path of the bulb: its own path is still a closed circuit, so current still flows through it.' },
+    { ch: 'Explain like an examiner', id: 'e3', type: 'oeq', title: 'Why are they dim?', grid: [4, 2],
+      parts: [P('v0,0', 'battery', { dir: -1, name: 'Cell' }), P('h0,0', 'wire'), P('h1,0', 'bulb', { name: 'A' }), P('h2,0', 'bulb', { name: 'B' }), P('v3,0', 'wire'), P('h0,1', 'wire'), P('h1,1', 'switch', { name: 'S' }), P('h2,1', 'wire')],
+      q: 'Bulbs A and B are dimmer than a single bulb connected to the same cell. Explain why.',
+      chips: [
+        ['series', 'Bulbs A and B are connected in series (in the same path).', 1], ['less', 'The amount of electric current flowing through the circuit is smaller,', 1], ['dim', 'so each bulb is dimmer.', 1],
+        ['share', 'The two bulbs share the electricity and use half each.', 0, 'Bulbs do not use up or share out current: the same, smaller current flows through both.'],
+        ['weak', 'The cell is weaker when there are two bulbs.', 0, 'The cell is the same. The two bulbs together make it harder for current to flow.'],
+        ['par', 'The bulbs are in parallel.', 0, 'These bulbs are one after the other in a single path, so they are in series.']
+      ],
+      model: 'Bulbs A and B are connected in series. The amount of electric current flowing through the circuit is smaller than with one bulb, so each bulb is dimmer.',
+      hints: ['Start by naming how the bulbs are connected.', 'Then say what happens to the amount of electric current.', 'Choose: in series → smaller current → dimmer.'],
+      learn: 'More bulbs in series means less electric current flows through the circuit, so each bulb is dimmer.' }
+  ];
+  var TYPE = { build: ['🔧 Build it', ''], fix: ['🩺 Fix it', 't2'], sort: ['🧪 Test it', 't5'], predict: ['🔮 Predict', 't3'], oeq: ['✍️ Explain', 't4'] };
+
+  /* ================= saving ================= */
+  var KEY = 'bryan_circuit_v1';
+  function readSave() { try { var s = JSON.parse(localStorage.getItem(KEY)); if (s && s.stars) return s; } catch (e) {} return { stars: {}, _t: 0 }; }
+  var save = readSave();
+  function store() {
+    save._t = Date.now();
+    try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {}
+    if (window.Progress) Progress.save('bryan', 'circuit', save);
+  }
+  if (window.Progress) Progress.sync('bryan', 'circuit', function () { return save; }, function (r) {
+    save = { stars: r.stars || {}, _t: r._t }; try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {}
+    if (!S) home();
+  });
+
+  /* ================= helpers ================= */
+  var app = document.getElementById('app'), NS = 'http://www.w3.org/2000/svg';
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  function btn(cls, text, fn) { var b = el('button', cls, text); b.type = 'button'; b.onclick = fn; return b; }
+  function sv(tag, a, parent) { var n = document.createElementNS(NS, tag); for (var k in a) n.setAttribute(k, a[k]); if (parent) parent.appendChild(n); return n; }
+  function starStr(n) { return '★'.repeat(n) + '<span class="off">' + '★'.repeat(3 - n) + '</span>'; }
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+  var S = null; // the level being played
+
+  /* ================= home ================= */
+  function home() {
+    S = null; app.textContent = '';
+    var back = el('a', 'back', '← Science Lab'); back.href = 'science.html'; app.appendChild(back);
+    app.appendChild(el('h1', null, '⚡ Circuit Lab'));
+    var got = L.reduce(function (a, l) { return a + (save.stars[l.id] || 0); }, 0);
+    app.appendChild(el('p', 'lead', 'Build, fix and predict real circuits, then explain them like a PSLE examiner. ' + got + ' of ' + L.length * 3 + ' stars.'));
+    var last = null, box = null;
+    L.forEach(function (l, i) {
+      if (l.ch !== last) { last = l.ch; app.appendChild(el('h2', 'chapter', l.ch)); box = el('div', 'levels'); app.appendChild(box); }
+      var b = btn('lv', null, function () { play(i); });
+      b.appendChild(el('span', 'n', 'Level ' + (i + 1) + ' · ' + TYPE[l.type][0]));
+      b.appendChild(el('b', null, l.title));
+      var st = el('span', 'st'); st.innerHTML = starStr(save.stars[l.id] || 0); b.appendChild(st);
+      box.appendChild(b);
+    });
+    var c = el('p', 'cloud'); c.id = 'cloud'; app.appendChild(c);
+    if (window.Progress) c.textContent = Progress.label(null, 'en');
+    window.scrollTo(0, 0);
+  }
+  if (window.Progress) Progress.onStatus(function () { var c = document.getElementById('cloud'); if (c) c.textContent = Progress.label(null, 'en'); });
+
+  /* ================= play ================= */
+  function play(i) {
+    var l = L[i], parts = {};
+    l.parts.forEach(function (p) { var q = clone(p); parts[q.e] = q; });
+    var inv = {}; Object.keys(l.tools || {}).forEach(function (k) { inv[k] = l.tools[k]; });
+    S = { i: i, l: l, C: l.grid[0], R: l.grid[1], parts: parts, inv: inv, tool: null, hints: 0, wrong: 0, done: false, step: 0, picked: [], tested: {}, answer: [], hidden: l.type === 'predict' };
+    var tk = Object.keys(inv).filter(function (k) { return k !== 'erase'; }); S.tool = tk[0] || (inv.erase ? 'erase' : null);
+    render(); window.scrollTo(0, 0);
+  }
+  function named(name) { for (var k in S.parts) if (S.parts[k].name === name) return k; return null; }
+  // Test harness for goals: T(opts) simulates with switch overrides; T.switches() lists switch edges.
+  function tester() {
+    function T(o) {
+      o = o || {};
+      var ps = clone(S.parts);
+      Object.keys(ps).forEach(function (k) {
+        if (ps[k].t !== 'switch') return;
+        if (o.all === 'closed') ps[k].open = false; if (o.all === 'open') ps[k].open = true;
+        if (o.open && o.open[k]) ps[k].open = true;
+      });
+      var r = simulate(ps, S.C, S.R);
+      return {
+        short: r.short,
+        lit: function (n) { var k = named(n); return !!k && r.bright[k] > 0.03 && !r.short; },
+        bright: function (n) { var k = named(n); return k ? r.bright[k] : 0; },
+        brightOf: function (k) { return r.short ? 0 : r.bright[k] || 0; },
+        bulbs: function () { return Object.keys(ps).filter(function (k) { return ps[k].t === 'bulb'; }); }
+      };
+    }
+    T.switches = function () { return Object.keys(S.parts).filter(function (k) { return S.parts[k].t === 'switch'; }); };
+    return T;
+  }
+
+  function render() {
+    var l = S.l, T = TYPE[l.type];
+    app.textContent = '';
+    var top = el('div', 'top');
+    top.appendChild(btn('back', '← All levels', home));
+    top.appendChild(el('span', 'tag ' + T[1], T[0]));
+    app.appendChild(top);
+    app.appendChild(el('h1', 'lt', 'Level ' + (S.i + 1) + ': ' + l.title));
+    var m = el('div', 'mission');
+    if (l.type === 'predict') m.innerHTML = '<b>Predict before you test.</b> ' + l.steps[S.step].q;
+    else if (l.type === 'oeq') m.innerHTML = '<b>Question.</b> ' + l.q;
+    else m.textContent = l.text;
+    app.appendChild(m);
+
+    var r = simulate(S.parts, S.C, S.R);
+    app.appendChild(board(r));
+    if (l.type === 'build' || l.type === 'fix') app.appendChild(toolbar());
+    app.appendChild(status(r));
+    ({ build: buildUI, fix: buildUI, sort: sortUI, predict: predictUI, oeq: oeqUI })[l.type]();
+    if (S.done) app.appendChild(doneBox());
+  }
+
+  /* ---------- board drawing ---------- */
+  var SP = 96, PAD = 46;
+  function board(r) {
+    var C = S.C, R = S.R, W = PAD * 2 + (C - 1) * SP, H = PAD * 2 + (R - 1) * SP;
+    var wrap = el('div', 'board'), s = sv('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Circuit board' }, wrap);
+    var defs = sv('defs', {}, s), gr = sv('radialGradient', { id: 'glow' }, defs);
+    sv('stop', { offset: '0', 'stop-color': '#FFE066', 'stop-opacity': '1' }, gr); sv('stop', { offset: '1', 'stop-color': '#FFE066', 'stop-opacity': '0' }, gr);
+    var edges = [];
+    for (var y = 0; y < R; y++) for (var x = 0; x < C; x++) { if (x < C - 1) edges.push('h' + x + ',' + y); if (y < R - 1) edges.push('v' + x + ',' + y); }
+    var lit = !S.hidden;
+    edges.forEach(function (k) {
+      var p = k.slice(1).split(',').map(Number), x0 = PAD + p[0] * SP, y0 = PAD + p[1] * SP, vert = k[0] === 'v';
+      var g = sv('g', { transform: 'translate(' + x0 + ' ' + y0 + ')' + (vert ? ' rotate(90)' : ''), 'class': 'slot', 'data-k': k }, s);
+      var part = S.parts[k];
+      drawPart(g, part, lit ? r : null, k);
+      var cur = lit && part ? r.cur[k] : 0;
+      if (lit && part && Math.abs(cur) > 0.03) {
+        // Moving dots show the current, on the wires only (not over the part itself).
+        var half = { bulb: 17, battery: 30, 'switch': 20, mat: 22, clip: 22 }[part.t] || 0;
+        (half ? [[0, SP / 2 - half], [SP / 2 + half, SP]] : [[0, SP]]).forEach(function (seg) {
+          var f = sv('line', { x1: cur > 0 ? seg[0] : seg[1], y1: 0, x2: cur > 0 ? seg[1] : seg[0], y2: 0, 'class': 'flow' }, g);
+          f.style.animationDuration = Math.max(0.25, Math.min(2.2, 1.6 / Math.abs(cur))) + 's';
+        });
+      }
+      sv('rect', { x: 8, y: -26, width: SP - 16, height: 52, fill: 'transparent' }, g);
+      g.addEventListener('click', function () { tap(k, g); });
+      if (part && part.name) {
+        var lx = vert ? x0 + 30 : x0 + SP / 2, ly = vert ? y0 + SP / 2 + 5 : y0 - 28;
+        var t = sv('text', { x: lx, y: ly, 'text-anchor': vert ? 'start' : 'middle', 'font-size': 15, 'font-weight': 700, fill: '#1D1640', 'font-family': 'Nunito Sans,sans-serif' }, s);
+        t.textContent = part.name;
+      }
+    });
+    for (y = 0; y < R; y++) for (x = 0; x < C; x++) sv('circle', { cx: PAD + x * SP, cy: PAD + y * SP, r: 4, fill: '#9A90C2' }, s);
+    return wrap;
+  }
+  function lead(g, a, b) { sv('line', { x1: a, y1: 0, x2: b, y2: 0, stroke: '#3B3355', 'stroke-width': 5, 'stroke-linecap': 'round' }, g); }
+  function drawPart(g, p, r, k) {
+    var M = SP / 2;
+    if (!p) { sv('line', { x1: 10, y1: 0, x2: SP - 10, y2: 0, stroke: '#D9D3EE', 'stroke-width': 3, 'stroke-dasharray': '6 6', 'class': 'hl' }, g); return; }
+    if (p.t === 'wire') { lead(g, 0, SP); return; }
+    if (p.t === 'bulb') {
+      var b = r ? (r.short ? 0 : r.bright[k] || 0) : 0, on = b > 0.03;
+      lead(g, 0, M - 16); lead(g, M + 16, SP);
+      if (on) sv('circle', { cx: M, cy: 0, r: 20 + 18 * Math.min(1.6, b), fill: 'url(#glow)', opacity: Math.min(1, 0.35 + b * 0.5) }, g);
+      sv('circle', { cx: M, cy: 0, r: 17, fill: on ? '#FFE066' : '#FFFFFF', 'fill-opacity': on ? Math.min(1, 0.4 + b * 0.6) : 1, stroke: '#3B3355', 'stroke-width': 3 }, g);
+      if (p.blown) { sv('path', { d: 'M' + (M - 9) + ' 6 L' + (M - 3) + ' -6 M' + (M + 3) + ' -6 L' + (M + 9) + ' 6', stroke: '#CF3F3F', 'stroke-width': 2.5, fill: 'none' }, g); }
+      else sv('path', { d: 'M' + (M - 10) + ' 7 L' + (M - 6) + ' -6 L' + (M - 2) + ' 4 L' + (M + 2) + ' -6 L' + (M + 6) + ' 4 L' + (M + 10) + ' -6', stroke: on ? '#B45309' : '#6B6390', 'stroke-width': 2, fill: 'none' }, g);
+      return;
+    }
+    if (p.t === 'battery') {
+      var d = p.dir || 1;
+      lead(g, 0, M - 24); lead(g, M + 24, SP);
+      sv('rect', { x: M - 24, y: -12, width: 48, height: 24, rx: 5, fill: '#2B2440' }, g);
+      sv('rect', { x: d > 0 ? M + 6 : M - 24, y: -12, width: 18, height: 24, rx: 4, fill: '#E0A526' }, g);
+      sv('rect', { x: d > 0 ? M + 24 : M - 29, y: -5, width: 5, height: 10, rx: 1.5, fill: '#B8B3C9' }, g);
+      var px = d > 0 ? M + 15 : M - 15, mx = d > 0 ? M - 10 : M + 10;
+      var tp = sv('text', { x: px, y: 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 800, fill: '#2B2440' }, g); tp.textContent = '+';
+      var tm = sv('text', { x: mx, y: 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 800, fill: '#fff' }, g); tm.textContent = '−';
+      if (k[0] === 'v') { tp.setAttribute('transform', 'rotate(-90 ' + px + ' 0)'); tm.setAttribute('transform', 'rotate(-90 ' + mx + ' 0)'); }
+      return;
+    }
+    if (p.t === 'switch') {
+      lead(g, 0, M - 20); lead(g, M + 20, SP);
+      sv('circle', { cx: M - 20, cy: 0, r: 5, fill: '#3B3355' }, g); sv('circle', { cx: M + 20, cy: 0, r: 5, fill: '#3B3355' }, g);
+      sv('line', { x1: M - 20, y1: 0, x2: p.open ? M + 14 : M + 20, y2: p.open ? -24 : 0, stroke: p.open ? '#CF3F3F' : '#2E8B57', 'stroke-width': 5, 'stroke-linecap': 'round' }, g);
+      return;
+    }
+    if (p.t === 'mat' || p.t === 'clip') {
+      lead(g, 0, M - 22); lead(g, M + 22, SP);
+      sv('rect', { x: M - 22, y: -17, width: 44, height: 34, rx: 8, fill: p.t === 'clip' ? '#EFE9FF' : '#fff', stroke: '#3B3355', 'stroke-width': 2.5, 'stroke-dasharray': p.t === 'clip' && !p.mat ? '4 3' : '0' }, g);
+      var e = sv('text', { x: M, y: 8, 'text-anchor': 'middle', 'font-size': 22 }, g);
+      e.textContent = p.mat ? MAT[p.mat][0] : '?';
+      if (k[0] === 'v') e.setAttribute('transform', 'rotate(-90 ' + M + ' 0)');
+    }
+  }
+  var TOOLS = { wire: ['➖', 'Wire'], bulb: ['💡', 'Bulb'], battery: ['🔋', 'Cell'], switch: ['🔘', 'Switch'], erase: ['🧽', 'Eraser'] };
+  function toolbar() {
+    var bar = el('div', 'tools'); bar.setAttribute('role', 'group'); bar.setAttribute('aria-label', 'Parts');
+    Object.keys(S.inv).forEach(function (k) {
+      var b = btn('tool', null, function () { S.tool = k; render(); });
+      b.setAttribute('aria-pressed', S.tool === k ? 'true' : 'false');
+      b.appendChild(document.createTextNode(TOOLS[k][0] + ' ' + TOOLS[k][1]));
+      if (k !== 'erase') b.appendChild(el('span', 'c', '×' + S.inv[k]));
+      bar.appendChild(b);
+    });
+    var tip = el('p', 'key', 'Pick a part, then tap a gap on the board. Tap a cell to turn it around, and tap a switch to open or close it.');
+    var w = el('div'); w.appendChild(bar); w.appendChild(tip); return w;
+  }
+  function status(r) {
+    var box = el('div', 'status');
+    if (S.hidden) return box;
+    if (r.short) box.appendChild(el('span', 'pill warn', '⚠️ Short circuit: the cell is getting hot!'));
+    Object.keys(S.parts).forEach(function (k) {
+      var p = S.parts[k]; if (p.t !== 'bulb') return;
+      var b = r.short ? 0 : r.bright[k] || 0, nm = p.name ? 'Bulb ' + p.name : 'Bulb';
+      var w = p.blown ? ['off', nm + ': fused'] : b > 1.6 ? ['on', nm + ': very bright'] : b > 0.6 ? ['on', nm + ': bright'] : b > 0.03 ? ['dim', nm + ': dim'] : ['off', nm + ': off'];
+      box.appendChild(el('span', 'pill ' + w[0], '💡 ' + w[1]));
+    });
+    return box;
+  }
+
+  /* ---------- tapping the board ---------- */
+  function tap(k, g) {
+    if (S.done || !(S.l.type === 'build' || S.l.type === 'fix')) {
+      var q = S.parts[k];
+      if (q && q.t === 'switch' && S.l.type !== 'predict' && S.l.type !== 'oeq') { q.open = !q.open; render(); }
+      return;
+    }
+    var p = S.parts[k], t = S.tool;
+    if (p && p.t === 'switch' && t !== 'erase') { p.open = !p.open; render(); return; }
+    if (p && p.t === 'battery' && t !== 'erase' && (t === 'battery' || !S.inv[t]) && !p.lock) { p.dir = -(p.dir || 1); render(); return; }
+    if (p && p.lock) { g.classList.add('shake'); setTimeout(function () { g.classList.remove('shake'); }, 300); return; }
+    if (t === 'erase') { if (p) { if (S.inv[p.t] != null) S.inv[p.t]++; delete S.parts[k]; render(); } return; }
+    if (!t || !S.inv[t]) return;
+    if (p && p.t === t) return;
+    if (p && S.inv[p.t] != null) S.inv[p.t]++;
+    S.inv[t]--;
+    S.parts[k] = { e: k, t: t, lock: false };
+    if (t === 'battery') S.parts[k].dir = 1;
+    if (t === 'switch') S.parts[k].open = false;
+    render();
+  }
+
+  /* ---------- level types ---------- */
+  function hintBox(wrap) {
+    var l = S.l;
+    for (var h = 0; h < S.hints; h++) wrap.appendChild(el('div', 'hint', '💡 Hint ' + (h + 1) + ': ' + l.hints[h]));
+  }
+  function actions(list) { var a = el('div', 'actions'); list.forEach(function (b) { a.appendChild(b); }); return a; }
+  function hintBtn() {
+    var b = btn('btn', S.hints < S.l.hints.length ? '💡 Hint (' + (S.l.hints.length - S.hints) + ' left)' : '💡 No more hints', function () { S.hints++; render(); });
+    b.disabled = S.done || !S.l.hints || S.hints >= S.l.hints.length; return b;
+  }
+  function feedback(text, kind) { if (text) app.appendChild(el('div', 'fb ' + (kind || ''), text)); }
+
+  function buildUI() {
+    var l = S.l;
+    hintBox(app);
+    app.appendChild(actions([
+      btn('btn go', '✅ Check', function () {
+        var msg = l.goal(tester());
+        if (msg) { S.wrong++; S.msg = msg; render(); } else finish();
+      }),
+      hintBtn(),
+      btn('btn', '↺ Start again', function () { var h = S.hints; play(S.i); S.hints = h; render(); })
+    ]));
+    if (S.msg && !S.done) feedback('✗ ' + S.msg, 'bad');
+  }
+  function sortUI() {
+    var l = S.l, clip = Object.keys(S.parts).filter(function (k) { return S.parts[k].t === 'clip'; })[0];
+    app.appendChild(el('p', 'key', 'Tap an object to put it in the clip:'));
+    var c = el('div', 'chips');
+    l.mats.forEach(function (m) {
+      var b = btn('chip', MAT[m][0] + ' ' + MAT[m][1], function () {
+        S.parts[clip].mat = m;
+        var r = simulate(S.parts, S.C, S.R); S.tested[m] = r.bright[named('A')] > 0.03 ? (r.bright[named('A')] < 0.6 ? 'dim' : 'yes') : 'no';
+        render();
+      });
+      b.setAttribute('aria-pressed', S.parts[clip].mat === m ? 'true' : 'false');
+      c.appendChild(b);
+    });
+    app.appendChild(c);
+    var tested = l.mats.filter(function (m) { return S.tested[m]; });
+    if (tested.length) {
+      var t = el('table', 'res'), tr = el('tr'); ['Object', 'Did bulb A light up?'].forEach(function (h) { tr.appendChild(el('th', null, h)); }); t.appendChild(tr);
+      tested.forEach(function (m) { var row = el('tr'); row.appendChild(el('td', null, MAT[m][0] + ' ' + MAT[m][1])); row.appendChild(el('td', null, S.tested[m] === 'yes' ? 'Yes' : S.tested[m] === 'dim' ? 'Yes, but dimly' : 'No')); t.appendChild(row); });
+      app.appendChild(t);
+    }
+    if (tested.length < l.mats.length) { app.appendChild(el('p', 'key', 'Tested ' + tested.length + ' of ' + l.mats.length + ' objects.')); hintBox(app); app.appendChild(actions([hintBtn()])); return; }
+    app.appendChild(el('div', 'mission', 'Which objects are electrical conductors? Select all of them.'));
+    var q = el('div', 'chips');
+    l.mats.forEach(function (m) {
+      var b = btn('chip', MAT[m][0] + ' ' + MAT[m][1], function () { if (S.done) return; var i = S.picked.indexOf(m); if (i < 0) S.picked.push(m); else S.picked.splice(i, 1); render(); });
+      b.setAttribute('aria-pressed', S.picked.indexOf(m) >= 0 ? 'true' : 'false');
+      if (S.done) b.className = 'chip ' + (MAT[m][2] > 0 ? 'right' : '');
+      q.appendChild(b);
+    });
+    app.appendChild(q);
+    hintBox(app);
+    app.appendChild(actions([btn('btn go', '✅ Check', function () {
+      var want = l.mats.filter(function (m) { return MAT[m][2] > 0; });
+      var ok = want.length === S.picked.length && want.every(function (m) { return S.picked.indexOf(m) >= 0; });
+      if (ok) finish(); else { S.wrong++; S.msg = 'Not quite. Look at your results table: every object that made the bulb light up, even dimly, is a conductor.'; render(); }
+    }), hintBtn()]));
+    if (S.msg && !S.done) feedback('✗ ' + S.msg, 'bad');
+  }
+  function predictUI() {
+    var l = S.l, step = l.steps[S.step];
+    var bulbs = Object.keys(S.parts).filter(function (k) { return S.parts[k].t === 'bulb'; }).map(function (k) { return S.parts[k].name; });
+    if (S.hidden) {
+      var c = el('div', 'chips');
+      bulbs.concat(['None']).forEach(function (n) {
+        var b = btn('chip', n === 'None' ? 'None of them' : 'Bulb ' + n, function () {
+          if (n === 'None') S.picked = S.picked.indexOf('None') >= 0 ? [] : ['None'];
+          else { S.picked = S.picked.filter(function (x) { return x !== 'None'; }); var i = S.picked.indexOf(n); if (i < 0) S.picked.push(n); else S.picked.splice(i, 1); }
+          render();
+        });
+        b.setAttribute('aria-pressed', S.picked.indexOf(n) >= 0 ? 'true' : 'false');
+        c.appendChild(b);
+      });
+      app.appendChild(c);
+      var go = btn('btn go', '▶ Test it', function () {
+        var a = step.act;
+        (a.close || []).forEach(function (n) { S.parts[named(n)].open = false; });
+        (a.open || []).forEach(function (n) { S.parts[named(n)].open = true; });
+        (a.blow || []).forEach(function (n) { S.parts[named(n)].blown = true; });
+        (a.flip || []).forEach(function (n) { var p = S.parts[named(n)]; p.dir = -(p.dir || 1); });
+        var r = tester()(), lit = bulbs.filter(function (n) { return r.lit(n); });
+        var mine = S.picked.filter(function (x) { return x !== 'None'; });
+        S.right = lit.length === mine.length && lit.every(function (n) { return mine.indexOf(n) >= 0; });
+        if (!S.right) S.wrong++;
+        S.actual = lit; S.hidden = false; render();
+      });
+      go.disabled = !S.picked.length;
+      app.appendChild(actions([go]));
+      return;
+    }
+    feedback((S.right ? '✓ You predicted correctly! ' : '✗ Not quite. ') + (S.actual.length ? 'Lit: bulb ' + S.actual.join(' and ') + '.' : 'None of the bulbs lit up.'), S.right ? 'good' : 'bad');
+    if (S.done) return;
+    var last = S.step === l.steps.length - 1;
+    app.appendChild(actions([btn('btn go', last ? 'See what you learnt →' : 'Next question →', function () {
+      if (last) { finish(); return; }
+      S.step++; S.picked = []; S.hidden = true; render();
+    })]));
+  }
+  function oeqUI() {
+    var l = S.l;
+    var ans = el('div', 'answer');
+    if (!S.answer.length) ans.appendChild(el('span', 'ph', 'Tap the chips below to build your answer.'));
+    else ans.textContent = S.answer.map(function (id) { return l.chips.filter(function (c) { return c[0] === id; })[0][1]; }).join(' ');
+    app.appendChild(ans);
+    var c = el('div', 'chips');
+    (S.order || (S.order = l.chips.map(function (x) { return x[0]; }).sort(function () { return Math.random() - .5; }))).forEach(function (id) {
+      var ch = l.chips.filter(function (x) { return x[0] === id; })[0];
+      var b = btn('chip', ch[1], function () { if (S.done) return; var i = S.answer.indexOf(id); if (i < 0) S.answer.push(id); else S.answer.splice(i, 1); S.msg = ''; render(); });
+      b.setAttribute('aria-pressed', S.answer.indexOf(id) >= 0 ? 'true' : 'false');
+      if (S.done) b.className = 'chip ' + (ch[2] ? 'right' : '');
+      c.appendChild(b);
+    });
+    app.appendChild(c);
+    hintBox(app);
+    app.appendChild(actions([btn('btn go', '✅ Check my answer', function () {
+      var bad = S.answer.map(function (id) { return l.chips.filter(function (x) { return x[0] === id; })[0]; }).filter(function (x) { return !x[2]; });
+      var need = l.chips.filter(function (x) { return x[2]; }), miss = need.filter(function (x) { return S.answer.indexOf(x[0]) < 0; });
+      if (bad.length) { S.wrong++; S.msg = '“' + bad[0][1] + '” ' + bad[0][3]; render(); return; }
+      if (miss.length) { S.wrong++; S.msg = 'Good so far, but your answer is missing ' + (miss.length === 1 ? 'a key point' : miss.length + ' key points') + '. An examiner gives marks for each link in the explanation.'; render(); return; }
+      finish();
+    }), hintBtn(), btn('btn', 'Clear', function () { S.answer = []; S.msg = ''; render(); })]));
+    if (S.msg && !S.done) feedback('✗ ' + S.msg, 'bad');
+    if (S.done) feedback('Model answer: ' + l.model, 'good');
+  }
+
+  function finish() {
+    S.done = true; S.msg = '';
+    S.stars = Math.max(1, 3 - S.hints - S.wrong);
+    if ((save.stars[S.l.id] || 0) < S.stars) { save.stars[S.l.id] = S.stars; store(); }
+    if (S.l.type === 'predict') S.hidden = false;
+    render();
+    var d = document.getElementById('done'); if (d) d.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  function doneBox() {
+    var d = el('div', 'fb good'); d.id = 'done';
+    var st = el('div', 'stars'); st.innerHTML = starStr(S.stars); d.appendChild(st);
+    d.appendChild(el('h3', null, S.stars === 3 ? 'Brilliant!' : 'Well done!'));
+    d.appendChild(el('p', null, '🧠 ' + S.l.learn));
+    var next = S.i < L.length - 1;
+    d.appendChild(actions([btn('btn go', next ? 'Next level →' : 'Back to all levels', function () { if (next) play(S.i + 1); else home(); }), btn('btn', 'Play again', function () { play(S.i); })]));
+    return d;
+  }
+
+  home();
+})();
+</script>
+</body>
+</html>
