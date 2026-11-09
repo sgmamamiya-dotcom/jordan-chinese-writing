@@ -1081,7 +1081,102 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso17', kind: 'lesson', emoji: '🔦', title: 'SPSO Lesson 12: Light, Shadows and Sound', level: 'SPSO', theme: 'spso',
+    id: 'spso18', kind: 'lesson', emoji: '🫁', title: 'SPSO Lesson 12: Respiration and Excretion', level: 'SPSO', theme: 'spso',
+    videos: [
+      { id: '8NUxvJS-_0k', title: 'How do lungs work?', by: 'TED-Ed' },
+      { id: 'PzfLDi-sL3w', title: 'How does asthma work?', by: 'TED-Ed' },
+      { id: 'HD__r66sFjk', title: 'How smoking wrecks your lungs (demonstration)', by: 'Chris Notap' },
+      { id: 'KCWEedgFNCk', title: 'What happens if you hold your pee in for too long', by: 'Insider Science' },
+      { id: '9KZHowze7lg', title: 'Kidney Disease and Dialysis', by: 'FuseSchool' },
+      { id: 'al_H8f1cG-I', title: 'How does kidney transplant surgery work?', by: 'TED-Ed' },
+      { id: 'YXzNiTcMUk4', title: 'Pig-to-human kidney transplant: 3D animation', by: 'University of Alabama at Birmingham' }
+    ],
+    form: 'https://docs.google.com/forms/d/e/1FAIpQLSfnsvent9G4FVzKJ0ym3yOZeMOMsmiu7m88rDZrtQwH1Uls1g/viewform',
+    slides: [
+      { kicker: 'SPSO · Lesson 12', title: 'Respiration and Excretion', emoji: '🫁',
+        points: ['The path of air into the lungs', 'Alveoli and gas exchange', 'How we breathe in and out', 'Respiration in cells and how CO₂ is carried', 'Asthma and smoking', 'Excretion: kidneys, nephrons, dialysis and transplants'] },
+      { title: 'The path of air', emoji: '👃',
+        steps: ['Nose', 'Pharynx (throat)', 'Larynx (voice box)', 'Trachea (windpipe)', 'Bronchi', 'Bronchioles', 'Alveoli'],
+        note: 'The nasal passages warm, moisten and filter the air. Air that skips the nose (for example, through a tube put straight into the trachea) is colder and drier, which can damage the lungs. Mucus and tiny hairs (cilia) in the trachea trap and sweep out dust and germs.' },
+      { title: 'Alveoli: where gases are exchanged', emoji: '🫧',
+        points: ['The lungs contain about 300–500 million tiny air sacs called alveoli.', 'Oxygen diffuses from the alveoli into the blood; carbon dioxide diffuses from the blood into the alveoli. This is simple diffusion: no energy is needed.', 'Alveoli are good at this: a huge surface area (about 70 m², the floor area of a small flat), walls only one cell thick, a moist lining and many capillaries.'] },
+      { title: 'Breathing in and out', emoji: '🌬️',
+        cols: [['Breathing in', 'Diaphragm contracts and flattens; rib muscles lift the ribs', 'The chest gets bigger, the pressure inside falls, and air rushes in.'], ['Breathing out', 'Diaphragm relaxes and domes up; ribs move down', 'The chest gets smaller, the pressure rises, and air is pushed out.'], ['What changes', 'Air breathed out has less oxygen and more carbon dioxide', 'About 21% → 16% oxygen; about 0.04% → 4% carbon dioxide. It is also warmer and wetter.']] },
+      { title: 'Respiration in cells', emoji: '⚡',
+        points: ['Breathing moves air; respiration is a chemical reaction in every cell.', 'Glucose + oxygen → carbon dioxide + water + energy (in the mitochondria).', 'The carbon dioxide is carried to the lungs mostly as bicarbonate (hydrogencarbonate) ions in the blood plasma; smaller amounts are carried by haemoglobin or simply dissolved.'] },
+      { title: 'Asthma', emoji: '😮‍💨',
+        points: ['In an asthma attack, the airways (bronchioles) become swollen, the muscles around them tighten and extra mucus is made.', 'The airways become narrow, so breathing is hard and wheezy.', 'Triggers include dust, pollen, smoke, cold air and exercise.', 'Inhalers deliver medicine that relaxes the airway muscles or reduces swelling.'] },
+      { title: 'Smoking and the lungs', emoji: '🚭',
+        cols: [['Tar', 'Sticky black substance', 'Coats the lungs, damages cilia, and contains chemicals that cause cancer.'], ['Nicotine and carbon monoxide', 'Addictive drug / poisonous gas', 'Carbon monoxide sticks to haemoglobin, so the blood carries less oxygen.'], ['Emphysema', 'A long-term (chronic) disease caused by smoking', 'Alveoli walls break down into bigger, fewer sacs, so there is less surface area and the person is always breathless.']] },
+      { title: 'Excretion', emoji: '🚽',
+        points: ['Excretion is removing waste made by the body’s own chemical reactions.', 'Lungs excrete carbon dioxide. Skin loses some water and salts in sweat.', 'The liver turns extra amino acids into urea; the kidneys remove urea, extra water and salts as urine.', '(Getting rid of undigested food is called egestion, not excretion.)'] },
+      { title: 'The urinary system', emoji: '🫘',
+        steps: ['Kidneys (filter the blood)', 'Ureters (carry urine)', 'Bladder (stores urine)', 'Urethra (out of the body)'],
+        note: 'Ureters carry urine from the kidneys to the bladder; the urethra carries it out. The bladder holds about 400–500 ml. Holding urine for too long now and then is uncomfortable and can raise the risk of infection.' },
+      { title: 'Inside the kidney: the nephron', emoji: '🔬',
+        cols: [['Glomerulus and Bowman’s capsule', 'Filtering', 'High pressure pushes water, salts, glucose and urea out of a knot of capillaries (glomerulus) into a cup (Bowman’s capsule).'], ['Proximal convoluted tubule', 'Taking back the good stuff', 'All the glucose and amino acids, and much of the water and salts, are reabsorbed into the blood.'], ['Loop of Henle and collecting duct', 'Concentrating the urine', 'More water is reabsorbed, so the urine left is concentrated. Each kidney has about a million nephrons, all making urine.']] },
+      { title: 'When kidneys fail', emoji: '🏥',
+        cols: [['Dialysis', 'A machine cleans the blood', 'Blood flows past a partially permeable membrane; urea and extra salts diffuse out. It takes about 4 hours, several times a week.'], ['Kidney transplant', 'A healthy kidney from a donor', 'One working kidney is enough. The new kidney is joined to blood vessels and the bladder; medicines stop the body rejecting it.'], ['Pig kidneys?', 'Xenotransplantation', 'Scientists have transplanted gene-edited pig kidneys into people, hoping to solve the shortage of donors.']] },
+      { title: 'Recap', emoji: '✅',
+        points: ['Nose → pharynx → larynx → trachea → bronchi → bronchioles → alveoli.', 'Gas exchange in the alveoli is by simple diffusion.', 'Most CO₂ travels as bicarbonate in plasma.', 'Smoking causes emphysema; asthma narrows the airways.', 'Kidneys → ureters → bladder → urethra.', 'Nephron: filter (glomerulus), reabsorb glucose (proximal tubule), concentrate urine.'] }
+    ],
+    summary: [
+      'Air travels through the nose, pharynx, larynx, trachea, bronchi and bronchioles to the alveoli. The nasal passages warm, moisten and filter the air; mucus and cilia trap dust and germs.',
+      'Gas exchange happens in the alveoli by simple diffusion: oxygen moves into the blood and carbon dioxide moves out. Alveoli have a huge surface area, thin walls, a moist lining and a rich blood supply.',
+      'When we breathe in, the diaphragm contracts and flattens and the ribs move up and out, so air is drawn in. When we breathe out, they relax and air is pushed out.',
+      'Breathed-out air contains less oxygen (about 16%) and more carbon dioxide (about 4%) than breathed-in air.',
+      'Cellular respiration: glucose + oxygen → carbon dioxide + water + energy. Most carbon dioxide is carried to the lungs as bicarbonate ions in the plasma.',
+      'Asthma makes the airways swell, tighten and fill with mucus. Smoking damages cilia and alveoli and causes emphysema, a chronic disease in which the alveoli break down.',
+      'Excretion removes waste from the body’s chemical reactions: carbon dioxide (lungs), urea, water and salts (kidneys, as urine) and some water and salts in sweat (skin).',
+      'Urine flows from the kidneys through the ureters to the bladder, and out through the urethra.',
+      'Each kidney has about a million nephrons. Blood is filtered from the glomerulus into Bowman’s capsule; glucose and amino acids are reabsorbed in the proximal convoluted tubule; water is reabsorbed further along to concentrate the urine.',
+      'If the kidneys fail, a dialysis machine can clean the blood, or the patient can receive a kidney transplant. Scientists are testing gene-edited pig kidneys to help with the shortage of donors.'
+    ],
+    terms: [
+      ['Trachea', 'The windpipe, held open by rings of cartilage.'],
+      ['Bronchi / bronchioles', 'The tubes that branch from the trachea into the lungs.'],
+      ['Alveoli', 'Tiny air sacs where gas exchange happens.'],
+      ['Diaphragm', 'The sheet of muscle under the lungs that helps us breathe.'],
+      ['Diffusion', 'Movement of particles from where there are many to where there are few.'],
+      ['Respiration', 'The release of energy from glucose in cells.'],
+      ['Bicarbonate ions', 'The main form in which carbon dioxide is carried in the blood.'],
+      ['Asthma', 'A condition in which the airways swell and narrow.'],
+      ['Emphysema', 'A chronic lung disease, mostly caused by smoking, in which alveoli break down.'],
+      ['Excretion', 'Removing waste products made by the body’s chemical reactions.'],
+      ['Urea', 'A waste made in the liver from extra amino acids; removed in urine.'],
+      ['Ureter', 'The tube that carries urine from a kidney to the bladder.'],
+      ['Urethra', 'The tube that carries urine from the bladder out of the body.'],
+      ['Nephron', 'A tiny filtering unit in the kidney.'],
+      ['Glomerulus', 'A knot of capillaries in the nephron where blood is filtered.'],
+      ['Dialysis', 'Using a machine to clean the blood when the kidneys fail.']
+    ],
+    quiz: [
+      { q: 'Where does gas exchange take place in the lungs?', a: ['Alveoli', 'Trachea', 'Larynx', 'Pharynx'], c: 0, e: 'The alveoli are tiny air sacs surrounded by capillaries.' },
+      { q: 'Gas exchange in the alveoli happens by…', a: ['simple diffusion', 'active transport', 'osmosis', 'digestion'], c: 0, e: 'Gases move from high to low concentration; no energy is needed.' },
+      { q: 'Why can air breathed through a tube in the trachea cause lung problems?', a: ['It does not pass through the nasal passages, so it is not warmed and moistened', 'It moves too slowly', 'It has too much oxygen', 'It passes the tongue'], c: 0, e: 'The nose warms, moistens and filters the air.' },
+      { q: 'What happens to the diaphragm when we breathe in?', a: ['It contracts and flattens', 'It relaxes and domes up', 'It stops moving', 'It fills with air'], c: 0, e: 'This makes the chest bigger, so air flows in.' },
+      { q: 'How is most carbon dioxide carried to the lungs?', a: ['As bicarbonate ions in the plasma', 'Attached to haemoglobin', 'As carbonate crystals', 'Inside white blood cells'], c: 0, e: 'Only smaller amounts ride on haemoglobin or are simply dissolved.' },
+      { q: 'Which long-term lung disease is mainly caused by smoking?', a: ['Emphysema', 'Asthma', 'A cold', 'Hay fever'], c: 0, e: 'Smoking breaks down the walls of the alveoli.' },
+      { q: 'Which tube carries urine from the kidney to the bladder?', a: ['Ureter', 'Urethra', 'Nephron', 'Trachea'], c: 0, e: 'Ureter (kidney → bladder), urethra (bladder → outside).' },
+      { q: 'Where in the nephron is blood first filtered?', a: ['The glomerulus, into Bowman’s capsule', 'The bladder', 'The loop of Henle', 'The urethra'], c: 0, e: 'High pressure in the glomerulus pushes small molecules out.' },
+      { q: 'Where are glucose and amino acids taken back into the blood?', a: ['The proximal convoluted tubule', 'The bladder', 'The ureter', 'The glomerulus'], c: 0, e: 'All the glucose is normally reabsorbed, so healthy urine has no glucose.' },
+      { q: 'Which organ makes urea?', a: ['Liver', 'Kidney', 'Lung', 'Bladder'], c: 0, e: 'The liver makes urea; the kidneys remove it.' }
+    ],
+    tips: [
+      'Breathing ≠ respiration. Breathing moves air; respiration releases energy in cells.',
+      'Ureter vs urethra: the urETer comes first (kidney → bladder), the urethra leads out.',
+      'Know why alveoli are efficient: large surface area, thin walls, moist, good blood supply.',
+      'Nephron order: glomerulus → Bowman’s capsule → proximal tubule → loop of Henle → distal tubule → collecting duct.',
+      'Excretion (waste from chemical reactions) is not egestion (undigested food).'
+    ],
+    facts: [
+      'If all your alveoli were spread out flat, they would cover about 70 square metres, roughly the floor of a small flat.',
+      'Your kidneys filter about 180 litres of blood plasma a day, but you only pass about 1.5 litres of urine. The rest is reabsorbed.',
+      'You can live a normal life with just one kidney.'
+    ]
+  },
+  {
+    id: 'spso17', kind: 'lesson', emoji: '🔦', title: 'SPSO Lesson 13: Light, Shadows and Sound', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'IXxZRZxafEQ', title: 'What Is Light?', by: 'Kurzgesagt – In a Nutshell' },
       { id: 'liqF6EamiE4', title: 'Can You Solve This Shadow Illusion?', by: 'Veritasium' },
@@ -1100,7 +1195,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSdtlHubG9EAD3l7zAhS7tDZ08GJo0nsOaGwFaMUVRJ0GUgVsg/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 12', title: 'Light, Shadows and Sound', emoji: '🔦',
+      { kicker: 'SPSO · Lesson 13', title: 'Light, Shadows and Sound', emoji: '🔦',
         points: ['What light is and how it travels', 'Shadows, pinhole cameras and eclipses', 'Mirrors, refraction and lenses', 'Colour and how we see it', 'Light made by living things', 'Sound: vibrations, pitch and loudness'] },
       { title: 'What is light?', emoji: '💡',
         points: ['Light is a form of energy that travels as a wave, in tiny packets called photons.', 'It travels in straight lines, at about 300,000 km per second in a vacuum: the fastest speed there is.', 'Luminous objects give out light (the Sun, a torch). We see other objects because light bounces off them into our eyes.', 'Materials can be transparent (let light through), translucent (let some through, blurry) or opaque (block light).'] },
@@ -1181,7 +1276,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso11', kind: 'lesson', emoji: '👶', title: 'SPSO Lesson 13: The Reproductive System', level: 'SPSO', theme: 'spso',
+    id: 'spso11', kind: 'lesson', emoji: '👶', title: 'SPSO Lesson 14: The Reproductive System', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'ayzN5f3qN8g', title: 'How menstruation works', by: 'TED-Ed' },
       { id: '_5OvgQW6FG4', title: 'Fertilization', by: 'Nucleus Medical Media' },
@@ -1194,7 +1289,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSeZjEvdPEE0B6TIgzFfdesAFtGzAVEuJByjrMCZNL_mIDuS0w/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 13', title: 'The Reproductive System', emoji: '👶',
+      { kicker: 'SPSO · Lesson 14', title: 'The Reproductive System', emoji: '👶',
         points: ['Puberty: how bodies change', 'The male reproductive system', 'The female reproductive system', 'The menstrual cycle', 'Fertilisation, pregnancy and birth', 'IVF, twins, and how other mammals give birth'] },
       { title: 'Puberty', emoji: '🌱',
         cols: [['When', 'Usually between about 9 and 16 years old', 'Hormones (chemical messengers) tell the body to start becoming an adult.'], ['Boys', 'Body changes', 'Voice deepens, shoulders broaden, more body hair, and the testes start making sperm.'], ['Girls', 'Body changes', 'Breasts develop, hips widen, more body hair, and periods (menstruation) begin.']],
@@ -1272,7 +1367,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso12', kind: 'lesson', emoji: '💧', title: 'SPSO Lesson 14: Changes of State and the Water Cycle', level: 'SPSO', theme: 'spso',
+    id: 'spso12', kind: 'lesson', emoji: '💧', title: 'SPSO Lesson 15: Changes of State and the Water Cycle', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'z5G4NCwWUxY', title: 'The Great Aqua Adventure (the water cycle)', by: 'Crash Course Kids' },
       { id: 'DjByja9ejTQ', title: 'Why Do Clouds Stay Up?', by: 'Be Smart' },
@@ -1295,7 +1390,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSc5IQIF1RG3q85r6KAC-bazM2872ZzngONsUfVX7FUTu1ESRQ/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 14', title: 'Changes of State and the Water Cycle', emoji: '💧',
+      { kicker: 'SPSO · Lesson 15', title: 'Changes of State and the Water Cycle', emoji: '💧',
         points: ['Melting, boiling and latent heat', 'Heating and cooling curves', 'Pressure and boiling point', 'Strange water: supercooling, superheating, ice that floats', 'Phase diagrams and the triple point', 'The gas laws', 'Water cycle, clouds and breezes'] },
       { title: 'Changes of state', emoji: '🧊',
         points: ['Solid → liquid: melting. Liquid → solid: freezing.', 'Liquid → gas: boiling (throughout the liquid) or evaporation (only at the surface, at any temperature).', 'Gas → liquid: condensation.', 'Solid → gas directly: sublimation, e.g. dry ice.'] },
@@ -1375,7 +1470,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso13', kind: 'lesson', emoji: '👁️', title: 'SPSO Lesson 15: The Senses and the Nervous System', level: 'SPSO', theme: 'spso',
+    id: 'spso13', kind: 'lesson', emoji: '👁️', title: 'SPSO Lesson 16: The Senses and the Nervous System', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'osChE163jJQ', title: 'How Many Senses Do We Have? Busting the myth of 5 senses', by: 'Peekaboo Kidz (Dr. Binocs)' },
       { id: 'VAEmxt78bBI', title: 'A Journey Through Your Nervous System', by: 'BRIGHT SIDE' },
@@ -1389,7 +1484,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSdxrYrrN9mf1pFvpw24qMNeaK9eMir1B8UBlY5dOA74uTxdFw/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 15', title: 'The Senses and the Nervous System', emoji: '👁️',
+      { kicker: 'SPSO · Lesson 16', title: 'The Senses and the Nervous System', emoji: '👁️',
         points: ['More than five senses', 'The nervous system: CNS and PNS', 'Neurons and nerve impulses', 'Synapses and neurotransmitters', 'The eye and sight problems', 'Hearing, balance and smell'] },
       { title: 'More than five senses', emoji: '🖐️',
         points: ['Sight, hearing, smell, taste and touch are the famous five.', 'We also sense balance (equilibrium), body position (proprioception), temperature, pain, and internal feelings like hunger and thirst.', 'Receptors are cells that detect stimuli. Exteroceptors detect the outside world; interoceptors monitor internal organs (digestive, breathing, heart, urinary, reproductive systems); proprioceptors sense the position of muscles and joints.'] },
@@ -1467,7 +1562,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso14', kind: 'lesson', emoji: '🏋️', title: 'SPSO Lesson 16: Forces and Motion', level: 'SPSO', theme: 'spso',
+    id: 'spso14', kind: 'lesson', emoji: '🏋️', title: 'SPSO Lesson 17: Forces and Motion', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'SEZVsE3eRbI', title: 'Types of Forces: What is Force?', by: 'Learning Junction' },
       { id: 'U78NOo-oxOY', title: 'Weight, Force, Mass and Gravity', by: 'FuseSchool' },
@@ -1495,7 +1590,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSf2WMmuBuATU7wb-UqL6AvXmBPkeas0n09t_LnIyoxfIdHcSg/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 16', title: 'Forces and Motion', emoji: '🏋️',
+      { kicker: 'SPSO · Lesson 17', title: 'Forces and Motion', emoji: '🏋️',
         points: ['Types of forces', 'Mass and weight', 'Newton’s three laws', 'Speed, acceleration and graphs', 'Friction and net force', 'Springs, floating and surface tension'] },
       { title: 'Types of forces', emoji: '👉',
         cols: [['Contact forces', 'Need to touch', 'Friction, air resistance, tension, the push of a surface (normal force), upthrust in water.'], ['Non-contact forces', 'Act at a distance', 'Gravity, magnetic force, electrostatic force.'], ['What forces do', 'Change motion or shape', 'Start, stop, speed up, slow down, change direction, or squash and stretch.']],
@@ -1572,7 +1667,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso15', kind: 'lesson', emoji: '🌡️', title: 'SPSO Lesson 17: Homeostasis and Hormones', level: 'SPSO', theme: 'spso',
+    id: 'spso15', kind: 'lesson', emoji: '🌡️', title: 'SPSO Lesson 18: Homeostasis and Hormones', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'Rgpj__C2jCc', title: 'What is Homeostasis?', by: 'Free Animated Education' },
       { id: '14SQT97EE4c', title: 'Negative Feedback', by: 'FuseSchool' },
@@ -1586,7 +1681,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSdyguGw0sVcTaGvTkHRtaVbv8IF8JnZ0b75dZ0Ywi114YDvgQ/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 17', title: 'Homeostasis and Hormones', emoji: '🌡️',
+      { kicker: 'SPSO · Lesson 18', title: 'Homeostasis and Hormones', emoji: '🌡️',
         points: ['What homeostasis is', 'Receptor → control centre → effector', 'Negative and positive feedback', 'Hormones and the endocrine glands', 'Blood sugar, insulin and diabetes', 'Controlling body temperature'] },
       { title: 'What is homeostasis?', emoji: '⚖️',
         points: ['Homeostasis means keeping conditions inside the body stable, even when the outside changes.', 'Examples: body temperature (about 37 °C), blood sugar level, water content, blood pressure.', 'It is called the central principle of physiology, because almost every body system helps keep conditions steady.'] },
