@@ -1081,7 +1081,107 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso11', kind: 'lesson', emoji: '👶', title: 'SPSO Lesson 12: The Reproductive System', level: 'SPSO', theme: 'spso',
+    id: 'spso17', kind: 'lesson', emoji: '🔦', title: 'SPSO Lesson 12: Light, Shadows and Sound', level: 'SPSO', theme: 'spso',
+    videos: [
+      { id: 'IXxZRZxafEQ', title: 'What Is Light?', by: 'Kurzgesagt – In a Nutshell' },
+      { id: 'liqF6EamiE4', title: 'Can You Solve This Shadow Illusion?', by: 'Veritasium' },
+      { id: 'oDNqfxRYQY0', title: 'Concave and Convex Mirrors', by: 'Manocha Academy' },
+      { id: 'jQqF76ZkSLU', title: 'Converging and Diverging Lenses (for class quiz question 8)', by: 'OMY Eduworld' },
+      { id: 'l8_fZPHasdo', title: 'How we see color', by: 'TED-Ed' },
+      { id: 'YtH9eXWuf3Y', title: 'Colour Theory: CMYK vs RGB', by: 'Ethan Avery' },
+      { id: 'mf5otGNbkuc', title: 'Optical illusions show how we see', by: 'TED (Beau Lotto)' },
+      { id: 'aPUF40j47-o', title: 'Bioluminescence in the deep sea', by: 'MBARI' },
+      { id: 'w6XslsZ0Vxw', title: '10 Fun Facts About Bioluminescence', by: 'Smithsonian Magazine' },
+      { id: 'gdGyvGPZ1G0', title: 'What is Sound?', by: 'Peekaboo Kidz (Dr. Binocs)' },
+      { id: 'px3oVGXr4mo', title: 'What Does Sound Look Like?', by: 'NPR Skunk Bear' },
+      { id: 'rYrdiQckGhw', title: '8 Crazy Experiments with Sound', by: 'Go Experimental' },
+      { id: 'H-iCZElJ8m0', title: 'Hearing Test (keep the volume low!)', by: 'adminofthissite' },
+      { id: '4JLNb8-LOB0', title: 'How to see with sound', by: 'TED-Ed' }
+    ],
+    form: 'https://docs.google.com/forms/d/e/1FAIpQLSdtlHubG9EAD3l7zAhS7tDZ08GJo0nsOaGwFaMUVRJ0GUgVsg/viewform',
+    slides: [
+      { kicker: 'SPSO · Lesson 12', title: 'Light, Shadows and Sound', emoji: '🔦',
+        points: ['What light is and how it travels', 'Shadows, pinhole cameras and eclipses', 'Mirrors, refraction and lenses', 'Colour and how we see it', 'Light made by living things', 'Sound: vibrations, pitch and loudness'] },
+      { title: 'What is light?', emoji: '💡',
+        points: ['Light is a form of energy that travels as a wave, in tiny packets called photons.', 'It travels in straight lines, at about 300,000 km per second in a vacuum: the fastest speed there is.', 'Luminous objects give out light (the Sun, a torch). We see other objects because light bounces off them into our eyes.', 'Materials can be transparent (let light through), translucent (let some through, blurry) or opaque (block light).'] },
+      { title: 'Shadows', emoji: '🌑',
+        points: ['A shadow forms when an opaque object blocks light, because light cannot bend around it.', 'Move the object closer to the light and the shadow gets bigger; move it away and the shadow gets smaller.', 'A large light source makes a dark middle shadow (umbra) with a lighter, fuzzy edge (penumbra).', 'Our brain uses shadows to judge shapes and brightness, which is why shadow illusions can fool us.'] },
+      { title: 'Pinhole cameras and eclipses', emoji: '🌘',
+        cols: [['Pinhole camera', 'Light travels in straight lines', 'Rays cross at the tiny hole, so the image on the screen is upside down.'], ['Solar eclipse', 'The Moon passes between the Sun and Earth', 'The Moon’s shadow falls on Earth.'], ['Watching safely', 'NEVER look at the Sun directly', 'Use pinhole projection: even the holes of a sieve or the gaps between leaves project little images of the eclipsed Sun onto the ground.']] },
+      { title: 'Mirrors', emoji: '🪞',
+        cols: [['Plane mirror', 'Flat', 'Angle of incidence = angle of reflection. The image is the same size but left–right reversed.'], ['Concave mirror', 'Curves inwards (like a cave)', 'Converges light. Used in torches, car headlights and make-up mirrors (magnified image when close).'], ['Convex mirror', 'Bulges outwards', 'Spreads light out, giving a wider view. Used on road bends, in shops and as car side mirrors.']] },
+      { title: 'Refraction and lenses', emoji: '🔍',
+        points: ['Light slows down in denser materials such as water and glass, so it bends when it crosses from one to another. This is refraction.', 'Light is fastest in a vacuum, so the refractive index of any material is bigger than 1.', 'A straw in water looks bent, and a pool looks shallower than it really is.', 'A convex (converging) lens brings light together: magnifying glasses, cameras, the lens in your eye. A concave (diverging) lens spreads light out: glasses for short-sighted people.'] },
+      { title: 'Colour', emoji: '🌈',
+        points: ['White light is a mixture of all colours. A prism or raindrops split it into a spectrum: red, orange, yellow, green, blue, indigo, violet.', 'An object looks red because it reflects red light and absorbs the other colours.', 'A white object reflects all colours. Black is NOT reflected “black light”: a black object absorbs almost all the light.', 'Our eyes have three kinds of cone cells, most sensitive to red, green and blue light.'] },
+      { title: 'Mixing colours', emoji: '🎨',
+        cols: [['Light (RGB)', 'Adding colours: screens', 'Red + green = yellow; red + blue = magenta; green + blue = cyan; all three = white.'], ['Ink and paint (CMYK)', 'Subtracting colours: printers', 'Cyan, magenta, yellow and black (K). Each ink absorbs some colours; mixing them all makes a dark colour.'], ['Illusions', 'The brain interprets', 'The same colour can look different depending on what is around it.']] },
+      { title: 'Living light: bioluminescence', emoji: '🦑',
+        points: ['Some living things make their own light through a chemical reaction (luciferin + an enzyme called luciferase).', 'Fireflies, glow-worms, some fungi, and three-quarters or more of deep-sea animals glow.', 'They use light to attract prey (the anglerfish’s lure), to find mates, to hide by matching faint light from above, or to startle predators.'] },
+      { title: 'Sound', emoji: '🔊',
+        cols: [['What it is', 'Vibrations passed through a medium', 'Sound needs particles to travel, so it cannot travel through a vacuum (space is silent).'], ['Speed', 'Fastest in solids, slowest in gases', 'About 340 m/s in air, about 1,500 m/s in water and over 5,000 m/s in steel. So sound travels faster in water than in air.'], ['Echo', 'Reflected sound', 'Bats and dolphins use echoes to find food (echolocation).']] },
+      { title: 'Pitch and loudness', emoji: '🎵',
+        cols: [['Pitch', 'Depends on frequency (Hz)', 'Faster vibrations → higher pitch.'], ['Loudness', 'Depends on amplitude', 'Bigger vibrations → louder. Measured in decibels (dB).'], ['Human hearing', 'About 20 Hz to 20,000 Hz', 'Below 20 Hz is infrasound (elephants and whales use it to communicate). Above 20,000 Hz is ultrasound (bats; also baby scans in hospitals). We lose high-pitch hearing as we get older.']] },
+      { title: 'Recap', emoji: '✅',
+        points: ['Light travels in straight lines, very fast; shadows and pinhole cameras prove it.', 'Concave mirrors converge; convex mirrors give a wide view.', 'Refraction: light bends as it slows down in denser materials.', 'We see the colours an object reflects; black absorbs light. Red + green light = yellow.', 'Bioluminescence: living things making light.', 'Sound: vibrations, needs a medium, faster in water than air; we hear 20–20,000 Hz.'] }
+    ],
+    summary: [
+      'Light is energy that travels in straight lines as a wave of photons, at about 300,000 km/s in a vacuum. We see objects when light from them enters our eyes.',
+      'Materials can be transparent, translucent or opaque. Opaque objects block light and form shadows; a shadow gets bigger as the object moves closer to the light source.',
+      'Because light travels in straight lines, a pinhole camera forms an upside-down image. During a solar eclipse, the Sun can be viewed safely by pinhole projection, e.g. through the holes of a sieve, never by looking directly.',
+      'In a plane mirror, the angle of incidence equals the angle of reflection. Concave mirrors converge light (torches, make-up mirrors); convex mirrors give a wide field of view (road and car mirrors).',
+      'Refraction is the bending of light as it changes speed between materials. Light travels fastest in a vacuum and slower in denser materials, so refractive indices are greater than 1.',
+      'Convex (converging) lenses bring light rays together; concave (diverging) lenses spread them apart.',
+      'White light contains all colours. An object’s colour is the light it reflects; black objects absorb nearly all light. Our eyes detect red, green and blue light with three kinds of cones.',
+      'Coloured light adds (RGB): red + green = yellow, and all three make white. Inks subtract colours (CMYK).',
+      'Bioluminescence is light produced by a chemical reaction in living things such as fireflies and many deep-sea animals.',
+      'Sound is a vibration that travels through a medium. It cannot travel in a vacuum and moves faster in water and solids than in air.',
+      'Pitch depends on frequency and loudness on amplitude. Humans hear about 20–20,000 Hz. Elephants use infrasound below 20 Hz; bats and hospital scanners use ultrasound.'
+    ],
+    terms: [
+      ['Luminous', 'Giving out its own light, e.g. the Sun.'],
+      ['Opaque / translucent / transparent', 'Blocks light / lets some light through / lets light through clearly.'],
+      ['Shadow', 'A dark area where light is blocked by an opaque object.'],
+      ['Reflection', 'Light bouncing off a surface.'],
+      ['Concave mirror', 'A mirror that curves inwards and converges light.'],
+      ['Convex mirror', 'A mirror that bulges outwards and gives a wide view.'],
+      ['Refraction', 'The bending of light as it passes from one material into another.'],
+      ['Converging lens', 'A convex lens that brings light rays together.'],
+      ['Spectrum', 'The band of colours that make up white light.'],
+      ['Bioluminescence', 'Light made by living things.'],
+      ['Vibration', 'A rapid back-and-forth movement that makes sound.'],
+      ['Frequency', 'Vibrations per second, in hertz (Hz). It sets the pitch.'],
+      ['Amplitude', 'The size of a vibration. It sets the loudness.'],
+      ['Ultrasound / infrasound', 'Sound too high (above 20,000 Hz) / too low (below 20 Hz) for humans to hear.'],
+      ['Echolocation', 'Finding things by sending out sounds and listening for echoes.']
+    ],
+    quiz: [
+      { q: 'Which property of light lets a pinhole camera work?', a: ['Light travels in straight lines', 'Light is made of colours', 'Light can be reflected by mirrors', 'Light is very hot'], c: 0, e: 'Straight rays cross at the pinhole, making an upside-down image.' },
+      { q: 'An object is moved closer to a torch. What happens to its shadow on the wall?', a: ['It gets bigger', 'It gets smaller', 'It disappears', 'It changes colour'], c: 0, e: 'The object blocks a wider cone of light when it is close to the source.' },
+      { q: 'Why does a black T-shirt look black?', a: ['It absorbs almost all the light', 'It reflects black light', 'It makes its own dark light', 'It reflects all colours'], c: 0, e: 'There is no “black light” to reflect. Black means very little light comes back.' },
+      { q: 'Which two colours of light mix to make yellow light?', a: ['Red and green', 'Red and blue', 'Blue and green', 'Yellow and white'], c: 0, e: 'Screens make yellow by lighting red and green pixels together.' },
+      { q: 'Which mirror is used on sharp road bends to show a wide view?', a: ['Convex mirror', 'Concave mirror', 'Plane mirror', 'No mirror'], c: 0, e: 'Convex mirrors bulge outwards and spread light, giving a wide field of view.' },
+      { q: 'Why does a straw in a glass of water look bent?', a: ['Refraction', 'Reflection', 'Bioluminescence', 'A shadow'], c: 0, e: 'Light changes speed and bends as it leaves the water.' },
+      { q: 'Which statement about sound is INCORRECT?', a: ['Sound travels faster in air than in water', 'Sound cannot travel in a vacuum', 'Humans cannot hear above 20,000 Hz', 'Elephants communicate using sounds below 20 Hz'], c: 0, e: 'Sound travels about 4 times faster in water than in air.' },
+      { q: 'A sound has a higher frequency. How does it sound?', a: ['Higher pitched', 'Louder', 'Quieter', 'Lower pitched'], c: 0, e: 'Frequency sets the pitch; amplitude sets the loudness.' },
+      { q: 'How can you watch a solar eclipse safely?', a: ['Project the Sun’s image through small holes, e.g. a sieve', 'Look at it with sunglasses', 'Look at it through binoculars', 'Look quickly with your eyes half closed'], c: 0, e: 'Never look at the Sun directly. Pinhole projection is safe.' },
+      { q: 'What is bioluminescence?', a: ['Light made by living things', 'Light reflected by the Moon', 'Sound made by animals', 'Light bending in water'], c: 0, e: 'Fireflies and many deep-sea animals make light by a chemical reaction.' }
+    ],
+    tips: [
+      'Mirrors: concave = caves in, converges; convex = bulges out, wide view.',
+      'Coloured LIGHT adds (red + green = yellow); paints and inks subtract.',
+      'Sound speed: solids > liquids > gases. It cannot travel in a vacuum.',
+      'Pitch ↔ frequency; loudness ↔ amplitude.',
+      'Most of the class quiz is picture-based. Draw the light rays with a ruler before choosing.'
+    ],
+    facts: [
+      'Light from the Sun takes about 8 minutes to reach Earth, so you always see the Sun as it was 8 minutes ago.',
+      'Mantis shrimps and some birds can see ultraviolet light that is invisible to us.',
+      'The loudest sound in recorded history, the 1883 Krakatoa eruption, was heard almost 5,000 km away.'
+    ]
+  },
+  {
+    id: 'spso11', kind: 'lesson', emoji: '👶', title: 'SPSO Lesson 13: The Reproductive System', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'ayzN5f3qN8g', title: 'How menstruation works', by: 'TED-Ed' },
       { id: '_5OvgQW6FG4', title: 'Fertilization', by: 'Nucleus Medical Media' },
@@ -1094,7 +1194,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSeZjEvdPEE0B6TIgzFfdesAFtGzAVEuJByjrMCZNL_mIDuS0w/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 12', title: 'The Reproductive System', emoji: '👶',
+      { kicker: 'SPSO · Lesson 13', title: 'The Reproductive System', emoji: '👶',
         points: ['Puberty: how bodies change', 'The male reproductive system', 'The female reproductive system', 'The menstrual cycle', 'Fertilisation, pregnancy and birth', 'IVF, twins, and how other mammals give birth'] },
       { title: 'Puberty', emoji: '🌱',
         cols: [['When', 'Usually between about 9 and 16 years old', 'Hormones (chemical messengers) tell the body to start becoming an adult.'], ['Boys', 'Body changes', 'Voice deepens, shoulders broaden, more body hair, and the testes start making sperm.'], ['Girls', 'Body changes', 'Breasts develop, hips widen, more body hair, and periods (menstruation) begin.']],
@@ -1172,7 +1272,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso12', kind: 'lesson', emoji: '💧', title: 'SPSO Lesson 13: Changes of State and the Water Cycle', level: 'SPSO', theme: 'spso',
+    id: 'spso12', kind: 'lesson', emoji: '💧', title: 'SPSO Lesson 14: Changes of State and the Water Cycle', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'z5G4NCwWUxY', title: 'The Great Aqua Adventure (the water cycle)', by: 'Crash Course Kids' },
       { id: 'DjByja9ejTQ', title: 'Why Do Clouds Stay Up?', by: 'Be Smart' },
@@ -1195,7 +1295,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSc5IQIF1RG3q85r6KAC-bazM2872ZzngONsUfVX7FUTu1ESRQ/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 13', title: 'Changes of State and the Water Cycle', emoji: '💧',
+      { kicker: 'SPSO · Lesson 14', title: 'Changes of State and the Water Cycle', emoji: '💧',
         points: ['Melting, boiling and latent heat', 'Heating and cooling curves', 'Pressure and boiling point', 'Strange water: supercooling, superheating, ice that floats', 'Phase diagrams and the triple point', 'The gas laws', 'Water cycle, clouds and breezes'] },
       { title: 'Changes of state', emoji: '🧊',
         points: ['Solid → liquid: melting. Liquid → solid: freezing.', 'Liquid → gas: boiling (throughout the liquid) or evaporation (only at the surface, at any temperature).', 'Gas → liquid: condensation.', 'Solid → gas directly: sublimation, e.g. dry ice.'] },
@@ -1275,7 +1375,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso13', kind: 'lesson', emoji: '👁️', title: 'SPSO Lesson 14: The Senses and the Nervous System', level: 'SPSO', theme: 'spso',
+    id: 'spso13', kind: 'lesson', emoji: '👁️', title: 'SPSO Lesson 15: The Senses and the Nervous System', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'osChE163jJQ', title: 'How Many Senses Do We Have? Busting the myth of 5 senses', by: 'Peekaboo Kidz (Dr. Binocs)' },
       { id: 'VAEmxt78bBI', title: 'A Journey Through Your Nervous System', by: 'BRIGHT SIDE' },
@@ -1289,7 +1389,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSdxrYrrN9mf1pFvpw24qMNeaK9eMir1B8UBlY5dOA74uTxdFw/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 14', title: 'The Senses and the Nervous System', emoji: '👁️',
+      { kicker: 'SPSO · Lesson 15', title: 'The Senses and the Nervous System', emoji: '👁️',
         points: ['More than five senses', 'The nervous system: CNS and PNS', 'Neurons and nerve impulses', 'Synapses and neurotransmitters', 'The eye and sight problems', 'Hearing, balance and smell'] },
       { title: 'More than five senses', emoji: '🖐️',
         points: ['Sight, hearing, smell, taste and touch are the famous five.', 'We also sense balance (equilibrium), body position (proprioception), temperature, pain, and internal feelings like hunger and thirst.', 'Receptors are cells that detect stimuli. Exteroceptors detect the outside world; interoceptors monitor internal organs (digestive, breathing, heart, urinary, reproductive systems); proprioceptors sense the position of muscles and joints.'] },
@@ -1367,7 +1467,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso14', kind: 'lesson', emoji: '🏋️', title: 'SPSO Lesson 15: Forces and Motion', level: 'SPSO', theme: 'spso',
+    id: 'spso14', kind: 'lesson', emoji: '🏋️', title: 'SPSO Lesson 16: Forces and Motion', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'SEZVsE3eRbI', title: 'Types of Forces: What is Force?', by: 'Learning Junction' },
       { id: 'U78NOo-oxOY', title: 'Weight, Force, Mass and Gravity', by: 'FuseSchool' },
@@ -1395,7 +1495,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSf2WMmuBuATU7wb-UqL6AvXmBPkeas0n09t_LnIyoxfIdHcSg/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 15', title: 'Forces and Motion', emoji: '🏋️',
+      { kicker: 'SPSO · Lesson 16', title: 'Forces and Motion', emoji: '🏋️',
         points: ['Types of forces', 'Mass and weight', 'Newton’s three laws', 'Speed, acceleration and graphs', 'Friction and net force', 'Springs, floating and surface tension'] },
       { title: 'Types of forces', emoji: '👉',
         cols: [['Contact forces', 'Need to touch', 'Friction, air resistance, tension, the push of a surface (normal force), upthrust in water.'], ['Non-contact forces', 'Act at a distance', 'Gravity, magnetic force, electrostatic force.'], ['What forces do', 'Change motion or shape', 'Start, stop, speed up, slow down, change direction, or squash and stretch.']],
@@ -1472,7 +1572,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso15', kind: 'lesson', emoji: '🌡️', title: 'SPSO Lesson 16: Homeostasis and Hormones', level: 'SPSO', theme: 'spso',
+    id: 'spso15', kind: 'lesson', emoji: '🌡️', title: 'SPSO Lesson 17: Homeostasis and Hormones', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'Rgpj__C2jCc', title: 'What is Homeostasis?', by: 'Free Animated Education' },
       { id: '14SQT97EE4c', title: 'Negative Feedback', by: 'FuseSchool' },
@@ -1486,7 +1586,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSdyguGw0sVcTaGvTkHRtaVbv8IF8JnZ0b75dZ0Ywi114YDvgQ/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 16', title: 'Homeostasis and Hormones', emoji: '🌡️',
+      { kicker: 'SPSO · Lesson 17', title: 'Homeostasis and Hormones', emoji: '🌡️',
         points: ['What homeostasis is', 'Receptor → control centre → effector', 'Negative and positive feedback', 'Hormones and the endocrine glands', 'Blood sugar, insulin and diabetes', 'Controlling body temperature'] },
       { title: 'What is homeostasis?', emoji: '⚖️',
         points: ['Homeostasis means keeping conditions inside the body stable, even when the outside changes.', 'Examples: body temperature (about 37 °C), blood sugar level, water content, blood pressure.', 'It is called the central principle of physiology, because almost every body system helps keep conditions steady.'] },
