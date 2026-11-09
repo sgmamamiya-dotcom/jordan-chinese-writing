@@ -879,7 +879,117 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso10', kind: 'lesson', emoji: '❤️', title: 'SPSO Lesson 10: The Circulatory System', level: 'SPSO', theme: 'spso',
+    id: 'spso19', kind: 'lesson', emoji: '🔥', title: 'SPSO Lesson 10: Heat and Thermodynamics', level: 'SPSO', theme: 'spso',
+    videos: [
+      { id: 'vqDbMEdLiCs', title: 'Misconceptions About Temperature', by: 'Veritasium' },
+      { id: 'qlX-dah7MlU', title: 'Which has more energy: an iceberg or a cup of coffee?', by: 'Flashpoint Equipment' },
+      { id: 'QTYlC70VV_I', title: 'What is Absolute Zero Temperature?', by: 'Pocket Science' },
+      { id: 'TNUDBdv3jWI', title: 'Absolute Zero: Absolute Awesome', by: 'SciShow' },
+      { id: '5GoZZKcNZiQ', title: 'Heat Transfer: Thermal Radiation', by: 'Ace Physics and Maths' },
+      { id: 'je-qc7sxYzU', title: 'How Radiation Affects Temperature', by: 'Cognito' },
+      { id: '7F6fT5p5oFk', title: 'What is the Electromagnetic Spectrum?', by: 'MooMooMath and Science' },
+      { id: 'lwfJPc-rSXw', title: 'Tour of the Electromagnetic Spectrum 1: Introduction', by: 'NASA Science' },
+      { id: 'i8caGm9Fmh0', title: 'Tour of the Electromagnetic Spectrum 4: Infrared Waves', by: 'NASA Science' },
+      { id: '9JuKqkZVgTU', title: 'Thermal Expansion: why are gaps left between railway tracks?', by: 'AumSum' },
+      { id: 'SgWtdXLqCYU', title: 'Thermal Expansion in Liquids', by: 'SymBios' },
+      { id: 'LIML0QbHxkU', title: 'Boyle’s Law Demonstration', by: 'MWSU Chemistry Department' },
+      { id: 'oEZbkXB3y1Q', title: 'Charles’s Law Demonstration', by: 'MWSU Chemistry Department' },
+      { id: 'BxUS1K7xu30', title: 'The Ideal Gas Law (Crash Course Chemistry #12)', by: 'CrashCourse' },
+      { id: 'xg5NiOwf_Zw', title: 'Air Pressure Can Crush: Can Implosions', by: 'The Sci Guys' },
+      { id: 'uDrdaNcGpwo', title: 'Mechanical equivalent of heat', by: 'machinedesignonline' },
+      { id: 'oJlGz31rLoA', title: 'Bunsen burner flames', by: 'Shule Moja' },
+      { id: 'Bz1Lb55GNwY', title: 'How Animals Survive the Coldest Places on Earth', by: 'Real Science' },
+      { id: 'az6oYcd-SfU', title: '9 Materials of the Future that Will Change the World', by: 'SciShow' }
+    ],
+    form: 'https://docs.google.com/forms/d/e/1FAIpQLSfqEUnITnhai1fHGJPp6CTOl-v-Uckb0o52yx6DuvaJmIj4hQ/viewform',
+    slides: [
+      { kicker: 'SPSO · Lesson 10', title: 'Heat and Thermodynamics', emoji: '🔥',
+        points: ['Heat vs temperature', 'Absolute zero and the kelvin scale', 'Conduction, convection and radiation', 'The electromagnetic spectrum', 'Thermal expansion', 'Gas laws and air pressure', 'Work and heat, flames, and keeping warm'] },
+      { title: 'Heat vs temperature', emoji: '🌡️',
+        cols: [['Temperature', 'How hot or cold something is', 'Measures the AVERAGE energy of the moving particles (°C or K).'], ['Heat (thermal energy)', 'The TOTAL energy of all the particles', 'Depends on the temperature AND on how much stuff there is.'], ['Iceberg vs coffee', 'The cold iceberg has more heat energy!', 'The coffee is hotter, but the iceberg has trillions of times more particles.']],
+        note: 'Heat always flows from a hotter object to a colder one, until they reach the same temperature.' },
+      { title: 'Why metal feels colder', emoji: '🥄',
+        points: ['A metal spoon and a wooden spoon in the same room are at the same temperature.', 'The metal FEELS colder because it is a good conductor: it carries heat away from your hand faster.', 'Your skin senses how fast heat leaves it, not the actual temperature.', 'Wood, plastic, wool and air are poor conductors (insulators).'] },
+      { title: 'Absolute zero', emoji: '🧊',
+        points: ['The colder something is, the slower its particles move.', 'Absolute zero, −273.15 °C, is the coldest possible temperature: the particles have the least possible energy.', 'The kelvin scale starts at absolute zero: 0 K = −273.15 °C, 0 °C = 273.15 K, and a change of 1 K = a change of 1 °C.', 'Scientists have cooled atoms to less than a billionth of a degree above absolute zero, but never all the way.'] },
+      { title: 'Three ways heat travels', emoji: '♨️',
+        cols: [['Conduction', 'Through solids, particle to particle', 'Particles vibrate and pass energy to their neighbours. Metals conduct best.'], ['Convection', 'In liquids and gases', 'Warm fluid expands, becomes less dense and rises; cooler fluid sinks to take its place, making a current.'], ['Radiation', 'Infrared waves; needs no matter', 'This is how the Sun’s heat crosses empty space. Dull, dark surfaces absorb and give out radiation best; shiny, light surfaces reflect it.']] },
+      { title: 'The electromagnetic spectrum', emoji: '🌈',
+        steps: ['Radio waves', 'Microwaves', 'Infrared', 'Visible light', 'Ultraviolet', 'X-rays', 'Gamma rays'],
+        note: 'All travel at the speed of light. From left to right the wavelength gets shorter and the energy higher. Infrared is the heat radiation: thermal cameras and TV remotes use it.' },
+      { title: 'Thermal expansion', emoji: '🛤️',
+        points: ['Most substances expand when heated and contract when cooled, because their particles move more and push further apart.', 'Gaps are left between railway tracks and in bridges (expansion joints) so they do not buckle on hot days.', 'Liquids expand too: the liquid in a thermometer rises as it warms.', 'Gases expand the most. A balloon taken from a warm room into a cold fridge shrinks.'] },
+      { title: 'Gas laws', emoji: '🎈',
+        cols: [['Boyle’s law', 'Squeeze a gas and its pressure rises', 'At constant temperature: pressure × volume stays the same.'], ['Charles’s law', 'Heat a gas and it expands', 'At constant pressure: volume is proportional to the kelvin temperature. A balloon in liquid nitrogen shrinks dramatically.'], ['Ideal gas law', 'PV = nRT', 'Links pressure, volume, amount of gas and kelvin temperature in one equation.']] },
+      { title: 'Air pressure can crush', emoji: '🥫',
+        steps: ['Heat a little water in a can until it steams', 'Steam pushes the air out', 'Flip the can into cold water', 'Steam condenses: almost nothing is left inside', 'Outside air pressure crushes the can'],
+        note: 'Air pressure at sea level is about 100,000 N on every square metre: like the weight of 10 tonnes!' },
+      { title: 'Work can make heat', emoji: '⚙️',
+        points: ['Rub your hands together: they get warm. Doing work can produce heat.', 'In the 1840s, James Joule used a falling weight to turn a paddle in water and measured the water warming up.', 'He showed that a fixed amount of work always makes the same amount of heat. This is why energy is measured in joules.', 'About 4.2 J of energy warms 1 g of water by 1 °C.'] },
+      { title: 'Bunsen burner flames', emoji: '🔥',
+        cols: [['Air hole closed', 'Yellow, luminous “safety flame”', 'Incomplete burning; cooler, sooty and easy to see.'], ['Air hole open', 'Blue, roaring flame', 'Complete burning with plenty of oxygen; much hotter and clean.'], ['Hottest part', 'Just above the tip of the inner blue cone', 'Used for heating in experiments.']] },
+      { title: 'Surviving the cold, and smart materials', emoji: '🐧',
+        points: ['Animals keep warm with fur, feathers and thick blubber (insulators that trap heat) and by huddling together.', 'Some fish make antifreeze proteins; the wood frog can survive being partly frozen.', 'New materials control heat amazingly well: aerogel is one of the best insulators known, mostly made of air.'] },
+      { title: 'Recap', emoji: '✅',
+        points: ['Temperature = average particle energy; heat = total energy.', 'Absolute zero = 0 K = −273.15 °C.', 'Conduction (solids), convection (fluids), radiation (no matter needed).', 'Dull, dark surfaces absorb and emit radiation best.', 'Things expand when heated: leave gaps in railway tracks.', 'Boyle: P × V constant. Charles: V ∝ T in kelvin.'] }
+    ],
+    summary: [
+      'Temperature measures the average energy of particles; heat (thermal energy) is the total energy of all the particles. A huge cold iceberg has more thermal energy than a hot cup of coffee.',
+      'Heat flows from hotter to colder objects. Metals feel colder than wood at the same temperature because they conduct heat away from your skin faster.',
+      'Absolute zero (0 K or −273.15 °C) is the lowest possible temperature. The kelvin scale starts there; to convert, add 273 to the Celsius temperature.',
+      'Heat travels by conduction (through solids), convection (currents in liquids and gases) and radiation (infrared waves that need no matter).',
+      'Dull, dark surfaces are good absorbers and emitters of radiation; shiny, light-coloured surfaces are good reflectors.',
+      'The electromagnetic spectrum: radio, microwaves, infrared, visible light, ultraviolet, X-rays and gamma rays. Infrared is heat radiation.',
+      'Most materials expand when heated. Gaps are left in railway tracks and bridges; liquid thermometers rely on expansion.',
+      'Boyle’s law: at constant temperature, pressure × volume is constant. Charles’s law: at constant pressure, volume is proportional to kelvin temperature. The ideal gas law combines these: PV = nRT.',
+      'When steam in a can condenses, the pressure inside drops and the outside air pressure crushes the can.',
+      'James Joule showed that mechanical work can be turned into a fixed amount of heat; energy is measured in joules.',
+      'A Bunsen burner with the air hole open gives a hot blue flame; with it closed, a cooler, yellow, sooty safety flame.',
+      'Animals survive extreme cold with insulation (fur, feathers, blubber), huddling, and even antifreeze proteins.'
+    ],
+    terms: [
+      ['Temperature', 'How hot or cold something is: the average energy of its particles.'],
+      ['Thermal energy (heat)', 'The total energy of the particles in a substance.'],
+      ['Absolute zero', '0 K or −273.15 °C: the lowest possible temperature.'],
+      ['Kelvin (K)', 'A temperature scale that starts at absolute zero.'],
+      ['Conduction', 'Heat passing through a solid from particle to particle.'],
+      ['Convection', 'Heat carried by moving currents in a liquid or gas.'],
+      ['Radiation', 'Heat travelling as infrared waves; it needs no matter.'],
+      ['Insulator', 'A material that does not let heat pass through easily.'],
+      ['Electromagnetic spectrum', 'The family of waves from radio waves to gamma rays.'],
+      ['Infrared', 'Electromagnetic waves we feel as heat.'],
+      ['Thermal expansion', 'Getting bigger when heated.'],
+      ['Boyle’s law', 'At constant temperature, pressure × volume stays the same.'],
+      ['Charles’s law', 'At constant pressure, a gas’s volume is proportional to its kelvin temperature.'],
+      ['Joule (J)', 'The unit of energy, named after James Joule.']
+    ],
+    quiz: [
+      { q: 'Which has more thermal (heat) energy?', a: ['A huge iceberg', 'A hot cup of coffee', 'They have the same', 'Neither has any'], c: 0, e: 'Thermal energy depends on the amount of matter too. The iceberg has vastly more particles.' },
+      { q: 'A metal and a wooden spoon have been in the same room all day. Why does the metal one feel colder?', a: ['Metal conducts heat away from your hand faster', 'Metal is at a lower temperature', 'Wood makes its own heat', 'Metal is heavier'], c: 0, e: 'They are at the same temperature; your skin senses the rate of heat loss.' },
+      { q: 'What is absolute zero in °C?', a: ['About −273 °C', '0 °C', '−100 °C', '−460 °C'], c: 0, e: '0 K = −273.15 °C.' },
+      { q: 'How does heat from the Sun reach Earth?', a: ['Radiation', 'Conduction', 'Convection', 'Evaporation'], c: 0, e: 'Space is almost empty, and only radiation can travel without matter.' },
+      { q: 'Why does warm air rise?', a: ['It expands and becomes less dense', 'It becomes heavier', 'Heat pulls it upwards', 'It turns into steam'], c: 0, e: 'This makes convection currents.' },
+      { q: 'Which surface absorbs radiated heat best?', a: ['Dull black', 'Shiny silver', 'Shiny white', 'Mirror'], c: 0, e: 'Dull, dark surfaces absorb and emit radiation best.' },
+      { q: 'Why are gaps left between sections of railway track?', a: ['The steel expands on hot days', 'To save steel', 'To let rain drain away', 'To make a clicking sound'], c: 0, e: 'Without gaps, the expanding rails would buckle.' },
+      { q: 'A balloon is put into a freezer. What happens?', a: ['It shrinks, because the gas contracts', 'It grows bigger', 'It pops immediately', 'Nothing'], c: 0, e: 'Charles’s law: lower temperature → smaller volume.' },
+      { q: 'Why does a steaming can get crushed when flipped into cold water?', a: ['The steam condenses, the inside pressure drops, and outside air pressure crushes it', 'The cold water is very heavy', 'The metal melts', 'The can is sucked by the water'], c: 0, e: 'Air pressure pushes on the can from outside with nothing to push back.' },
+      { q: 'Which Bunsen flame is hottest?', a: ['Blue flame with the air hole open', 'Yellow flame with the air hole closed', 'An orange flickering flame', 'All are equally hot'], c: 0, e: 'More oxygen means complete combustion and a hotter flame.' }
+    ],
+    tips: [
+      'Do not mix up heat (total energy) and temperature (average energy).',
+      'Conduction: solids. Convection: fluids. Radiation: no matter needed.',
+      'Use kelvin (°C + 273) in every gas law calculation.',
+      'Colour and shine of surfaces only affect RADIATION, not conduction.',
+      'The class quiz is picture-based. Read every diagram carefully; Q4’s hint reminds you that radiation needs no matter.'
+    ],
+    facts: [
+      'The coldest natural place known in the universe is the Boomerang Nebula, at about −272 °C, just 1 °C above absolute zero.',
+      'The Eiffel Tower can grow about 15 cm taller on a hot summer day because the iron expands.',
+      'Aerogel is so good at insulating that a thin piece can protect flowers from a blowtorch flame.'
+    ]
+  },
+  {
+    id: 'spso10', kind: 'lesson', emoji: '❤️', title: 'SPSO Lesson 11: The Circulatory System', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'zsSfb9RMryc', title: 'Blood Flow Through the Heart Explained', by: 'Teach PE' },
       { id: 'gExUCrpAKyQ', title: 'Platelets and Blood Clotting', by: 'FuseSchool' },
@@ -892,7 +1002,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSdF_VFF9GQonADf_8hV-wmdKgrx3pIpEVZyBr8eXc7511V8Tw/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 10', title: 'The Circulatory System', emoji: '❤️',
+      { kicker: 'SPSO · Lesson 11', title: 'The Circulatory System', emoji: '❤️',
         points: ['The heart and its four chambers', 'The path of blood through the body', 'Arteries, veins and capillaries', 'What blood is made of', 'Blood groups and “golden blood”', 'Heart disease and heart attacks'] },
       { title: 'The heart', emoji: '🫀',
         cols: [['Four chambers', 'Two atria on top, two ventricles below', 'Atria receive blood; ventricles pump it out. The left ventricle has the thickest wall, because it pumps blood to the whole body.'], ['Valves', 'One-way doors', 'They stop blood flowing backwards.'], ['“Lub-dub”', 'The heartbeat sound', 'It is the sound of the valves snapping shut, not blood hitting anything.']] },
@@ -980,7 +1090,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso16', kind: 'lesson', emoji: '🔬', title: 'SPSO Lesson 11: Cell Biology', level: 'SPSO', theme: 'spso',
+    id: 'spso16', kind: 'lesson', emoji: '🔬', title: 'SPSO Lesson 12: Cell Biology', level: 'SPSO', theme: 'spso',
     videos: [
       { id: '8vo59AKzU4Q', title: 'Human Cell', by: 'Peekaboo Kidz (Dr. Binocs)' },
       { id: 'nsklF1w4eok', title: 'Cell membranes are way more complicated than you think', by: 'TED-Ed' },
@@ -998,7 +1108,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSeELcdjUa7voDIUYlwh0b6khig-nL6dSVA2J3f0SCe0DaDZtg/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 11', title: 'Cell Biology', emoji: '🔬',
+      { kicker: 'SPSO · Lesson 12', title: 'Cell Biology', emoji: '🔬',
         points: ['Parts of animal and plant cells', 'What a light microscope can and cannot show', 'How complex cells evolved', 'Specialised cells in plants and animals', 'Levels of organisation and the 4 tissue types', 'Stem cells'] },
       { title: 'Inside a cell', emoji: '🧫',
         cols: [['In animal AND plant cells', 'Nucleus, cytoplasm, cell membrane, mitochondria, ribosomes', 'The nucleus (with a nucleolus inside) holds DNA. Mitochondria release energy (respiration). Ribosomes make proteins.'], ['Plant cells also have', 'Cellulose cell wall, chloroplasts, a large vacuole', 'Chloroplasts carry out photosynthesis. The cell wall gives support.'], ['Factories and shipping', 'Endoplasmic reticulum (ER) and Golgi body', 'Rough ER (with ribosomes) makes and moves proteins; the Golgi body packages and sends them out.']] },
@@ -1081,7 +1191,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso18', kind: 'lesson', emoji: '🫁', title: 'SPSO Lesson 12: Respiration and Excretion', level: 'SPSO', theme: 'spso',
+    id: 'spso18', kind: 'lesson', emoji: '🫁', title: 'SPSO Lesson 13: Respiration and Excretion', level: 'SPSO', theme: 'spso',
     videos: [
       { id: '8NUxvJS-_0k', title: 'How do lungs work?', by: 'TED-Ed' },
       { id: 'PzfLDi-sL3w', title: 'How does asthma work?', by: 'TED-Ed' },
@@ -1093,7 +1203,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSfnsvent9G4FVzKJ0ym3yOZeMOMsmiu7m88rDZrtQwH1Uls1g/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 12', title: 'Respiration and Excretion', emoji: '🫁',
+      { kicker: 'SPSO · Lesson 13', title: 'Respiration and Excretion', emoji: '🫁',
         points: ['The path of air into the lungs', 'Alveoli and gas exchange', 'How we breathe in and out', 'Respiration in cells and how CO₂ is carried', 'Asthma and smoking', 'Excretion: kidneys, nephrons, dialysis and transplants'] },
       { title: 'The path of air', emoji: '👃',
         steps: ['Nose', 'Pharynx (throat)', 'Larynx (voice box)', 'Trachea (windpipe)', 'Bronchi', 'Bronchioles', 'Alveoli'],
@@ -1176,7 +1286,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso17', kind: 'lesson', emoji: '🔦', title: 'SPSO Lesson 13: Light, Shadows and Sound', level: 'SPSO', theme: 'spso',
+    id: 'spso17', kind: 'lesson', emoji: '🔦', title: 'SPSO Lesson 14: Light, Shadows and Sound', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'IXxZRZxafEQ', title: 'What Is Light?', by: 'Kurzgesagt – In a Nutshell' },
       { id: 'liqF6EamiE4', title: 'Can You Solve This Shadow Illusion?', by: 'Veritasium' },
@@ -1195,7 +1305,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSdtlHubG9EAD3l7zAhS7tDZ08GJo0nsOaGwFaMUVRJ0GUgVsg/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 13', title: 'Light, Shadows and Sound', emoji: '🔦',
+      { kicker: 'SPSO · Lesson 14', title: 'Light, Shadows and Sound', emoji: '🔦',
         points: ['What light is and how it travels', 'Shadows, pinhole cameras and eclipses', 'Mirrors, refraction and lenses', 'Colour and how we see it', 'Light made by living things', 'Sound: vibrations, pitch and loudness'] },
       { title: 'What is light?', emoji: '💡',
         points: ['Light is a form of energy that travels as a wave, in tiny packets called photons.', 'It travels in straight lines, at about 300,000 km per second in a vacuum: the fastest speed there is.', 'Luminous objects give out light (the Sun, a torch). We see other objects because light bounces off them into our eyes.', 'Materials can be transparent (let light through), translucent (let some through, blurry) or opaque (block light).'] },
@@ -1276,7 +1386,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso11', kind: 'lesson', emoji: '👶', title: 'SPSO Lesson 14: The Reproductive System', level: 'SPSO', theme: 'spso',
+    id: 'spso11', kind: 'lesson', emoji: '👶', title: 'SPSO Lesson 15: The Reproductive System', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'ayzN5f3qN8g', title: 'How menstruation works', by: 'TED-Ed' },
       { id: '_5OvgQW6FG4', title: 'Fertilization', by: 'Nucleus Medical Media' },
@@ -1289,7 +1399,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSeZjEvdPEE0B6TIgzFfdesAFtGzAVEuJByjrMCZNL_mIDuS0w/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 14', title: 'The Reproductive System', emoji: '👶',
+      { kicker: 'SPSO · Lesson 15', title: 'The Reproductive System', emoji: '👶',
         points: ['Puberty: how bodies change', 'The male reproductive system', 'The female reproductive system', 'The menstrual cycle', 'Fertilisation, pregnancy and birth', 'IVF, twins, and how other mammals give birth'] },
       { title: 'Puberty', emoji: '🌱',
         cols: [['When', 'Usually between about 9 and 16 years old', 'Hormones (chemical messengers) tell the body to start becoming an adult.'], ['Boys', 'Body changes', 'Voice deepens, shoulders broaden, more body hair, and the testes start making sperm.'], ['Girls', 'Body changes', 'Breasts develop, hips widen, more body hair, and periods (menstruation) begin.']],
@@ -1367,7 +1477,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso12', kind: 'lesson', emoji: '💧', title: 'SPSO Lesson 15: Changes of State and the Water Cycle', level: 'SPSO', theme: 'spso',
+    id: 'spso12', kind: 'lesson', emoji: '💧', title: 'SPSO Lesson 16: Changes of State and the Water Cycle', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'z5G4NCwWUxY', title: 'The Great Aqua Adventure (the water cycle)', by: 'Crash Course Kids' },
       { id: 'DjByja9ejTQ', title: 'Why Do Clouds Stay Up?', by: 'Be Smart' },
@@ -1390,7 +1500,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSc5IQIF1RG3q85r6KAC-bazM2872ZzngONsUfVX7FUTu1ESRQ/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 15', title: 'Changes of State and the Water Cycle', emoji: '💧',
+      { kicker: 'SPSO · Lesson 16', title: 'Changes of State and the Water Cycle', emoji: '💧',
         points: ['Melting, boiling and latent heat', 'Heating and cooling curves', 'Pressure and boiling point', 'Strange water: supercooling, superheating, ice that floats', 'Phase diagrams and the triple point', 'The gas laws', 'Water cycle, clouds and breezes'] },
       { title: 'Changes of state', emoji: '🧊',
         points: ['Solid → liquid: melting. Liquid → solid: freezing.', 'Liquid → gas: boiling (throughout the liquid) or evaporation (only at the surface, at any temperature).', 'Gas → liquid: condensation.', 'Solid → gas directly: sublimation, e.g. dry ice.'] },
@@ -1470,7 +1580,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso13', kind: 'lesson', emoji: '👁️', title: 'SPSO Lesson 16: The Senses and the Nervous System', level: 'SPSO', theme: 'spso',
+    id: 'spso13', kind: 'lesson', emoji: '👁️', title: 'SPSO Lesson 17: The Senses and the Nervous System', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'osChE163jJQ', title: 'How Many Senses Do We Have? Busting the myth of 5 senses', by: 'Peekaboo Kidz (Dr. Binocs)' },
       { id: 'VAEmxt78bBI', title: 'A Journey Through Your Nervous System', by: 'BRIGHT SIDE' },
@@ -1484,7 +1594,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSdxrYrrN9mf1pFvpw24qMNeaK9eMir1B8UBlY5dOA74uTxdFw/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 16', title: 'The Senses and the Nervous System', emoji: '👁️',
+      { kicker: 'SPSO · Lesson 17', title: 'The Senses and the Nervous System', emoji: '👁️',
         points: ['More than five senses', 'The nervous system: CNS and PNS', 'Neurons and nerve impulses', 'Synapses and neurotransmitters', 'The eye and sight problems', 'Hearing, balance and smell'] },
       { title: 'More than five senses', emoji: '🖐️',
         points: ['Sight, hearing, smell, taste and touch are the famous five.', 'We also sense balance (equilibrium), body position (proprioception), temperature, pain, and internal feelings like hunger and thirst.', 'Receptors are cells that detect stimuli. Exteroceptors detect the outside world; interoceptors monitor internal organs (digestive, breathing, heart, urinary, reproductive systems); proprioceptors sense the position of muscles and joints.'] },
@@ -1562,7 +1672,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso14', kind: 'lesson', emoji: '🏋️', title: 'SPSO Lesson 17: Forces and Motion', level: 'SPSO', theme: 'spso',
+    id: 'spso14', kind: 'lesson', emoji: '🏋️', title: 'SPSO Lesson 18: Forces and Motion', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'SEZVsE3eRbI', title: 'Types of Forces: What is Force?', by: 'Learning Junction' },
       { id: 'U78NOo-oxOY', title: 'Weight, Force, Mass and Gravity', by: 'FuseSchool' },
@@ -1590,7 +1700,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSf2WMmuBuATU7wb-UqL6AvXmBPkeas0n09t_LnIyoxfIdHcSg/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 17', title: 'Forces and Motion', emoji: '🏋️',
+      { kicker: 'SPSO · Lesson 18', title: 'Forces and Motion', emoji: '🏋️',
         points: ['Types of forces', 'Mass and weight', 'Newton’s three laws', 'Speed, acceleration and graphs', 'Friction and net force', 'Springs, floating and surface tension'] },
       { title: 'Types of forces', emoji: '👉',
         cols: [['Contact forces', 'Need to touch', 'Friction, air resistance, tension, the push of a surface (normal force), upthrust in water.'], ['Non-contact forces', 'Act at a distance', 'Gravity, magnetic force, electrostatic force.'], ['What forces do', 'Change motion or shape', 'Start, stop, speed up, slow down, change direction, or squash and stretch.']],
@@ -1667,7 +1777,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso15', kind: 'lesson', emoji: '🌡️', title: 'SPSO Lesson 18: Homeostasis and Hormones', level: 'SPSO', theme: 'spso',
+    id: 'spso15', kind: 'lesson', emoji: '🌡️', title: 'SPSO Lesson 19: Homeostasis and Hormones', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'Rgpj__C2jCc', title: 'What is Homeostasis?', by: 'Free Animated Education' },
       { id: '14SQT97EE4c', title: 'Negative Feedback', by: 'FuseSchool' },
@@ -1681,7 +1791,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSdyguGw0sVcTaGvTkHRtaVbv8IF8JnZ0b75dZ0Ywi114YDvgQ/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 18', title: 'Homeostasis and Hormones', emoji: '🌡️',
+      { kicker: 'SPSO · Lesson 19', title: 'Homeostasis and Hormones', emoji: '🌡️',
         points: ['What homeostasis is', 'Receptor → control centre → effector', 'Negative and positive feedback', 'Hormones and the endocrine glands', 'Blood sugar, insulin and diabetes', 'Controlling body temperature'] },
       { title: 'What is homeostasis?', emoji: '⚖️',
         points: ['Homeostasis means keeping conditions inside the body stable, even when the outside changes.', 'Examples: body temperature (about 37 °C), blood sugar level, water content, blood pressure.', 'It is called the central principle of physiology, because almost every body system helps keep conditions steady.'] },
