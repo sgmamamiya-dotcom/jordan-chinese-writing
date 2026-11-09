@@ -980,7 +980,108 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso11', kind: 'lesson', emoji: '👶', title: 'SPSO Lesson 11: The Reproductive System', level: 'SPSO', theme: 'spso',
+    id: 'spso16', kind: 'lesson', emoji: '🔬', title: 'SPSO Lesson 11: Cell Biology', level: 'SPSO', theme: 'spso',
+    videos: [
+      { id: '8vo59AKzU4Q', title: 'Human Cell', by: 'Peekaboo Kidz (Dr. Binocs)' },
+      { id: 'nsklF1w4eok', title: 'Cell membranes are way more complicated than you think', by: 'TED-Ed' },
+      { id: '9i7kAt97XYU', title: 'How we think complex cells evolved', by: 'TED-Ed' },
+      { id: 'FK9xHry877U', title: 'What is the biggest single-celled organism?', by: 'TED-Ed' },
+      { id: 'dO2xx-aeZ4w', title: 'How a single-celled organism almost wiped out life on Earth', by: 'TED-Ed' },
+      { id: 'u87QpOOkdxI', title: 'Specialised Cells', by: 'Science Sauce' },
+      { id: '5j8j7BhCCEg', title: 'Body Tissues (the 4 types)', by: 'Amoeba Sisters' },
+      { id: 'S59JwFCjNhc', title: 'Intro to Histology: The Four Tissue Types', by: 'Corporis' },
+      { id: '1i_iJBcB51I', title: 'The Four Types of Tissues: Epithelial, Connective, Nervous and Muscular', by: 'Armando Hasudungan' },
+      { id: 'UIvU-OuZHww', title: 'The Components of Blood', by: 'Atomi' },
+      { id: 'evH0I7Coc54', title: 'What are stem cells?', by: 'TED-Ed' },
+      { id: 'YdjQz4urDjM', title: 'Induced Pluripotent Stem Cells (iPSC)', by: 'NIE Singapore' },
+      { id: 'fGNchPdlaGU', title: 'Method of the Year 2009: iPS cells', by: 'Nature Video' }
+    ],
+    form: 'https://docs.google.com/forms/d/e/1FAIpQLSeELcdjUa7voDIUYlwh0b6khig-nL6dSVA2J3f0SCe0DaDZtg/viewform',
+    slides: [
+      { kicker: 'SPSO · Lesson 11', title: 'Cell Biology', emoji: '🔬',
+        points: ['Parts of animal and plant cells', 'What a light microscope can and cannot show', 'How complex cells evolved', 'Specialised cells in plants and animals', 'Levels of organisation and the 4 tissue types', 'Stem cells'] },
+      { title: 'Inside a cell', emoji: '🧫',
+        cols: [['In animal AND plant cells', 'Nucleus, cytoplasm, cell membrane, mitochondria, ribosomes', 'The nucleus (with a nucleolus inside) holds DNA. Mitochondria release energy (respiration). Ribosomes make proteins.'], ['Plant cells also have', 'Cellulose cell wall, chloroplasts, a large vacuole', 'Chloroplasts carry out photosynthesis. The cell wall gives support.'], ['Factories and shipping', 'Endoplasmic reticulum (ER) and Golgi body', 'Rough ER (with ribosomes) makes and moves proteins; the Golgi body packages and sends them out.']] },
+      { title: 'Light vs electron microscope', emoji: '🔭',
+        cols: [['Light microscope', 'Uses light; up to about 1,500× magnification', 'Shows the cell wall, cell membrane, nucleus, nucleolus, large vacuole and chloroplasts.'], ['Electron microscope', 'Uses electrons; can magnify over 1,000,000×', 'Needed to see ribosomes, the endoplasmic reticulum, the Golgi body and the inside of mitochondria.'], ['Remember', 'Golgi and rough ER', 'They are too small to see with an ordinary light microscope.']] },
+      { title: 'Two kinds of cells', emoji: '🦠',
+        cols: [['Prokaryotic', 'No nucleus, no mitochondria', 'Bacteria, e.g. E. coli. They DO have a cell wall.'], ['Eukaryotic', 'Have a nucleus and organelles', 'Animals, plants, fungi and protists.'], ['Endosymbiosis', 'How complex cells began', 'Mitochondria and chloroplasts were once free-living bacteria swallowed by a bigger cell. They still have their own small, circular DNA.']] },
+      { title: 'Single-celled life', emoji: '🔎',
+        points: ['Amoeba: a protist with no cell wall; it changes shape to move and feed.', 'Yeast: a single-celled fungus with a cell wall.', 'Some algae (e.g. Chlamydomonas) are single-celled; most protists are single-celled, but seaweeds such as kelp are many-celled.', 'Some single cells are huge: the seaweed Caulerpa is one giant cell that can grow to about a metre long.', 'Billions of years ago, single-celled cyanobacteria released so much oxygen that it poisoned much of the life that existed then.'] },
+      { title: 'Specialised animal cells', emoji: '🩸',
+        cols: [['Red blood cell', 'Carries oxygen', 'No nucleus and no mitochondria, so there is more room for haemoglobin. Biconcave shape. Made in the bone marrow.'], ['Nerve cell', 'Carries messages', 'Long, with branches to connect to other cells.'], ['Muscle and sperm cells', 'Move', 'Muscle cells contract and have many mitochondria; sperm cells have a tail. Animal cells have no cell wall.']] },
+      { title: 'Specialised plant cells', emoji: '🍃',
+        cols: [['Palisade cells', 'Photosynthesis', 'Packed with chloroplasts, in the upper middle layer of a leaf.'], ['Root hair cells', 'Absorb water and minerals', 'A long “hair” gives a large surface area. No chloroplasts, because there is no light underground.'], ['Guard cells and xylem', 'Control gas exchange / carry water', 'Guard cells open and close stomata (on both leaf surfaces, but mostly the lower one). Xylem is made of DEAD, hollow cells joined into pipes.']] },
+      { title: 'Levels of organisation', emoji: '🪜',
+        steps: ['Organelle (e.g. ribosome)', 'Cell', 'Tissue', 'Organ', 'Organ system', 'Organism'],
+        note: 'A tissue is a group of similar cells doing the same job. An organ is made of different tissues working together.' },
+      { title: 'The four animal tissues', emoji: '🧩',
+        cols: [['Epithelial', 'Covers and lines', 'Skin surface, lining of the gut.'], ['Connective', 'Supports and connects', 'Bone, cartilage, fat, and blood (cells in liquid plasma).'], ['Muscle and nervous', 'Movement / messages', 'Muscle tissue contracts; nervous tissue carries signals.']] },
+      { title: 'Cells and water (osmosis)', emoji: '💧',
+        points: ['Water moves into or out of cells through the cell membrane by osmosis.', 'In pure water (a hypotonic solution), red blood cells take in water, swell and burst.', 'In very salty water (a hypertonic solution), they lose water and shrink.', 'Plant cells do not burst, because their strong cell wall stops them.'] },
+      { title: 'Stem cells', emoji: '🌱',
+        cols: [['What they are', 'Unspecialised cells that can divide and become other types', 'They help growth and repair.'], ['Kinds', 'Embryonic and adult', 'Embryonic stem cells can become almost any cell. Adult stem cells, like the haematopoietic stem cells in bone marrow, make all the blood cells, including red blood cells.'], ['iPS cells', 'Induced pluripotent stem cells', 'In 2006, Shinya Yamanaka turned ordinary skin cells back into stem cells. He won the Nobel Prize in 2012.']] },
+      { title: 'Recap', emoji: '✅',
+        points: ['Plant cells have a cell wall, chloroplasts and a large vacuole; animal cells do not.', 'Ribosomes, ER and Golgi need an electron microscope.', 'Mitochondria and chloroplasts have their own circular DNA (endosymbiosis).', 'Red blood cells: no nucleus, no mitochondria, made in bone marrow.', 'Ribosome → cell → tissue → organ → organ system → organism.', 'Stem cells can become specialised cells.'] }
+    ],
+    summary: [
+      'All animal and plant cells have a nucleus, cytoplasm, cell membrane, mitochondria and ribosomes. Plant cells also have a cellulose cell wall, chloroplasts and a large vacuole.',
+      'Ribosomes make proteins. The rough endoplasmic reticulum and the Golgi body process and package proteins. Mitochondria release energy by respiration.',
+      'A light microscope shows the cell wall, membrane, nucleus, nucleolus, vacuole and chloroplasts. Ribosomes, the ER and the Golgi body can only be seen with an electron microscope.',
+      'Prokaryotes (bacteria such as E. coli) have no nucleus and no mitochondria but do have a cell wall. Eukaryotes (animals, plants, fungi, protists) have a nucleus.',
+      'Complex cells probably evolved when a large cell engulfed bacteria that became mitochondria and chloroplasts. These organelles still have their own circular DNA.',
+      'Amoebae have no cell wall; yeast (a fungus) does. Most protists are single-celled, but some, like kelp, are not.',
+      'Specialised animal cells: red blood cells (no nucleus or mitochondria, made in the bone marrow), nerve cells, muscle cells and sperm cells. Animal cells, such as skeletal muscle cells, have no cell wall.',
+      'Specialised plant cells: palisade cells (many chloroplasts), root hair cells (large surface area, no chloroplasts), guard cells (control stomata) and xylem (dead, hollow cells forming water pipes).',
+      'Levels of organisation from simplest to most complex: organelle (e.g. ribosome) → cell → tissue → organ → organ system → organism.',
+      'The four animal tissue types are epithelial, connective (including bone and blood), muscle and nervous tissue.',
+      'Red blood cells swell and burst in a hypotonic solution (e.g. pure water) and shrink in a hypertonic (very salty) solution.',
+      'Stem cells can divide and become specialised cells. Haematopoietic stem cells in the bone marrow make red blood cells. Induced pluripotent stem (iPS) cells are ordinary cells reprogrammed into stem cells.'
+    ],
+    terms: [
+      ['Organelle', 'A tiny structure inside a cell with a particular job, e.g. a mitochondrion.'],
+      ['Nucleus', 'Holds the cell’s DNA and controls the cell.'],
+      ['Mitochondrion', 'Where respiration releases energy.'],
+      ['Ribosome', 'Where proteins are made.'],
+      ['Chloroplast', 'Where photosynthesis happens.'],
+      ['Cell wall', 'A strong outer layer (cellulose in plants) that supports the cell.'],
+      ['Golgi body', 'Packages proteins and sends them where they are needed.'],
+      ['Prokaryote', 'A cell with no nucleus, e.g. bacteria.'],
+      ['Eukaryote', 'A cell with a nucleus.'],
+      ['Endosymbiosis', 'One cell living inside another; how mitochondria and chloroplasts began.'],
+      ['Specialised cell', 'A cell with features suited to one job.'],
+      ['Tissue', 'A group of similar cells working together.'],
+      ['Xylem', 'Tubes of dead cells that carry water in plants.'],
+      ['Osmosis', 'Movement of water across a membrane.'],
+      ['Stem cell', 'An unspecialised cell that can become other kinds of cell.']
+    ],
+    quiz: [
+      { q: 'Which of these is found in plant cells but NOT animal cells?', a: ['Chloroplasts', 'Nucleus', 'Mitochondria', 'Cell membrane'], c: 0, e: 'Plant cells also have a cell wall and a large vacuole.' },
+      { q: 'Which organelles cannot be seen with an ordinary light microscope?', a: ['Golgi body and rough ER', 'Cell wall and nucleus', 'Vacuole and nucleus', 'Cell wall and nucleolus'], c: 0, e: 'They are too small; an electron microscope is needed.' },
+      { q: 'What do ribosomes make?', a: ['Proteins', 'RNA', 'Energy', 'Sugar'], c: 0, e: 'Ribosomes join amino acids into proteins.' },
+      { q: 'Where are red blood cells made?', a: ['In the bone marrow', 'In the heart', 'In the liver', 'In the lungs'], c: 0, e: 'Haematopoietic stem cells in the bone marrow produce them.' },
+      { q: 'Which cell has NO cell wall?', a: ['Skeletal muscle cell', 'Guard cell', 'E. coli bacterium', 'Yeast'], c: 0, e: 'Animal cells have no cell wall; plant cells, bacteria and fungi do.' },
+      { q: 'Why do root hair cells have no chloroplasts?', a: ['They are underground where there is no light', 'They are dead', 'They are animal cells', 'They store water only'], c: 0, e: 'Their job is to absorb water and minerals, not to photosynthesise.' },
+      { q: 'Which shows increasing complexity?', a: ['Ribosome, cell, tissue, organ', 'Cell, mitochondria, tissue, organ', 'Mitochondria, tissue, cell, organ', 'Cell, tissue, ribosome, organ'], c: 0, e: 'Organelles are parts of cells; cells make tissues; tissues make organs.' },
+      { q: 'What happens to a red blood cell placed in pure water?', a: ['It swells and bursts', 'It shrinks', 'Nothing', 'It grows a cell wall'], c: 0, e: 'Water enters by osmosis. In very salty water it would shrink instead.' },
+      { q: 'Which is TRUE about xylem?', a: ['It is made of dead, hollow cells that carry water', 'It is made of living cells', 'It carries sugar', 'It is found only in leaves'], c: 0, e: 'Phloem (living cells) carries sugar.' },
+      { q: 'Which cells naturally become red blood cells?', a: ['Haematopoietic stem cells', 'Epithelial cells', 'Nerve cells', 'Guard cells'], c: 0, e: 'They live in the bone marrow and make all kinds of blood cells.' }
+    ],
+    tips: [
+      'Make a table: organelle → job → plant only or both?',
+      'Electron microscope for small things: ribosomes, ER, Golgi.',
+      'Hypotonic (watery) → animal cells swell and burst. Hypertonic (salty) → they shrink.',
+      'Xylem = dead pipes for water; phloem = living tubes for sugar.',
+      'Mitochondrial and chloroplast DNA is circular, like bacterial DNA, not linear.'
+    ],
+    facts: [
+      'Your body has about 37 trillion cells, and about 25 trillion of them are red blood cells.',
+      'A red blood cell lives about 120 days, so your bone marrow makes about 2 million new ones every second.',
+      'The longest cells in your body are nerve cells: one runs from the bottom of your spine to your big toe.'
+    ]
+  },
+  {
+    id: 'spso11', kind: 'lesson', emoji: '👶', title: 'SPSO Lesson 12: The Reproductive System', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'ayzN5f3qN8g', title: 'How menstruation works', by: 'TED-Ed' },
       { id: '_5OvgQW6FG4', title: 'Fertilization', by: 'Nucleus Medical Media' },
@@ -993,7 +1094,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSeZjEvdPEE0B6TIgzFfdesAFtGzAVEuJByjrMCZNL_mIDuS0w/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 11', title: 'The Reproductive System', emoji: '👶',
+      { kicker: 'SPSO · Lesson 12', title: 'The Reproductive System', emoji: '👶',
         points: ['Puberty: how bodies change', 'The male reproductive system', 'The female reproductive system', 'The menstrual cycle', 'Fertilisation, pregnancy and birth', 'IVF, twins, and how other mammals give birth'] },
       { title: 'Puberty', emoji: '🌱',
         cols: [['When', 'Usually between about 9 and 16 years old', 'Hormones (chemical messengers) tell the body to start becoming an adult.'], ['Boys', 'Body changes', 'Voice deepens, shoulders broaden, more body hair, and the testes start making sperm.'], ['Girls', 'Body changes', 'Breasts develop, hips widen, more body hair, and periods (menstruation) begin.']],
@@ -1071,7 +1172,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso12', kind: 'lesson', emoji: '💧', title: 'SPSO Lesson 12: Changes of State and the Water Cycle', level: 'SPSO', theme: 'spso',
+    id: 'spso12', kind: 'lesson', emoji: '💧', title: 'SPSO Lesson 13: Changes of State and the Water Cycle', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'z5G4NCwWUxY', title: 'The Great Aqua Adventure (the water cycle)', by: 'Crash Course Kids' },
       { id: 'DjByja9ejTQ', title: 'Why Do Clouds Stay Up?', by: 'Be Smart' },
@@ -1094,7 +1195,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSc5IQIF1RG3q85r6KAC-bazM2872ZzngONsUfVX7FUTu1ESRQ/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 12', title: 'Changes of State and the Water Cycle', emoji: '💧',
+      { kicker: 'SPSO · Lesson 13', title: 'Changes of State and the Water Cycle', emoji: '💧',
         points: ['Melting, boiling and latent heat', 'Heating and cooling curves', 'Pressure and boiling point', 'Strange water: supercooling, superheating, ice that floats', 'Phase diagrams and the triple point', 'The gas laws', 'Water cycle, clouds and breezes'] },
       { title: 'Changes of state', emoji: '🧊',
         points: ['Solid → liquid: melting. Liquid → solid: freezing.', 'Liquid → gas: boiling (throughout the liquid) or evaporation (only at the surface, at any temperature).', 'Gas → liquid: condensation.', 'Solid → gas directly: sublimation, e.g. dry ice.'] },
@@ -1174,7 +1275,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso13', kind: 'lesson', emoji: '👁️', title: 'SPSO Lesson 13: The Senses and the Nervous System', level: 'SPSO', theme: 'spso',
+    id: 'spso13', kind: 'lesson', emoji: '👁️', title: 'SPSO Lesson 14: The Senses and the Nervous System', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'osChE163jJQ', title: 'How Many Senses Do We Have? Busting the myth of 5 senses', by: 'Peekaboo Kidz (Dr. Binocs)' },
       { id: 'VAEmxt78bBI', title: 'A Journey Through Your Nervous System', by: 'BRIGHT SIDE' },
@@ -1188,7 +1289,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSdxrYrrN9mf1pFvpw24qMNeaK9eMir1B8UBlY5dOA74uTxdFw/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 13', title: 'The Senses and the Nervous System', emoji: '👁️',
+      { kicker: 'SPSO · Lesson 14', title: 'The Senses and the Nervous System', emoji: '👁️',
         points: ['More than five senses', 'The nervous system: CNS and PNS', 'Neurons and nerve impulses', 'Synapses and neurotransmitters', 'The eye and sight problems', 'Hearing, balance and smell'] },
       { title: 'More than five senses', emoji: '🖐️',
         points: ['Sight, hearing, smell, taste and touch are the famous five.', 'We also sense balance (equilibrium), body position (proprioception), temperature, pain, and internal feelings like hunger and thirst.', 'Receptors are cells that detect stimuli. Exteroceptors detect the outside world; interoceptors monitor internal organs (digestive, breathing, heart, urinary, reproductive systems); proprioceptors sense the position of muscles and joints.'] },
@@ -1266,7 +1367,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso14', kind: 'lesson', emoji: '🏋️', title: 'SPSO Lesson 14: Forces and Motion', level: 'SPSO', theme: 'spso',
+    id: 'spso14', kind: 'lesson', emoji: '🏋️', title: 'SPSO Lesson 15: Forces and Motion', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'SEZVsE3eRbI', title: 'Types of Forces: What is Force?', by: 'Learning Junction' },
       { id: 'U78NOo-oxOY', title: 'Weight, Force, Mass and Gravity', by: 'FuseSchool' },
@@ -1294,7 +1395,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSf2WMmuBuATU7wb-UqL6AvXmBPkeas0n09t_LnIyoxfIdHcSg/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 14', title: 'Forces and Motion', emoji: '🏋️',
+      { kicker: 'SPSO · Lesson 15', title: 'Forces and Motion', emoji: '🏋️',
         points: ['Types of forces', 'Mass and weight', 'Newton’s three laws', 'Speed, acceleration and graphs', 'Friction and net force', 'Springs, floating and surface tension'] },
       { title: 'Types of forces', emoji: '👉',
         cols: [['Contact forces', 'Need to touch', 'Friction, air resistance, tension, the push of a surface (normal force), upthrust in water.'], ['Non-contact forces', 'Act at a distance', 'Gravity, magnetic force, electrostatic force.'], ['What forces do', 'Change motion or shape', 'Start, stop, speed up, slow down, change direction, or squash and stretch.']],
@@ -1371,7 +1472,7 @@ window.SCI_TOPICS = [
     ]
   },
   {
-    id: 'spso15', kind: 'lesson', emoji: '🌡️', title: 'SPSO Lesson 15: Homeostasis and Hormones', level: 'SPSO', theme: 'spso',
+    id: 'spso15', kind: 'lesson', emoji: '🌡️', title: 'SPSO Lesson 16: Homeostasis and Hormones', level: 'SPSO', theme: 'spso',
     videos: [
       { id: 'Rgpj__C2jCc', title: 'What is Homeostasis?', by: 'Free Animated Education' },
       { id: '14SQT97EE4c', title: 'Negative Feedback', by: 'FuseSchool' },
@@ -1385,7 +1486,7 @@ window.SCI_TOPICS = [
     ],
     form: 'https://docs.google.com/forms/d/e/1FAIpQLSdyguGw0sVcTaGvTkHRtaVbv8IF8JnZ0b75dZ0Ywi114YDvgQ/viewform',
     slides: [
-      { kicker: 'SPSO · Lesson 15', title: 'Homeostasis and Hormones', emoji: '🌡️',
+      { kicker: 'SPSO · Lesson 16', title: 'Homeostasis and Hormones', emoji: '🌡️',
         points: ['What homeostasis is', 'Receptor → control centre → effector', 'Negative and positive feedback', 'Hormones and the endocrine glands', 'Blood sugar, insulin and diabetes', 'Controlling body temperature'] },
       { title: 'What is homeostasis?', emoji: '⚖️',
         points: ['Homeostasis means keeping conditions inside the body stable, even when the outside changes.', 'Examples: body temperature (about 37 °C), blood sugar level, water content, blood pressure.', 'It is called the central principle of physiology, because almost every body system helps keep conditions steady.'] },
