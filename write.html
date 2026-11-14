@@ -142,6 +142,11 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;ma
   <input id="addCharInput" class="addCharInput" maxlength="80" placeholder="一次输入多个字，例如：学校老师同学朋友">
   <button class="primary" id="addCharBtn">批量添加</button>
 </div>
+<div class="add-online">
+  <span class="row-label">📥 汪老师最新听写：</span>
+  <button class="primary" id="importWeekBtn">导入 4.8 听写字（共 42 个，已选好）</button>
+  <span class="online-note">只需点一次，重复点也不会重复添加</span>
+</div>
 <div class="library-tools">
     <input id="searchInput" class="search" type="search" placeholder="🔍 搜索汉字或拼音，例如：昨天 / zuo">
     <select id="groupSelect" class="groupSelect">
@@ -525,6 +530,33 @@ async function addOnlineCharacter(){
     $('status').textContent='✓ 已把 '+charsIn.length+' 个字保存到「'+formatGroup(groupName)+'」';$('status').className='status ok';
   }catch(err){$('status').textContent='添加失败：'+err.message;$('status').className='status bad';}
 }
+
+const WEEK_SETS=[{name:'P1-汪老师4.8听写',label:'4.8',pairs:'她tā 们men 买mǎi 了le 鱼yú 肉ròu 和hé 青qīng 菜cài 提tí 着zhe 大dà 包bāo 小xiǎo 的de 东dōng 西xi 走zǒu 回huí 家jiā 皮pí 球qiú 桌zhuō 子zi 垃lā 圾jī 美měi 丽lì 开kāi 车chē 上shàng 学xué 飞fēi 机jī 生shēng 气qì 做zuò 手shǒu 工gōng 天tiān 空kōng 中zhōng'}];
+async function importWeek(set){
+  const st=$('status');
+  try{
+    const pairs=set.pairs.split(' ').map(x=>({char:x[0],pinyin:x.slice(1)}));
+    let group=GROUPS.find(g=>g.name===set.name);
+    if(!group){
+      const {data:ex}=await supabase.from('groups').select('id,name').eq('name',set.name).maybeSingle();
+      if(ex){group=ex;GROUPS.push(group);renderGroupOptions();}
+    }
+    if(!group){
+      const {data,error}=await supabase.from('groups').insert({name:set.name}).select('id,name').single();
+      if(error) throw error;
+      group=data;GROUPS.push(group);renderGroupOptions();
+    }
+    const rows=pairs.map(x=>({char:x.char,pinyin:x.pinyin,group_id:group.id}));
+    const {error:cErr}=await supabase.from('characters').upsert(rows,{onConflict:'char,group_id',ignoreDuplicates:true});
+    if(cErr) throw cErr;
+    await refreshLibrary();
+    selectedChars=[];
+    pairs.forEach(x=>{const item=LIBRARY.find(y=>y.char===x.char&&y.group_id===group.id);if(item)selectedChars.push(item);});
+    saveSelected();renderLibrary();renderPracticeNav();
+    const gs=$('groupSelect');if(gs){gs.value=set.name;gs.dispatchEvent(new Event('change'));}
+    st.textContent='✓ 已导入 '+pairs.length+' 个字到「'+formatGroup(set.name)+'」，并已勾选，可以直接练习。';st.className='status ok';
+  }catch(err){st.textContent='导入失败：'+err.message;st.className='status bad';}
+}
 async function refreshLibrary(){
   LIBRARY=await fetchLibraryRows();
 }
@@ -673,7 +705,7 @@ $('weakBtn').addEventListener('click',async()=>{
 });
 $('resetBtn').addEventListener('click',()=>{if(CHARS.length)selectChar(0);});
 document.querySelectorAll('.stage').forEach(el=>el.addEventListener('touchstart',e=>{if(mode==='quiz')e.preventDefault()},{passive:false}));
-$('addCharBtn').addEventListener('click',addOnlineCharacter);$('addGroupBtn').addEventListener('click',addGroup);$('renameGroupBtn').addEventListener('click',renameGroup);$('deleteGroupBtn').addEventListener('click',deleteGroup);$('addCharInput').addEventListener('keydown',e=>{if(e.key==='Enter')addOnlineCharacter();});$('searchInput').addEventListener('input',renderLibrary);$('groupSelect').addEventListener('change',renderLibrary);$('selectAllBtn').addEventListener('click',selectAllVisible);$('clearAllBtn').addEventListener('click',clearAll);$('practiceSelectedBtn').addEventListener('click',startSelectedPractice);$('practiceGroupBtn').addEventListener('click',practiceThisGroup);
+$('addCharBtn').addEventListener('click',addOnlineCharacter);$('importWeekBtn').addEventListener('click',()=>importWeek(WEEK_SETS[0]));$('addGroupBtn').addEventListener('click',addGroup);$('renameGroupBtn').addEventListener('click',renameGroup);$('deleteGroupBtn').addEventListener('click',deleteGroup);$('addCharInput').addEventListener('keydown',e=>{if(e.key==='Enter')addOnlineCharacter();});$('searchInput').addEventListener('input',renderLibrary);$('groupSelect').addEventListener('change',renderLibrary);$('selectAllBtn').addEventListener('click',selectAllVisible);$('clearAllBtn').addEventListener('click',clearAll);$('practiceSelectedBtn').addEventListener('click',startSelectedPractice);$('practiceGroupBtn').addEventListener('click',practiceThisGroup);
 $('prevCharBtn').addEventListener('click',()=>{if(current>0)selectChar(current-1);});
 $('nextCharBtn').addEventListener('click',()=>{if(current<CHARS.length-1)selectChar(current+1);});
 $('saveDailyBtn').addEventListener('click',async()=>{
