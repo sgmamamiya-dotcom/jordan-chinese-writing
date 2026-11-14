@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>家长看板 · Parent page</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito+Sans:wght@400;700&display=swap">
+<link rel="stylesheet" href="hub.css">
+<style>
+h2{font-family:var(--display);font-weight:800;font-size:26px;margin:30px 0 10px;line-height:1.15}
+.panel{background:var(--card);border-radius:22px;border:3px solid var(--ink);padding:16px 18px;margin-bottom:16px}
+.panel h3{font-family:var(--display);font-weight:800;font-size:21px;margin:0 0 2px}
+.panel .sub{color:var(--mute);font-size:14px;margin:0 0 12px}
+.rows{display:grid;gap:10px}
+.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.row .name{flex:1;min-width:150px;font-weight:700}
+.row .name small{display:block;font-weight:400;color:var(--mute);font-size:13.5px}
+.chip{font-size:13.5px;font-weight:700;border-radius:999px;padding:3px 12px;white-space:nowrap;border:2px solid var(--ink)}
+.chip.ok{background:#D9F6F1}
+.chip.warn{background:#FFE9B0}
+.chip.none{background:#F1EEF9;color:var(--mute);border-color:#C9C2E3}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.stat{background:#F7F4FF;border-radius:14px;padding:10px 8px;text-align:center}
+.stat b{display:block;font-family:var(--display);font-size:28px;line-height:1.1}
+.stat span{font-size:13px;color:var(--mute)}
+.stat em{display:block;font-style:normal;font-size:12.5px;font-weight:700;min-height:18px}
+.up{color:#0B7F71}.down{color:#B4332B}
+.bar{height:12px;border-radius:999px;background:#E6E0FA;overflow:hidden;margin:6px 0 2px}
+.bar i{display:block;height:100%;background:var(--purple);border-radius:999px}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:560px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid #E6E0FA;vertical-align:top}
+th{font-size:13px;color:var(--mute);white-space:nowrap}
+td.n{text-align:center;font-weight:700;white-space:nowrap}
+.note{color:var(--mute);font-size:13.5px;margin:10px 0 0}
+.spark{display:block;width:100%;height:70px;margin:4px 0 10px}
+@media(max-width:520px){.stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Home</a>
+  <h1>家长看板</h1>
+  <p class="hello" id="today"></p>
+
+  <h2>Bryan</h2>
+
+  <section class="panel">
+    <h3>Overall status · 总览</h3>
+    <p class="sub">每一项最近一次练习的时间。7 天内练过算「本周有练」。</p>
+    <div class="rows" id="overall"><p class="note">正在读取进度…</p></div>
+  </section>
+
+  <section class="panel">
+    <h3>English oral · 英文口试</h3>
+    <p class="sub">每天和 Claude 的 PSLE 式口试练习。看图对话满分 25，是 Claude 的估分，不是官方分数；四项能力按 1–4 分。</p>
+    <div id="oral"></div>
+  </section>
+
+  <section class="panel">
+    <h3>华文 · Chinese</h3>
+    <p class="sub">必考字练习和部件听写的进度。</p>
+    <div id="chinese"><p class="note">正在读取进度…</p></div>
+  </section>
+
+  <section class="panel">
+    <h3>English writing · 英文写作</h3>
+    <p class="sub">Banish Boring Words 和 Bryan's Daily News。</p>
+    <div id="english"><p class="note">正在读取进度…</p></div>
+  </section>
+
+  <h2>Jordan</h2>
+  <section class="panel">
+    <h3>即将加入</h3>
+    <p class="sub">Jordan 的进度（练字、听写、拼写）之后会加在这里。</p>
+    <div id="jordan"></div>
+  </section>
+
+  <p class="note" id="cloud"></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="bryan/oral-log.js"></script>
+<script>
+(function () {
+  var SB_URL = 'https://uscpgatqeeqejbwnvyoh.supabase.co';
+  var SB_KEY = 'sb_publishable_Tc5qBurC5SnTyNjB2jtA2A_jFs9T3og';
+  var ZI_TOTAL = 350, ZI_GROUP = 10;
+  var DAY = 86400000, now = new Date();
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function fmt(d) { return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); }
+  function parseDay(s) { var p = String(s).split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function daysAgo(d) { return Math.floor((new Date(now.getFullYear(), now.getMonth(), now.getDate()) - new Date(d.getFullYear(), d.getMonth(), d.getDate())) / DAY); }
+  function ago(d) { var n = daysAgo(d); return n <= 0 ? '今天' : n === 1 ? '昨天' : n + ' 天前'; }
+  function chip(d) {
+    if (!d) return '<span class="chip none">还没有记录</span>';
+    return daysAgo(d) <= 7 ? '<span class="chip ok">本周有练 · ' + ago(d) + '</span>' : '<span class="chip warn">' + ago(d) + '，超过一周</span>';
+  }
+  function row(name, detail, d) { return '<div class="row"><span class="name">' + esc(name) + '<small>' + esc(detail) + '</small></span>' + chip(d) + '</div>'; }
+
+  $('today').textContent = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) + ' · 孩子们的学习进度';
+
+  // ---------- English oral (bryan/oral-log.js) ----------
+  var LOG = (window.ORAL_LOG || []).slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+  var SKILLS = [['cs', 'Complete sentences'], ['org', 'Organization'], ['flu', 'Fluency'], ['ind', 'Independence']];
+  function val(v, max) { return v == null ? '—' : v + (max ? '/' + max : ''); }
+  function delta(first, last) {
+    if (first == null || last == null || first === last) return '';
+    return '<em class="' + (last > first ? 'up">▲ ' : 'down">▼ ') + first + ' → ' + last + '</em>';
+  }
+  function spark(points, max) {
+    if (points.length < 2) return '';
+    var W = 600, H = 70, pad = 8;
+    var xy = points.map(function (v, i) { return [pad + i * (W - 2 * pad) / (points.length - 1), H - pad - v / max * (H - 2 * pad)]; });
+    return '<svg class="spark" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" role="img" aria-label="Conversation marks over time">' +
+      '<polyline fill="none" stroke="#5B2BD9" stroke-width="3" stroke-linejoin="round" points="' + xy.map(function (p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' ') + '"/>' +
+      xy.map(function (p) { return '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="4" fill="#5B2BD9"/>'; }).join('') + '</svg>';
+  }
+  function renderOral() {
+    if (!LOG.length) { $('oral').innerHTML = '<p class="note">还没有口试练习记录。</p>'; return; }
+    var first = LOG[0], last = LOG[LOG.length - 1];
+    var week = LOG.filter(function (r) { return daysAgo(parseDay(r.date)) < 7; }).length;
+    var convs = LOG.filter(function (r) { return r.conv != null; });
+    var h = '<div class="stats">';
+    SKILLS.forEach(function (s) {
+      h += '<div class="stat"><b>' + val(last[s[0]]) + '</b><span>' + s[1] + '</span>' + (delta(first[s[0]], last[s[0]]) || '<em></em>') + '</div>';
+    });
+    h += '</div>';
+    h += '<p class="note" style="margin:0 0 10px">共 ' + LOG.length + ' 次练习，最近 7 天 ' + week + ' 次。上面是最近一次的分数' + (LOG.length > 1 ? '，箭头是和第一次相比。' : '；练多几次后会显示和第一次相比的变化。') +
+      (convs.length ? ' 看图对话最近一次：<b>' + convs[convs.length - 1].conv + '/25</b>' + (convs.length > 1 ? '（第一次 ' + convs[0].conv + '/25）' : '') + '。' : '') + '</p>';
+    h += spark(convs.map(function (r) { return r.conv; }), 25);
+    h += '<div class="tablewrap"><table><thead><tr><th>Date</th><th>Topic</th><th>Conv /25</th><th>Sent.</th><th>Org.</th><th>Fluency</th><th>Indep.</th><th>Next focus</th></tr></thead><tbody>';
+    LOG.slice().reverse().forEach(function (r) {
+      h += '<tr><td style="white-space:nowrap">' + fmt(parseDay(r.date)) + '</td><td>' + esc(r.topic) + '</td><td class="n">' + val(r.conv) + '</td><td class="n">' + val(r.cs) + '</td><td class="n">' + val(r.org) +
+        '</td><td class="n">' + val(r.flu) + '</td><td class="n">' + val(r.ind) + '</td><td>' + esc(r.focus) + '</td></tr>';
+    });
+    h += '</tbody></table></div><p class="note">— 表示当天证据不足，没有评分（Not assessed）。朗读不打分，因为从语音转文字判断不了发音。</p>';
+    $('oral').innerHTML = h;
+  }
+  renderOral();
+  var oralLast = LOG.length ? parseDay(LOG[LOG.length - 1].date) : null;
+
+  // ---------- practice pages (Supabase: learning_progress, newsletter) ----------
+  function render(rows, news, failed) {
+    var by = {};
+    (rows || []).forEach(function (r) { by[r.kid + '/' + r.app] = r; });
+    function when(k) { var r = by[k]; if (!r) return null; var t = (r.data && r.data._t) || Date.parse(r.updated_at); return t ? new Date(t) : null; }
+    var zi = (by['bryan/zi'] || {}).data || {}, bj = (by['bryan/bujian'] || {}).data || {}, en = (by['bryan/english'] || {}).data || {};
+    var done = zi.done || {}, groups = Object.keys(done).filter(function (g) { return done[g] && done[g].size; });
+    var chars = groups.reduce(function (n, g) { return n + done[g].size; }, 0);
+    var avg = groups.length ? Math.round(groups.reduce(function (n, g) { return n + (done[g].score || 0); }, 0) / groups.length) : null;
+    var wrong = Object.keys(zi.wrong || {}).length;
+    var lastZi = groups.map(function (g) { return done[g].date; }).filter(Boolean).sort().pop();
+    var best = en['bryan_bbw_best_v1'] || {}, stars = en['bryan_bbw_stars_v1'] || [];
+    var newsLast = news && news.length ? parseDay(news[0].edition_date) : null;
+    var newsWeek = (news || []).filter(function (n) { return daysAgo(parseDay(n.edition_date)) < 7; }).length;
+    var offline = failed ? '（暂时读不到网上存档）' : '';
+
+    $('overall').innerHTML =
+      row('English oral · 英文口试', LOG.length ? '共 ' + LOG.length + ' 次练习' : '还没开始', oralLast) +
+      row('必考字练习', failed ? offline : chars + ' / ' + ZI_TOTAL + ' 字', when('bryan/zi')) +
+      row('部件听写', failed ? offline : (bj.streak && bj.streak.n ? '连续 ' + bj.streak.n + ' 天' : '听写练习'), when('bryan/bujian')) +
+      row('Banish Boring Words', failed ? offline : (best.pick != null ? 'Best quiz ' + best.pick + '%' : 'Composition vocabulary'), when('bryan/english')) +
+      row("Bryan's Daily News", failed ? offline : (news ? '共 ' + news.length + ' 期，最近 7 天 ' + newsWeek + ' 期' : ''), newsLast);
+
+    if (failed) { $('chinese').innerHTML = $('english').innerHTML = '<p class="note">暂时读不到网上存档，请稍后刷新。</p>'; return; }
+    var pct = Math.round(chars / ZI_TOTAL * 100);
+    $('chinese').innerHTML =
+      '<div class="stats"><div class="stat"><b>' + chars + '</b><span>必考字已学 / ' + ZI_TOTAL + '</span></div>' +
+      '<div class="stat"><b>' + groups.length + '</b><span>完成组数 / ' + Math.ceil(ZI_TOTAL / ZI_GROUP) + '</span></div>' +
+      '<div class="stat"><b>' + (avg == null ? '—' : avg + '%') + '</b><span>小测平均分</span></div>' +
+      '<div class="stat"><b>' + wrong + '</b><span>错字本里的字</span></div></div>' +
+      '<div class="bar"><i style="width:' + pct + '%"></i></div><p class="note" style="margin-top:4px">必考字完成 ' + pct + '%' + (lastZi ? '，最近完成一组：' + esc(lastZi) : '') + '。</p>' +
+      '<p class="note">部件听写：' + (bj.streak && bj.streak.n ? '连续练习 ' + bj.streak.n + ' 天' : '还没有连续记录') + (Array.isArray(bj.review) ? '，待复习 ' + bj.review.length + ' 个字' : '') + '。</p>';
+    $('english').innerHTML =
+      '<div class="stats"><div class="stat"><b>' + (best.pick != null ? best.pick + '%' : '—') + '</b><span>Best-word quiz</span></div>' +
+      '<div class="stat"><b>' + (best.trans || 0) + '</b><span>Stories perfect</span></div>' +
+      '<div class="stat"><b>' + (best.up || 0) + '</b><span>Sentences upgraded</span></div>' +
+      '<div class="stat"><b>' + stars.length + '</b><span>Words starred</span></div></div>' +
+      '<p class="note">Daily News：' + (news && news.length ? '共写了 ' + news.length + ' 期，最近 7 天 ' + newsWeek + ' 期，最近一期 ' + fmt(newsLast) : '还没有写过') + '。</p>';
+  }
+
+  var db = null;
+  try { db = window.supabase.createClient(SB_URL, SB_KEY); } catch (e) {}
+  if (!db) { render(null, null, true); return; }
+  Promise.all([
+    db.from('learning_progress').select('kid,app,data,updated_at'),
+    db.from('newsletter').select('edition_date').order('edition_date', { ascending: false }).limit(400)
+  ]).then(function (res) {
+    if (res[0].error) throw res[0].error;
+    render(res[0].data, res[1].error ? null : res[1].data, false);
+    $('cloud').textContent = '☁️ 进度来自网上存档，刷新页面可看最新。';
+  }).catch(function () { render(null, null, true); });
+})();
+</script>
+</body>
+</html>
