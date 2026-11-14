@@ -184,6 +184,7 @@ button:focus-visible{outline:3px solid #8FB8FF;outline-offset:3px}
 .tile[disabled]{opacity:.22;transform:scale(.92);box-shadow:none;cursor:default}
 .tile.glow{animation:glow .9s ease infinite;outline:5px solid #FFD25E;outline-offset:3px;box-shadow:0 8px 0 var(--edge),0 0 30px 10px rgba(255,210,94,.85)}
 .tile.glow::after{content:"👆";position:absolute;right:-10px;top:-16px;font-size:24px;-webkit-text-stroke:0}
+.stk{display:flex;flex-direction:column;align-items:center;line-height:.85}.stk i{font-style:normal;font-size:.6em}
 .tile.two{font-size:clamp(22px,4.8vw,32px);letter-spacing:-.08em}
 .mt.two{font-size:17px;letter-spacing:-.08em}
 .actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:30px}
@@ -353,10 +354,10 @@ var CHARS=[
 ['x2','美','měi','tb',['羊', '大'],['手', '犬', '太'],'美丽','{}丽'],
 ['x2','开','kāi','tb',['一','廾'],['二','井','艹'],'开车','{}车'],
 ['x2','上','shàng','tb',['卜','一'],['十','土','止'],'上学','{}学'],
-['x2','学','xué','tbb',['⺍','冖','子'],['宀','了','亠'],'上学','上{}'],
+['x2','学','xué','tb',['⺍冖','子'],['宀','了','亠'],'上学','上{}'],
 ['x2','机','jī','lr',['木', '几'],['禾', '凡', '巾'],'飞机','飞{}'],
 ['x2','生','shēng','tb',['𠂉','土'],['牛','工','士'],'生气','{}气'],
-['x2','气','qì','tbb',['𠂉','一','乙'],['牛','二','乚'],'生气','生{}'],
+['x2','气','qì','tmb',['𠂉','一','乙'],['牛','二','乚'],'生气','生{}'],
 ['x2','做','zuò','lcr',['亻', '古', '攵'],['彳', '吉', '文'],'做手工','{}手工'],
 ['x2','天','tiān','tb',['一', '大'],['二', '夫', '人'],'天空中','{}空中'],
 ['x2','空','kōng','tb',['穴', '工'],['宀', '土', '王'],'天空中','天{}中'],
@@ -403,7 +404,6 @@ var ZIBY={};ZI.forEach(function(c){ZIBY[c.ch]=c;});
 var STRUCT={
  lr:{name:'左右结构',tip:'左右结构：先放左边，再放右边',labels:['左','右'],slots:[[3,6,45,88,50],[52,6,45,88,50]]},
  tb:{name:'上下结构',tip:'上下结构：先放上面，再放下面',labels:['上','下'],slots:[[6,3,88,45,46],[6,52,88,45,46]]},
- tbb:{name:'上中下结构',tip:'上中下结构：从上到下放三个部件',labels:['上','中','下'],slots:[[6,2,88,30,36],[6,34,88,30,36],[6,66,88,30,36]]},
  lcr:{name:'左中右结构',tip:'左中右结构：从左到右放三个部件',labels:['左','中','右'],slots:[[2,8,30,84,28],[35,8,30,84,28],[68,8,30,84,28]]},
  sur:{name:'全包围结构',tip:'全包围：先放外面的框，再放里面',labels:['外','里'],slots:[[2,2,96,96,96],[27,27,46,46,44]],shell:'b-all'},
  l2r:{name:'左右结构',tip:'左边先放，再放右上和右下',labels:['左','右上','右下'],slots:[[2,6,34,88,34],[39,3,59,46,40],[39,51,59,46,40]]},
@@ -523,6 +523,9 @@ function makeQ(it){
     active:0,attempts:0,hints:0,solved:false,busy:false,revealed:false,glow:null,pop:null,bad:[],stars:0,
     msg:{t:'听一听，找出它的部件吧！',k:''}};
 }
+var STK='⺍冖';
+function G(ch){return ch===STK?'<span class="stk"><i>⺍</i><i>冖</i></span>':ch;}
+function multi(ch){return ch.length>1&&ch!==STK;}
 function tileCh(q,id){for(var i=0;i<q.tiles.length;i++)if(q.tiles[i].id===id)return q.tiles[i].ch;return '';}
 function firstFree(q){for(var i=0;i<q.slots.length;i++)if(q.slots[i]===null&&!q.locked[i])return i;return -1;}
 
@@ -684,8 +687,8 @@ function play(){
     frame=st.slots.map(function(g,i){
       var id=q.slots[i],ch=id===null?'':tileCh(q,id);
       var cls=['slot',id===null?'empty':'',(i===q.active&&id===null)?'active':'',(i===0&&st.shell)?'shell '+st.shell:'',q.locked[i]?'locked':'',q.bad.indexOf(i)>=0?'bad':'',q.pop===i?'pop':''].join(' ');
-      var style='left:'+g[0]+'%;top:'+g[1]+'%;width:'+g[2]+'%;height:'+g[3]+'%;font-size:'+(ch.length>1?g[4]*0.55:g[4])+'cqw;z-index:'+((i===0&&st.shell)?1:2);
-      return '<button class="'+cls+'" style="'+style+'" data-a="slot" data-i="'+i+'" aria-label="'+st.labels[i]+'格'+(ch?'，已放'+ch:'，空')+'">'+(ch||'<span class="lab">'+st.labels[i]+'</span>')+'</button>';
+      var style='left:'+g[0]+'%;top:'+g[1]+'%;width:'+g[2]+'%;height:'+g[3]+'%;font-size:'+(multi(ch)?g[4]*0.55:g[4])+'cqw;z-index:'+((i===0&&st.shell)?1:2);
+      return '<button class="'+cls+'" style="'+style+'" data-a="slot" data-i="'+i+'" aria-label="'+st.labels[i]+'格'+(ch?'，已放'+ch:'，空')+'">'+(ch?G(ch):'<span class="lab">'+st.labels[i]+'</span>')+'</button>';
     }).join('');
   }
   var sparks='';
@@ -699,7 +702,7 @@ function play(){
     var tiles=q.tiles.map(function(t){
       var used=q.slots.indexOf(t.id)>=0;
       var lab=(hasBig&&hasSm)?(t.ch==='囗'?'大口':t.ch==='口'?'小口':t.ch):t.ch;
-      return '<button class="tile c'+t.col+(lab.length>1?' two':'')+(q.glow===t.id?' glow':'')+'" style="--rot:'+t.rot+'deg" data-a="tile" data-id="'+t.id+'"'+(used?' disabled':'')+' aria-label="部件 '+lab+'">'+lab+'</button>';
+      return '<button class="tile c'+t.col+(multi(lab)?' two':'')+(q.glow===t.id?' glow':'')+'" style="--rot:'+t.rot+'deg" data-a="tile" data-id="'+t.id+'"'+(used?' disabled':'')+' aria-label="部件 '+lab+'">'+G(lab)+'</button>';
     }).join('');
     bottom='<div class="tray">'+tiles+'</div>'+
       '<div class="actions">'+
@@ -708,7 +711,7 @@ function play(){
         '<button class="btn ghost" data-a="reveal"'+(q.busy?' disabled':'')+'>看答案</button>'+
       '</div>';
   }else{
-    var eq=it.parts.map(function(ch,i){return (i?'<span>+</span>':'')+'<span class="mt c'+((i*2+1)%6)+(ch.length>1?' two':'')+'">'+ch+'</span>';}).join('');
+    var eq=it.parts.map(function(ch,i){return (i?'<span>+</span>':'')+'<span class="mt c'+((i*2+1)%6)+(multi(ch)?' two':'')+'">'+G(ch)+'</span>';}).join('');
     bottom='<div class="done">'+
       '<div class="stars" role="img" aria-label="'+q.stars+' 星">'+stars(q.stars)+'</div>'+
       '<div class="gain">能量 +'+q.gain+'</div>'+
