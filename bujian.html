@@ -182,7 +182,8 @@ button:focus-visible{outline:3px solid #8FB8FF;outline-offset:3px}
 .tile:hover{transform:rotate(var(--rot,0deg)) translateY(-3px)}
 .tile:active{transform:rotate(var(--rot,0deg)) translateY(5px);box-shadow:0 3px 0 var(--edge),0 8px 14px rgba(0,0,0,.4),inset 0 2px 0 rgba(255,255,255,.6)}
 .tile[disabled]{opacity:.22;transform:scale(.92);box-shadow:none;cursor:default}
-.tile.glow{animation:glow .9s ease 3}
+.tile.glow{animation:glow .9s ease infinite;outline:5px solid #FFD25E;outline-offset:3px;box-shadow:0 8px 0 var(--edge),0 0 30px 10px rgba(255,210,94,.85)}
+.tile.glow::after{content:"👆";position:absolute;right:-10px;top:-16px;font-size:24px;-webkit-text-stroke:0}
 .tile.two{font-size:clamp(22px,4.8vw,32px);letter-spacing:-.08em}
 .mt.two{font-size:17px;letter-spacing:-.08em}
 .actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:30px}
@@ -238,7 +239,7 @@ button:focus-visible{outline:3px solid #8FB8FF;outline-offset:3px}
   .wprev{font-size:24px}
   .btn{padding:12px 20px}
 }
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.tile.glow{animation:none!important}}
 </style>
 </head>
 <body>
@@ -688,9 +689,11 @@ function play(){
   var bottom;
   if(!q.solved){
     var ready=q.slots.every(function(v){return v!==null;});
+    var hasBig=q.tiles.some(function(t){return t.ch==='囗';}),hasSm=q.tiles.some(function(t){return t.ch==='口';});
     var tiles=q.tiles.map(function(t){
       var used=q.slots.indexOf(t.id)>=0;
-      return '<button class="tile c'+t.col+(t.ch.length>1?' two':'')+(q.glow===t.id?' glow':'')+'" style="--rot:'+t.rot+'deg" data-a="tile" data-id="'+t.id+'"'+(used?' disabled':'')+' aria-label="部件 '+t.ch+'">'+t.ch+'</button>';
+      var lab=(hasBig&&hasSm)?(t.ch==='囗'?'大口':t.ch==='口'?'小口':t.ch):t.ch;
+      return '<button class="tile c'+t.col+(lab.length>1?' two':'')+(q.glow===t.id?' glow':'')+'" style="--rot:'+t.rot+'deg" data-a="tile" data-id="'+t.id+'"'+(used?' disabled':'')+' aria-label="部件 '+lab+'">'+lab+'</button>';
     }).join('');
     bottom='<div class="tray">'+tiles+'</div>'+
       '<div class="actions">'+
