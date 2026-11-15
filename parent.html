@@ -72,15 +72,16 @@ td.n{text-align:center;font-weight:700;white-space:nowrap}
 
   <h2>Jordan</h2>
   <section class="panel">
-    <h3>即将加入</h3>
-    <p class="sub">Jordan 的进度（练字、听写、拼写）之后会加在这里。</p>
-    <div id="jordan"></div>
+    <h3>English reading · 英文朗读与理解</h3>
+    <p class="sub">按每次阅读练习记录表现。四项能力使用 1–4 分；证据不足时显示 Not assessed，不作猜测。</p>
+    <div id="jordan-reading"></div>
   </section>
 
   <p class="note" id="cloud"></p>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="bryan/oral-log.js"></script>
+<script src="jordan/reading-log.js"></script>
 <script>
 (function () {
   var SB_URL = 'https://uscpgatqeeqejbwnvyoh.supabase.co';
@@ -140,6 +141,34 @@ td.n{text-align:center;font-weight:700;white-space:nowrap}
   }
   renderOral();
   var oralLast = LOG.length ? parseDay(LOG[LOG.length - 1].date) : null;
+  // ---------- Jordan English reading log ----------
+  var JLOG = (window.JORDAN_READING_LOG || []).slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+  var J_SKILLS = [['cs', 'Complete sentences'], ['org', 'Organization'], ['flu', 'Fluency'], ['ind', 'Independence']];
+  function renderJordanReading() {
+    if (!JLOG.length) {
+      $('jordan-reading').innerHTML = '<p class="note">还没有阅读练习记录。完成一次朗读后，会在这里显示评估和进步趋势。</p>';
+      return;
+    }
+    var first = JLOG[0], last = JLOG[JLOG.length - 1];
+    var h = '<div class="stats">';
+    J_SKILLS.forEach(function (s) {
+      h += '<div class="stat"><b>' + val(last[s[0]]) + '</b><span>' + s[1] + '</span>' +
+        (delta(first[s[0]], last[s[0]]) || '<em></em>') + '</div>';
+    });
+    h += '</div>';
+    h += '<p class="note" style="margin:0 0 10px">共 ' + JLOG.length + ' 次阅读练习。上面显示最近一次的分数；有多次记录后会显示与第一次练习的变化。</p>';
+    h += '<div class="tablewrap"><table><thead><tr><th>Date</th><th>Book / Activity</th><th>Sent.</th><th>Org.</th><th>Fluency</th><th>Indep.</th><th>Retry</th><th>Next focus</th></tr></thead><tbody>';
+    JLOG.slice().reverse().forEach(function (r) {
+      h += '<tr><td style="white-space:nowrap">' + fmt(parseDay(r.date)) + '</td><td><b>' + esc(r.book) + '</b><br>' + esc(r.activity) + '<br><small>' + esc(r.evidence_summary) + '</small></td>' +
+        '<td class="n">' + val(r.cs) + '</td><td class="n">' + val(r.org) + '</td><td class="n">' + val(r.flu) + '</td><td class="n">' + val(r.ind) + '</td><td>' + esc(r.retry) + '</td><td>' + esc(r.focus) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+    h += '<p class="note">— 表示 Not assessed（当天证据不足）。朗读流利度不会仅凭语音转文字评分。</p>';
+    h += '<p class="note"><b>Did well:</b> ' + esc(last.strength) + '<br><b>Priority:</b> ' + esc(last.priority) +
+      '<br><b>Retry improvement:</b> ' + esc(last.retry_detail) + '<br><b>Evidence:</b> ' + esc(last.evidence) + '</p>';
+    $('jordan-reading').innerHTML = h;
+  }
+  renderJordanReading();
 
   // ---------- practice pages (Supabase: learning_progress, newsletter) ----------
   function render(rows, news, failed) {
