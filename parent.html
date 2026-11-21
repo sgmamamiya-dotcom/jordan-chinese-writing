@@ -59,6 +59,12 @@ td.n{text-align:center;font-weight:700;white-space:nowrap}
   </section>
 
   <section class="panel">
+    <h3>English Composition · 英文作文</h3>
+    <p class="sub">每一版作文的估分：Content 和 Language 各 18 分，共 36 分。Independent level 是最近一次没有提示、自己写完的那一版。</p>
+    <div id="composition"></div>
+  </section>
+
+  <section class="panel">
     <h3>华文 · Chinese</h3>
     <p class="sub">必考字练习和部件听写的进度。</p>
     <div id="chinese"><p class="note">正在读取进度…</p></div>
@@ -81,6 +87,7 @@ td.n{text-align:center;font-weight:700;white-space:nowrap}
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="bryan/oral-log.js"></script>
+<script src="bryan/composition-log.js"></script>
 <script src="jordan/reading-log.js"></script>
 <script>
 (function () {
@@ -141,6 +148,33 @@ td.n{text-align:center;font-weight:700;white-space:nowrap}
   }
   renderOral();
   var oralLast = LOG.length ? parseDay(LOG[LOG.length - 1].date) : null;
+
+  // ---------- English composition (bryan/composition-log.js) ----------
+  // Kept in file order, not sorted: several drafts can share one date.
+  var CLOG = window.COMPOSITION_LOG || [];
+  function total(r) { return r.content == null || r.language == null ? null : r.content + r.language; }
+  function renderComposition() {
+    if (!CLOG.length) { $('composition').innerHTML = '<p class="note">还没有作文记录。</p>'; return; }
+    var first = CLOG[0], last = CLOG[CLOG.length - 1];
+    var indep = CLOG.filter(function (r) { return r.indep; }).pop();
+    var h = '<div class="stats">' +
+      '<div class="stat"><b>' + val(last.content, 18) + '</b><span>Content (latest)</span>' + (delta(first.content, last.content) || '<em></em>') + '</div>' +
+      '<div class="stat"><b>' + val(last.language, 18) + '</b><span>Language (latest)</span>' + (delta(first.language, last.language) || '<em></em>') + '</div>' +
+      '<div class="stat"><b>' + val(total(last), 36) + '</b><span>Total (latest)</span>' + (delta(total(first), total(last)) || '<em></em>') + '</div>' +
+      '<div class="stat"><b>' + (indep ? indep.content + '/' + indep.language : '—') + '</b><span>Independent level</span><em>' + (indep ? '≈ ' + total(indep) + '/36, no hints' : '') + '</em></div>' +
+      '</div>';
+    h += '<p class="note" style="margin:0 0 10px">共 ' + CLOG.length + ' 版。上面是最近一版的分数，箭头是和第一版相比。</p>';
+    h += '<div class="tablewrap"><table><thead><tr><th>Date</th><th>Piece</th><th>Version</th><th>Content /18</th><th>Language /18</th><th>Notes</th></tr></thead><tbody>';
+    CLOG.slice().reverse().forEach(function (r) {
+      h += '<tr><td style="white-space:nowrap">' + fmt(parseDay(r.date)) + '</td><td>' + esc(r.piece) + '</td><td>' + esc(r.version) + '</td><td class="n">' + val(r.content) +
+        '</td><td class="n">' + val(r.language) + '</td><td>' + esc(r.notes) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+    if (window.COMPOSITION_FOCUS) h += '<p class="note"><b>Focus next time:</b> ' + esc(window.COMPOSITION_FOCUS) + '</p>';
+    $('composition').innerHTML = h;
+  }
+  renderComposition();
+  var compLast = CLOG.length ? parseDay(CLOG[CLOG.length - 1].date) : null;
   // ---------- Jordan English reading log ----------
   var JLOG = (window.JORDAN_READING_LOG || []).slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; });
   var J_SKILLS = [['cs', 'Complete sentences'], ['org', 'Organization'], ['flu', 'Fluency'], ['ind', 'Independence']];
@@ -188,6 +222,7 @@ td.n{text-align:center;font-weight:700;white-space:nowrap}
 
     $('overall').innerHTML =
       row('English oral · 英文口试', LOG.length ? '共 ' + LOG.length + ' 次练习' : '还没开始', oralLast) +
+      row('English composition · 英文作文', CLOG.length ? '共 ' + CLOG.length + ' 版，最近 ' + val(CLOG[CLOG.length - 1].content) + '/' + val(CLOG[CLOG.length - 1].language) : '还没开始', compLast) +
       row('必考字练习', failed ? offline : chars + ' / ' + ZI_TOTAL + ' 字', when('bryan/zi')) +
       row('部件听写', failed ? offline : (bj.streak && bj.streak.n ? '连续 ' + bj.streak.n + ' 天' : '听写练习'), when('bryan/bujian')) +
       row('Banish Boring Words', failed ? offline : (best.pick != null ? 'Best quiz ' + best.pick + '%' : 'Composition vocabulary'), when('bryan/english')) +
