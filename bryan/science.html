@@ -188,6 +188,7 @@ table.res th{background:#F4F1FF}
     app.appendChild(el('h1', null, '🔬 Science Lab'));
     app.appendChild(el('p', 'hello', T.filter(function (t) { return t.kind !== 'lesson'; }).length + ' topics from P3 to P6, each with a virtual experiment, summary, key words, quiz, exam tips and fun facts, plus SPSO (Science Olympiad) lessons.'));
     var game = el('a', 'game', '⚡ Circuit Lab game: build, fix and predict circuits, then explain them like an examiner →'); game.href = 'circuit-lab.html'; app.appendChild(game);
+    var mis = el('a', 'game', '📒 My Science Mistakes: redo the questions I got wrong in school papers →'); mis.href = 'science-mistakes.html'; app.appendChild(mis);
     var f = el('div', 'filters'); f.setAttribute('role', 'group'); f.setAttribute('aria-label', 'Show level');
     ['all', 'P3', 'P4', 'P5', 'P6', 'SPSO'].forEach(function (lv) {
       var b = button(null, lv === 'all' ? 'All levels' : lv, function () { write(FILTER_KEY, lv); listView(); });
