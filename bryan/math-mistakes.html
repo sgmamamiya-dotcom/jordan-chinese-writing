@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bryan's Math Mistakes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito+Sans:wght@400;700&display=swap">
+<link rel="stylesheet" href="../hub.css">
+<style>
+[hidden]{display:none!important}
+.wrap{max-width:820px}
+h1{color:var(--ink)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.filters button,.acts button{font:700 15px var(--body);min-height:42px;padding:0 16px;border-radius:999px;border:2px solid var(--ink);background:var(--card);color:var(--ink);cursor:pointer}
+.filters button[aria-pressed=true]{background:var(--ink);color:#fff}
+.mq{background:var(--card);border:3px solid var(--ink);border-radius:20px;padding:18px;box-shadow:0 6px 0 var(--ink);margin:0 0 22px}
+.meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px;font-weight:700;color:var(--mute);margin:0 0 6px}
+.meta .done{color:#1f7a3f}
+.mq h2{font-family:var(--display);font-weight:800;font-size:22px;margin:0 0 6px;line-height:1.2}
+.mq .stem{font-size:18px;line-height:1.55;margin:0 0 12px}
+.ans{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 10px}
+.ans input{font:700 18px var(--body);width:110px;min-height:46px;padding:0 12px;border-radius:12px;border:2px solid var(--ink)}
+.ans .unit{font-weight:700}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.acts .ok{background:#1f7a3f;border-color:#1f7a3f;color:#fff}
+.acts .main{background:var(--purple);border-color:var(--purple);color:#fff}
+.box{border-radius:12px;padding:10px 14px;font-size:16px;line-height:1.55;margin-top:10px}
+.verdict{font-weight:700;font-size:17px;padding:0;margin-top:10px}
+.verdict.good{color:#1f7a3f}.verdict.bad{color:#c0392b}
+.hint{background:#EAF2FF}
+.steps{background:#E6F6EA}
+.steps ol{margin:6px 0 0;padding-left:22px}
+.steps li{margin:3px 0}
+.trap{background:#FCE9E7}
+.check{background:#F1EEFF}
+.habit{background:#FFF7DD;border-left:6px solid var(--yellow);border-radius:0 12px 12px 0}
+.empty{color:var(--mute);font-size:17px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script src="math-mistakes.js"></script>
+<script>
+(function () {
+  'use strict';
+  var app = document.getElementById('app');
+  var M = window.MATH_MISTAKES.map(function (m, i) { return [m, i]; }).sort(function (x, y) { return x[0].date < y[0].date ? 1 : x[0].date > y[0].date ? -1 : x[1] - y[1]; }).map(function (x) { return x[0]; });
+  var KEY = 'math_mistakes_v1', FKEY = 'math_mistakes_filter_v1';
+  function read(k, d) { try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } }
+  function write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  var state = read(KEY, {});
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  function button(cls, text, fn) { var b = el('button', cls, text); b.type = 'button'; b.onclick = fn; return b; }
+  function labelled(cls, label, text) { var d = el('div', 'box ' + cls); var b = el('b', null, label); d.appendChild(b); d.appendChild(document.createTextNode(' ' + text)); return d; }
+  function parseNum(s) {
+    s = String(s).trim().replace(/\s+/g, '');
+    var f = s.match(/^(-?\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)$/);
+    if (f) return parseFloat(f[1]) / parseFloat(f[2]);
+    return s === '' ? NaN : Number(s);
+  }
+
+  function card(m) {
+    var box = el('article', 'mq');
+    var st = state[m.id] || {};
+    var meta = el('div', 'meta');
+    meta.appendChild(el('span', null, m.date + ' · ' + m.source));
+    meta.appendChild(el('span', st.mastered ? 'done' : null, st.mastered ? '✓ Mastered' : 'To review'));
+    box.appendChild(meta);
+    box.appendChild(el('h2', null, m.topic));
+    m.q.split(/\n\s*\n/).forEach(function (p) { box.appendChild(el('p', 'stem', p)); });
+
+    var ans = el('div', 'ans');
+    var input = el('input'); input.type = 'text'; input.inputMode = 'decimal'; input.placeholder = 'Answer'; input.setAttribute('aria-label', 'Your answer');
+    ans.appendChild(input);
+    if (m.unit) ans.appendChild(el('span', 'unit', m.unit));
+    box.appendChild(ans);
+
+    var hintBox = labelled('hint', '💡 Hint:', m.hint); hintBox.hidden = true;
+    var out = el('div'); out.hidden = true;
+
+    function reveal(correct) {
+      out.textContent = '';
+      if (correct === true) out.appendChild(el('div', 'verdict good', '✓ Correct! Now explain your steps out loud before reading on.'));
+      else if (correct === false) out.appendChild(el('div', 'verdict bad', '✗ Not yet. The answer is ' + m.answer + (m.unit ? ' ' + m.unit : '') + '.'));
+      var s = el('div', 'box steps'); s.appendChild(el('b', null, '✅ Worked solution'));
+      var ol = el('ol'); m.steps.forEach(function (t) { ol.appendChild(el('li', null, t)); }); s.appendChild(ol); out.appendChild(s);
+      out.appendChild(labelled('trap', '⚠️ The trap:', m.trap));
+      out.appendChild(labelled('check', '🔍 Check:', m.check));
+      out.appendChild(labelled('habit', '🎯 Exam habit:', m.habit));
+      var acts = el('div', 'acts');
+      acts.appendChild(button(null, '↻ Try again', function () { box.replaceWith(card(m)); }));
+      acts.appendChild(button('ok', st.mastered ? '↩ Move back to review' : '✓ I\'ve got it', function () {
+        var x = state[m.id] || {}; x.mastered = !x.mastered; state[m.id] = x; write(KEY, state); render();
+      }));
+      out.appendChild(acts);
+      out.hidden = false;
+      acts1.hidden = true;
+    }
+
+    var acts1 = el('div', 'acts');
+    acts1.appendChild(button('main', 'Check', function () {
+      var v = parseNum(input.value);
+      if (isNaN(v)) { input.focus(); return; }
+      var ok = Math.abs(v - m.answer) < 1e-6;
+      var x = state[m.id] || {}; x.tries = (x.tries || 0) + 1; if (ok) x.right = (x.right || 0) + 1; state[m.id] = x; write(KEY, state);
+      input.disabled = true;
+      reveal(ok);
+    }));
+    acts1.appendChild(button(null, '💡 Hint', function () { hintBox.hidden = false; }));
+    acts1.appendChild(button(null, 'Show solution', function () { input.disabled = true; reveal(null); }));
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') acts1.firstChild.click(); });
+
+    box.appendChild(acts1); box.appendChild(hintBox); box.appendChild(out);
+    return box;
+  }
+
+  function render() {
+    var f = read(FKEY, 'review');
+    app.textContent = '';
+    var back = el('a', 'back', '← Math'); back.href = 'math.html'; app.appendChild(back);
+    app.appendChild(el('h1', null, '📒 Math Mistakes'));
+    var todo = M.filter(function (m) { return !(state[m.id] && state[m.id].mastered); }).length;
+    app.appendChild(el('p', 'hello', 'Tricky questions to redo. Work it out on paper, type your answer, then read the trap and mark it "got it". ' + todo + ' left to review.'));
+    var bar = el('div', 'filters');
+    [['review', 'To review'], ['all', 'All']].forEach(function (x) {
+      var b = button(null, x[1], function () { write(FKEY, x[0]); render(); });
+      b.setAttribute('aria-pressed', x[0] === f ? 'true' : 'false'); bar.appendChild(b);
+    });
+    app.appendChild(bar);
+    var list = M.filter(function (m) { return f === 'all' || !(state[m.id] && state[m.id].mastered); });
+    if (!list.length) app.appendChild(el('p', 'empty', '🎉 All mastered! Tap "All" to look back.'));
+    list.forEach(function (m) { app.appendChild(card(m)); });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
