@@ -280,7 +280,7 @@ td.n{text-align:right;white-space:nowrap}
   }
   function fill(text, opt) {
     var parts = opt ? opt.split(' … ') : [], k = 0;
-    return esc(text).replace(/___/g, function () {
+    return esc(text).replace(/\{([^}]*)\}/g, '<u>$1</u>').replace(/___/g, function () {
       var w = parts[k++]; return w ? '<span class="blank ok">' + esc(w) + '</span>' : '<span class="blank">&nbsp;</span>';
     });
   }
@@ -293,6 +293,7 @@ td.n{text-align:right;white-space:nowrap}
     $('qBar').style.width = (run.i / run.items.length * 100) + '%';
     $('qSrc').textContent = item.rep ? '🔁 Try this one again · 再试一次' :
       (SETS[run.kind] ? 'Question ' + q.n : setName(q.set) + ' · Q' + q.n) + (S.wrong[q.id] ? ' · 📕 ' + (S.wrong[q.id].s || 0) + '/' + CLEAR_AFTER + ' days right' : '');
+    if (q.set.syn) $('qSrc').textContent += ' · Pick the word closest in meaning to the underlined part';
     $('qText').innerHTML = fill(q.text);
     $('qOpts').innerHTML = run.order.map(function (o, k) { return '<button class="opt" data-o="' + o + '"><span class="k">' + (k + 1) + '</span>' + esc(q.opts[o - 1]) + '</button>'; }).join('');
     $('qFb').textContent = ''; $('qFb').className = 'feedback';
@@ -307,7 +308,7 @@ td.n{text-align:right;white-space:nowrap}
       var v = +b.dataset.o;
       if (v === q.a) b.classList.add('right'); else if (v === o) b.classList.add('wrong');
     });
-    $('qText').innerHTML = fill(q.text, q.opts[q.a - 1]);
+    $('qText').innerHTML = fill(q.text, q.opts[q.a - 1]) + (q.set.syn ? ' <span class="blank ok">= ' + esc(q.opts[q.a - 1]) + '</span>' : '');
     fb.className = 'feedback ' + (ok ? 'ok' : 'no');
     if (item.rep) {
       // Second go in the same practice: just for learning, nothing is recorded.

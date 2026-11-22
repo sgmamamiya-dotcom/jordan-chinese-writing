@@ -1,9 +1,252 @@
 // Bryan's vocabulary MCQ bank, typed in from scanned pages of Conquer Vocabulary Workbook.
 // Each set: id (unique, never change it once used: progress is stored against it), level, ex (exercise number), theme,
-// q: [sentence with ___ for the blank, [option1..option4], correct option number 1-4].
+// q: [sentence with ___ for the blank (or {…} for the underlined part when syn: true), [option1..option4], correct option number 1-4].
 // paperWrong: question numbers Bryan got wrong on paper; they start in his 错题本.
 // To add P5/P6 later, append more sets with level 'P5' / 'P6'.
 var VOCAB_SETS = [
+  // ---------------- P4 · Science and technology / Animals / Travels / Nature / Emotions / Being healthy ----------------
+  // syn: true = "choose the word closest in meaning to the underlined word(s)"; {…} marks the underlined part.
+  { id: 'p4-02', level: 'P4', ex: 2, theme: 'Science and technology', paperWrong: [7, 9], q: [
+    ['Power is ___ to the laptop from this battery.', ['supplied', 'added', 'transferred', 'sent'], 1],
+    ['I do not understand the medical ___ used in this story.', ['terms', 'sections', 'words', 'areas'], 1],
+    ['The invention of the computer was a ___ point in many people\'s lives.', ['timely', 'twisting', 'selling', 'turning'], 4],
+    ['With a car, we can move at a much faster ___ than before.', ['pace', 'space', 'race', 'trace'], 1],
+    ['Do you know that antibiotics was discovered by ___? The scientist did not expect to discover such a useful medicine.', ['probability', 'time', 'chance', 'opportunity'], 3],
+    ['When aeroplanes were first invented, the invention did not look ___ as no one could get it to fly for long periods of time.', ['extensive', 'efficient', 'promising', 'convenient'], 3],
+    ['Inventors can ___ themselves to a room for hours while they work on an invention.', ['consume', 'restrain', 'confine', 'retain'], 3],
+    ['I do not like to ___ my laptop with me when I go out as it is big and heavy.', ['pull', 'lug', 'burden', 'trawl'], 2],
+    ['Technology has become a/an ___ in our lives these days. We cannot do without it.', ['instrument', 'requirement', 'prerequisite', 'necessity'], 4],
+    ['You must mix the right ___ of soap and water if you want to blow bubbles that last longer.', ['set', 'proportion', 'share', 'comparison'], 2]
+  ] },
+  { id: 'p4-04', level: 'P4', ex: 4, theme: 'Animals in the wild', paperWrong: [4, 5, 7, 10], q: [
+    ['The hunter ___ the deer without it knowing.', ['stalked', 'tracked', 'traced', 'searched'], 1],
+    ['How does the hedgehog ___ itself from its enemies?', ['attack', 'protect', 'calm', 'shelter'], 2],
+    ['Most animals have ___ vision as they are nocturnal creatures.', ['light', 'dim', 'dark', 'night'], 4],
+    ['The lions left behind a ___ mess of bones after they finished their meal.', ['muddled', 'untidy', 'tangled', 'mangled'], 4],
+    ['If the pandas are not saved, there will not be any of them in ___ soon.', ['extinction', 'existence', 'continuation', 'endurance'], 2],
+    ['Do not try to ___ a wild animal for there is a likelihood that it might attack you.', ['befriend', 'assist', 'support', 'promote'], 1],
+    ['James was able to see lions, giraffes and elephants up close when he went on a ___ in the African grasslands.', ['cruise', 'voyage', 'safari', 'search'], 3],
+    ['When you are in the desert, you have to keep your eyes ___ for snakes that may be hidden in the sand.', ['unblinking', 'wide', 'peeled', 'sharp'], 3],
+    ['An orangutan\'s behaviour can be ___ at times. You never know what it might do to you.', ['unbecoming', 'unpredictable', 'irregular', 'flexible'], 2],
+    ['Our local zoo, the ___ in placing animals in enclosures that look like their natural habitats, has inspired many other zoos around the world to follow in its footsteps.', ['pioneer', 'source', 'explorer', 'creator'], 1]
+  ] },
+  { id: 'p4-05', level: 'P4', ex: 5, theme: 'Animals in the wild', paperWrong: [5, 6, 9], q: [
+    ['Some animals die from ___ to extremely hot and cold weather.', ['contact', 'exposure', 'encounter', 'existence'], 2],
+    ['The scorpion has a thick outer covering to prevent water ___.', ['shortage', 'loss', 'problems', 'reduction'], 2],
+    ['If man continues to destroy the forests, many animals will become ___.', ['risky', 'extinct', 'lost', 'destroyed'], 2],
+    ['Not all hunters shoot at animals from a distance. Some kill them at close ___.', ['sight', 'distance', 'range', 'space'], 3],
+    ['The lion is a ___ creature that will not die easily as it can bear with harsh living conditions.', ['brutal', 'ferocious', 'hardy', 'firm'], 3],
+    ['Animals in the grasslands ___ on different species of grass so there is little competition among them for food.', ['eat', 'lie', 'swallow', 'graze'], 4],
+    ['Not all ___ animals are able to breathe for long periods underwater. Some of them have to come up for air occasionally.', ['aquatic', 'nocturnal', 'maritime', 'mammal'], 1],
+    ['Many desert animals hide in their burrows in the day and ___ at night to hunt for food.', ['emerge', 'expose', 'exit', 'arrive'], 1],
+    ['There is such a/an ___ number of animals in the wild that it is impossible to see all of them on one visit.', ['divisive', 'increased', 'vague', 'diverse'], 4],
+    ['The small body and strong legs of a deer allow it to ___ to the grasslands where it stays.', ['adapt', 'rely', 'settle', 'change'], 1]
+  ] },
+  { id: 'p4-07', level: 'P4', ex: 7, theme: 'Travels', paperWrong: [], q: [
+    ['Geraldine was glad to get off the aeroplane after the ___ ride.', ['raging', 'interesting', 'turbulent', 'unruly'], 3],
+    ['Not many people travel to this island because it is ___ only by sea.', ['accessible', 'allowed', 'approachable', 'available'], 1],
+    ['The scenery ___ past very quickly when I was on the train.', ['whizzed', 'flitted', 'flapped', 'vanished'], 1],
+    ['As I could not speak Japanese, my Japanese pen friend was my ___ when I was in Japan.', ['converter', 'translator', 'linguist', 'forecaster'], 2],
+    ['I liked to look at the beautiful rural ___ as we drove through the countryside.', ['setting', 'background', 'landscape', 'geography'], 3],
+    ['There is a ___ in each animal enclosure at the zoo so that the animals cannot escape.', ['fortress', 'pond', 'pool', 'moat'], 4],
+    ['As I was on a tight ___, I had to find cheaper places to stay in when I was abroad.', ['expense', 'account', 'budget', 'finance'], 3],
+    ['Mrs Travis met with a/an ___ accident when she was overseas. She was in a coma for a month.', ['fatal', 'critical', 'important', 'severe'], 4],
+    ['Please ___ yourself with a few important phrases in the foreign language before you go overseas.', ['adapt', 'accustom', 'contribute', 'familiarise'], 4],
+    ['We decided to make a/an ___ on our way home from the park to avoid passing by the cemetery.', ['divergence', 'detour', 'change', 'alternative'], 2]
+  ] },
+  { id: 'p4-08', level: 'P4', ex: 8, theme: 'Travels', paperWrong: [6], q: [
+    ['The train station is ___ with activity throughout the day.', ['covered', 'contained', 'abuzz', 'awakened'], 3],
+    ['A/An ___ tour of Buckingham Palace is conducted at certain times of the year.', ['accompanied', 'organised', 'arranged', 'planned'], 2],
+    ['Adults who are travelling with young children have the ___ of boarding the aeroplane before other passengers.', ['certainty', 'authority', 'chance', 'privilege'], 4],
+    ['You can have a simple meal at the food centre or a/an ___ one at a restaurant.', ['complex', 'elaborate', 'complicated', 'lengthy'], 2],
+    ['When I made ___ between the cultures in Japan and Singapore, I realised that there were many similarities.', ['contrasts', 'judgments', 'comparisons', 'reviews'], 3],
+    ['As I did not know what to order, I asked the waiter what the ___ at the restaurant were.', ['specialities', 'extras', 'dishes', 'sets'], 1],
+    ['Children who go to the playground should be ___ by an adult at all times.', ['guarded', 'supervised', 'attached', 'attended'], 2],
+    ['A large ___ of our time was spent travelling on the bus from one place to another.', ['area', 'portion', 'segment', 'section'], 2],
+    ['I packed all my daily ___ into the hand luggage that I was carrying on the aeroplane.', ['provisions', 'supplies', 'necessities', 'materials'], 3],
+    ['James found it difficult to ___ to the change in time when he travelled to America.', ['adept', 'rotate', 'change', 'adjust'], 4]
+  ] },
+  { id: 'p4-09', level: 'P4', ex: 9, theme: 'Travels', paperWrong: [], q: [
+    ['We do not have to buy the train tickets ___. We can buy them later.', ['beforehand', 'previously', 'precisely', 'definitely'], 1],
+    ['Her holidays are ___ with activities. There are many things she wants to do.', ['arranged', 'covered', 'packed', 'taken'], 3],
+    ['Due to the ___ weather conditions in the mountains, not many hikers made it to the peaks.', ['deep', 'fierce', 'cruel', 'harsh'], 4],
+    ['Many tourists are expected to arrive at the end of the year during the ___ period.', ['end', 'peak', 'yearly', 'popular'], 2],
+    ['I was ___ by the interesting exhibitions in the museums and grand theatres in Paris.', ['intrigued', 'interested', 'charmed', 'enchanted'], 1],
+    ['The boys who behaved in an ___ way were told to leave the amusement park.', ['unruly', 'undefined', 'uncertain', 'impossible'], 1],
+    ['You have to walk through a metal ___ when you are checking in at the airport.', ['detector', 'machine', 'receiver', 'scanner'], 1],
+    ['According to the package you signed up with the travel agency, the hike up this mountain is ___. You can choose not to do it.', ['crucial', 'optional', 'critical', 'voluntary'], 2],
+    ['Many items are now ___ on an aeroplane as they are considered dangerous.', ['allowed', 'permitted', 'extinguished', 'prohibited'], 4],
+    ['Tourists who buy goods from this shop are often charged an ___ price.', ['uplifting', 'excessive', 'excruciating', 'exorbitant'], 4]
+  ] },
+  { id: 'p4-11', level: 'P4', ex: 11, theme: 'Nature', paperWrong: [10], q: [
+    ['During the blizzard, snow ___ into huge piles that blocked the roads.', ['ripped', 'drifted', 'buried', 'flooded'], 2],
+    ['During the thunderstorm, the rivers ___ and flooded the nearby farms.', ['extended', 'expanded', 'overflowed', 'leaked'], 3],
+    ['When the power lines fell on the people during the earthquake, many of them died from ___.', ['contamination', 'electrocution', 'strangulation', 'infection'], 2],
+    ['The health effects of the haze on the people were ___ in the history of Singapore.', ['unaffected', 'unprecedented', 'novel', 'noteworthy'], 2],
+    ['We ___ together in the tent to keep ourselves warm as the downpour continued outside.', ['huddled', 'bundled', 'crowded', 'hunched'], 1],
+    ['In the past, the sea was the ___ means of transportation for people. People travelled from one place to another by boat.', ['good', 'initial', 'early', 'main'], 4],
+    ['We stepped out of the tent and shielded our eyes from the ___ sunlight in the morning.', ['burning', 'glowing', 'sizzling', 'blinding'], 4],
+    ['Mr Brown felt ___ and was ready to begin work again after spending a few days at the beach resort.', ['refreshed', 'cool', 'satisfied', 'weightless'], 1],
+    ['The farmers built a dam so that they could change the ___ of the river and allow water to flow into their farms.', ['route', 'trail', 'course', 'location'], 3],
+    ['Workers can get the sand that they need for construction from the sand ___.', ['quarry', 'mine', 'pit', 'excavation'], 1]
+  ] },
+  { id: 'p4-12', level: 'P4', ex: 12, theme: 'Nature', paperWrong: [2, 6, 7, 8], q: [
+    ['My sister and I like to slide down the mountains on a ___ in winter.', ['ski', 'track', 'sledge', 'bike'], 3],
+    ['Droughts will often occur in hot and dry ___ than in wet ones.', ['occasions', 'temperatures', 'environments', 'climates'], 4],
+    ['When a natural disaster occurs, those who survive will often ___ because there is not enough food for them.', ['dehydrate', 'wither', 'starve', 'weaken'], 3],
+    ['The hurricane only caused ___ damage to the area as it had hit an empty plot of land.', ['extensive', 'specific', 'minimal', 'maximum'], 3],
+    ['A regular ___ is held in the schools and offices in Japan so that the people would know what to do when an earthquake occurs.', ['drill', 'practice', 'preparation', 'instruction'], 1],
+    ['Disasters are becoming more ___ in recent years. Many countries are hit by a disaster at least once a year.', ['frequent', 'irregular', 'dangerous', 'serious'], 1],
+    ['A boat with three fishermen on board ___ in the sea during the thunderstorm last night.', ['tumbled', 'capsized', 'shifted', 'rolled'], 2],
+    ['Early traders used the ___ of the Amazon River to reach the inner parts of the country.', ['reservoirs', 'lakes', 'tributaries', 'oceans'], 3],
+    ['Our feet ___ into the snow as we trekked through the forest in the middle of winter.', ['slipped', 'tripped', 'skidded', 'sank'], 4],
+    ['A large part of land in Brazil has been ___ as protected land. The forests there will not be destroyed.', ['designated', 'formed', 'made', 'created'], 1]
+  ] },
+  { id: 'p4-13', level: 'P4', ex: 13, theme: 'Nature', paperWrong: [1, 9], q: [
+    ['The rain came down in ___ a few minutes after we started our picnic.', ['gushes', 'drips', 'floods', 'torrents'], 4],
+    ['Jim and I took off our shoes and ___ in the shallow water.', ['clambered', 'waded', 'crawled', 'drifted'], 2],
+    ['Many rivers and reservoirs are now used for ___ purposes like canoeing and jet-skiing.', ['fun', 'recreation', 'pastime', 'vacation'], 2],
+    ['Today, more people are learning to ___ the beauty of nature and signing up for tours to the countryside.', ['welcome', 'find', 'appreciate', 'understand'], 3],
+    ['The weather changes are ___ in the wilderness so you must always be well prepared.', ['important', 'erratic', 'immediate', 'abnormal'], 2],
+    ['Many groups of people are ___ against the construction of roads and buildings on the land where the forests are now standing.', ['approving', 'asking', 'requesting', 'protesting'], 4],
+    ['Four people who were canoeing in the rivers were ___ away by the strong waves.', ['swept', 'floated', 'brushed', 'cleared'], 1],
+    ['This waterfall is ___. A pump is needed so that the water is able to flow from a great height to a pond below.', ['artificial', 'real', 'natural', 'counterfeit'], 1],
+    ['Many beautiful lakes have been ___ by the National Parks so that future generations will be able to enjoy them as well.', ['preserved', 'conserved', 'nurtured', 'sheltered'], 1],
+    ['The hikers were ___ in a cave during the thunderstorm. They could only continue their hike the next day.', ['captive', 'abandoned', 'marooned', 'caught'], 3]
+  ] },
+  { id: 'p4-14', level: 'P4', ex: 14, theme: 'Nature', syn: true, paperWrong: [2], q: [
+    ['The village was located in the {centre} of the mountainous region.', ['heart', 'edge', 'inside', 'periphery'], 1],
+    ['Do you know that fish {lay their eggs} in the water?', ['spawn', 'fertilise', 'produce', 'mate'], 1],
+    ['The view from the mountaintop was {very impressive}.', ['unique', 'interesting', 'breathtaking', 'refreshing'], 3],
+    ['The tsunami was a {terrible event}. It killed thousands of people.', ['phenomenon', 'catastrophe', 'occasion', 'festival'], 2],
+    ['Powerful storms have different names depending on where they {start}.', ['arise', 'spring', 'live', 'originate'], 4],
+    ['What is the {most noticeable} flower that can be found in the rainforest?', ['real', 'dominant', 'traditional', 'chief'], 2],
+    ['The {very dry} land makes it impossible to grow crops.', ['infertile', 'vacant', 'arid', 'sterilised'], 3],
+    ['The {heavy rain and wind} destroyed many houses and buildings in the town.', ['drizzle', 'blizzard', 'typhoon', 'downpour'], 3],
+    ['The authorities {made fun of} the way the farmers used animal behaviour to predict the weather.', ['mocked', 'teased', 'joked', 'faked'], 1],
+    ['There are only a few rainforests left in the world that have not been {changed} by man.', ['modified', 'harmed', 'affected', 'opened'], 1]
+  ] },
+  { id: 'p4-16', level: 'P4', ex: 16, theme: 'Emotions and attitudes', paperWrong: [7], q: [
+    ['Benjamin was ___ when his neighbour\'s cat scratched his car.', ['anxious', 'determined', 'disappointed', 'furious'], 4],
+    ['We were ___ when our grandfather did not wake up after the surgery.', ['contented', 'cautious', 'anxious', 'impatient'], 3],
+    ['Jim was ___ when he was selected for the science competition.', ['listless', 'delighted', 'apologetic', 'impatient'], 2],
+    ['The customers were becoming ___ as they had been waiting outside the restaurant for a long time.', ['contented', 'relieved', 'impatient', 'terrified'], 3],
+    ['If you are ___, you will be set free. You will not be punished if you did not commit the crime.', ['upset', 'fearful', 'denied', 'innocent'], 4],
+    ['The tribe members were ___ when the government ordered them to leave their homes in the forest so that a road could be built there.', ['daunted', 'infuriated', 'nervous', 'elated'], 2],
+    ['Cheryl was filled with ___ as she stared at the steep mountain in front of her that she was about to climb.', ['trepidation', 'anger', 'cautiousness', 'courage'], 1],
+    ['The children were so ___ that they shrieked with joy when their parents told them about their coming trip to Europe.', ['impatient', 'elated', 'awed', 'determined'], 2],
+    ['Jill is ___ about outdoor activities. She likes cycling and swimming the best.', ['fearful', 'wary', 'anxious', 'enthusiastic'], 4],
+    ['Brendan stared in ___ at the paintings hanging in the museum. He had never seen so many of them housed in one place before.', ['fear', 'awe', 'happiness', 'anger'], 2]
+  ] },
+  { id: 'p4-17', level: 'P4', ex: 17, theme: 'Emotions and attitudes', paperWrong: [2], q: [
+    ['A few ___ men jumped into the sea to save the drowning boy.', ['courageous', 'adventurous', 'optimistic', 'sombre'], 1],
+    ['May was a/an ___ girl who disliked playing with her classmates.', ['pessimistic', 'aloof', 'embarrassed', 'fearful'], 2],
+    ['Geraldine\'s generosity towards the children\'s homes was ___ as she was usually a very stingy girl.', ['unexpected', 'unwanted', 'stunning', 'dreadful'], 1],
+    ['I was ___ to see a man eating the food that had been left for the stray cat.', ['amused', 'startled', 'disappointed', 'fearful'], 2],
+    ['After rushing to the library, we were ___ to find that it was already closed for the day.', ['relieved', 'puzzled', 'weary', 'dismayed'], 4],
+    ['I was ___ about hosting the end-of-year prize presentation ceremony as I might suffer from stage fright.', ['determined', 'nervous', 'weary', 'capable'], 2],
+    ['She was so ___ that she did not even tell anyone that a bully was harassing her every day.', ['contented', 'jovial', 'timid', 'optimistic'], 3],
+    ['Mrs Jones is always ___ when buying products from door-to-door salespeople as she does not want to get cheated by them.', ['delighted', 'dismayed', 'cautious', 'annoyed'], 3],
+    ['The authorities are ___ to put an end to illegal hunting. They will not hesitate to fine and imprison all those who are caught.', ['determined', 'careful', 'infuriated', 'confident'], 1],
+    ['Anna was ___ when she was not chosen to be in the team for the coming basketball tournament.', ['fearful', 'impatient', 'conceited', 'crestfallen'], 4]
+  ] },
+  { id: 'p4-20', level: 'P4', ex: 20, theme: 'Emotions and attitudes', paperWrong: [7], q: [
+    ['She was ___ angrily under her breath when she heard the news.', ['whispering', 'muttering', 'snapping', 'quivering'], 2],
+    ['Julie is a/an ___ child who cannot stop asking questions.', ['obstinate', 'fearful', 'inquisitive', 'cheerful'], 3],
+    ['My little brother is so ___ that none of us can keep up with him.', ['happy', 'cheerful', 'excited', 'energetic'], 4],
+    ['Terry was ___ with his neighbour for playing loud music throughout the night.', ['frightened', 'anxious', 'annoyed', 'puzzled'], 3],
+    ['We were ___ to see the house in a mess when we came home from school today.', ['shocked', 'sad', 'contented', 'relieved'], 1],
+    ['The guests at the party were ___ the arrival of the guest of honour when it was announced that he had met with an accident.', ['foreseeing', 'anticipating', 'predicting', 'hoping'], 2],
+    ['Fear ___ through my body when I realised that my brother was one of the victims in the plane crash.', ['waved', 'coursed', 'crashed', 'seeped'], 2],
+    ['She tried her best to sound brave although she was ___ in fear when she refused to comply with the bully\'s demands.', ['trembling', 'waving', 'moving', 'wobbling'], 1],
+    ['Her lips ___ when she spoke of her late grandfather. She missed him a lot.', ['wobbled', 'vibrated', 'whispered', 'quivered'], 4],
+    ['On the first day of school, Wendy felt ___ as the place was very big and she was all alone.', ['tired', 'lost', 'puzzled', 'aloof'], 2]
+  ] },
+  { id: 'p4-21', level: 'P4', ex: 21, theme: 'Emotions and attitudes', paperWrong: [10], q: [
+    ['Ken has a ___ of heights. He does not want to sit on the cable car.', ['hatred', 'phobia', 'horror', 'dread'], 2],
+    ['The ___ customer shouted at the sales assistant for her bad service.', ['concerned', 'disobedient', 'irate', 'listless'], 3],
+    ['The girls ___ in delight when they heard the good news.', ['whined', 'groaned', 'shrieked', 'moaned'], 3],
+    ['The director of the charity organisation was ___ to all those who had donated generously to the centre.', ['remorseful', 'regretful', 'understanding', 'grateful'], 4],
+    ['Sam was ___ as he had been trying to fix his model car for the past hour.', ['concerned', 'fearful', 'afraid', 'frustrated'], 4],
+    ['I was ___ as she still could not understand me after my numerous explanations.', ['exasperated', 'sad', 'startled', 'alarmed'], 1],
+    ['Ben often ___ when he meets new people as he is shy and afraid of them. It is difficult to hear what he has to say.', ['stumbles', 'mumbles', 'screams', 'shrieks'], 2],
+    ['Mr and Mrs Jones were ___ to how well their son did in class. They did not care about his studies at all.', ['angry', 'indifferent', 'concerned', 'frustrated'], 2],
+    ['Geraldine has a/an ___ for music. She has been playing the violin since she was five years old.', ['passion', 'rage', 'delight', 'excitement'], 1],
+    ['We were ___ when we found out that Tim did not take a bath every day.', ['excited', 'agitated', 'disgusted', 'interested'], 3]
+  ] },
+  { id: 'p4-22', level: 'P4', ex: 22, theme: 'Emotions and attitudes', paperWrong: [2, 10], q: [
+    ['Anna was ___ when she was accused of being a thief.', ['disobedient', 'indignant', 'rebellious', 'fearful'], 2],
+    ['The ___ girl often interferes in other people\'s affairs.', ['curious', 'presumptuous', 'considerate', 'excitable'], 2],
+    ['No one can control the ___ girl. She does whatever she wants.', ['obedient', 'rebellious', 'intelligent', 'rude'], 2],
+    ['John\'s ___ was to own a new bicycle.', ['love', 'liking', 'interest', 'desire'], 4],
+    ['Aunt Sue is a ___ lady. She goes to church to pray every day.', ['loving', 'traditional', 'pious', 'protective'], 3],
+    ['It was a hot day. We were ___ to go to the swimming pool after school.', ['agitated', 'eager', 'contented', 'frustrated'], 2],
+    ['The ___ man wanted everyone to do things his way. He did not care how others would feel.', ['rude', 'domineering', 'protective', 'passionate'], 2],
+    ['Although I refused to help her, she was very ___ and continued asking me.', ['persistent', 'altruistic', 'conscientious', 'devious'], 1],
+    ['Mr Sam is very ___ of his children. He will not let them go out on their own.', ['protective', 'loving', 'knowledgeable', 'kind'], 1],
+    ['The waiter treats his colleagues in a ___ manner because he thinks he has more experience and is better than any of them.', ['condescending', 'rough', 'straightforward', 'candid'], 1]
+  ] },
+  { id: 'p4-23', level: 'P4', ex: 23, theme: 'Emotions and attitudes', paperWrong: [3, 4, 9], q: [
+    ['Lucy is a ___ girl. She will believe everything you tell her.', ['gullible', 'young', 'timid', 'quiet'], 1],
+    ['We were so ___ by the toddler\'s actions that we could not stop laughing.', ['excited', 'puzzled', 'amused', 'frustrated'], 3],
+    ['The ___ boy talked badly about his friends behind their backs.', ['disobedient', 'frustrated', 'hypocritical', 'conceited'], 3],
+    ['Mrs Marks is a/an ___ woman who does everything her husband wants.', ['considerate', 'docile', 'kind', 'eager'], 2],
+    ['Julie is a/an ___ girl who will do anything at all costs to get what she wants.', ['devious', 'conscientious', 'exasperated', 'passionate'], 1],
+    ['The old man treats his children ___ whenever they make even a small mistake.', ['eagerly', 'harshly', 'passionately', 'angrily'], 2],
+    ['William was ___ to receive a new bicycle on his birthday. He had wanted one for a long time.', ['thrilled', 'furious', 'frantic', 'charmed'], 1],
+    ['Susie is a/an ___ girl who has designed many unique and interesting clothes.', ['kind', 'exciting', 'adventurous', 'creative'], 4],
+    ['The ___ girl prefers to spend time with her friends instead of staying home alone.', ['noisy', 'outgoing', 'altruistic', 'eager'], 2],
+    ['The ___ man is always willing to help others without expecting to receive anything in return.', ['confident', 'devious', 'obedient', 'altruistic'], 4]
+  ] },
+  { id: 'p4-25', level: 'P4', ex: 25, theme: 'Emotions and attitudes', syn: true, paperWrong: [4, 5], q: [
+    ['My father was {very tired} when he came home from work today.', ['anxious', 'dismayed', 'distressed', 'weary'], 4],
+    ['She was sitting {thoughtfully} by the window. I did not want to disturb her.', ['quietly', 'fearfully', 'pensively', 'innocently'], 3],
+    ['Jason felt {bad} about damaging his sister\'s doll so he bought her a new one.', ['shocked', 'guilty', 'unhappy', 'anxious'], 2],
+    ['There was a sense of {happiness and excitement} as we sat on the roller coaster.', ['anxiety', 'trepidation', 'optimism', 'exhilaration'], 4],
+    ['Everyone likes Jasmine because she has a {lively} personality.', ['cheerful', 'interesting', 'kind', 'bubbly'], 4],
+    ['My uncle was {very angry} when he found out that we had broken his valuable vase.', ['irritated', 'livid', 'indifferent', 'harsh'], 2],
+    ['The {shy} girl refused to leave her mother\'s side when they visited a relative\'s house.', ['bashful', 'quiet', 'tired', 'rude'], 1],
+    ['Shirley\'s eyes {shone} with pleasure when she saw all the valuable jewellery in front of her.', ['gleamed', 'flashed', 'kindled', 'glowed'], 1],
+    ['Everyone was {totally confused} by her sudden change in behaviour. She used to be quiet but now she has become very talkative.', ['distracted', 'worried', 'bewildered', 'ashamed'], 3],
+    ['The {proud} lady refused to sit at the same table as those who were poorer than she was.', ['terrified', 'shy', 'ashamed', 'conceited'], 4]
+  ] },
+  { id: 'p4-26', level: 'P4', ex: 26, theme: 'Being healthy', paperWrong: [6], q: [
+    ['Such ___ exercise is not suitable for a newcomer at the gymnasium.', ['vigorous', 'strong', 'light', 'regular'], 1],
+    ['It is important to eat a ___ meal at all times.', ['balanced', 'big', 'sufficient', 'nice'], 1],
+    ['William was ___ to go swimming with us as he hates water.', ['eager', 'reluctant', 'waiting', 'tired'], 2],
+    ['You must find an exercise regime that is ___ for your lifestyle.', ['nice', 'suitable', 'qualified', 'necessary'], 2],
+    ['James follows a simple exercise ___ every day.', ['custom', 'practice', 'habit', 'routine'], 4],
+    ['Having a good night\'s rest is ___ to a healthy lifestyle.', ['vital', 'key', 'highlighted', 'connected'], 1],
+    ['No matter how busy you are, you must find the time to ___.', ['relax', 'freshen', 'entertain', 'renew'], 1],
+    ['A healthy lifestyle ___ will be held this month to encourage residents to exercise.', ['battle', 'promotion', 'campaign', 'operation'], 3],
+    ['The elderly must continue to stay ___ if they want to lead a healthy lifestyle.', ['alive', 'energetic', 'active', 'balanced'], 3],
+    ['You have to do more ___ activities like climbing stairs instead of taking the lift if you want to lose weight.', ['rough', 'tough', 'psychological', 'physical'], 4]
+  ] },
+  { id: 'p4-27', level: 'P4', ex: 27, theme: 'Being healthy', paperWrong: [5], q: [
+    ['I did not have much ___ left after climbing ten flights of stairs.', ['life', 'energy', 'force', 'power'], 2],
+    ['There were more than two hundred ___ in the marathon.', ['participants', 'exercisers', 'contributors', 'members'], 1],
+    ['Each exercise regime in the gymnasium is ___ to an individual\'s needs.', ['sold', 'brought', 'catered', 'provided'], 3],
+    ['My grandfather will ___ at a nursing home after he leaves the hospital.', ['recuperate', 'refresh', 'renew', 'rejuvenate'], 1],
+    ['James has promised his mother that he will not ___ himself during football practice today.', ['train', 'stress', 'pull', 'exert'], 4],
+    ['The football players have to follow a/an ___ training schedule before the match starts.', ['strong', 'tight', 'intensive', 'irregular'], 3],
+    ['You must select an exercise that you are ___ with and not something that you dislike so that you will be able to do it every day.', ['comfortable', 'relieved', 'active', 'serious'], 1],
+    ['If jogging is not suitable for you, you could take a ___ walk through the park instead.', ['sharp', 'gentle', 'brief', 'brisk'], 4],
+    ['My cousin is suffering from ___ asthma. She has been suffering from it for a long time.', ['extensive', 'intensive', 'fatal', 'chronic'], 4],
+    ['It is often difficult to play team games when the players do not ___ with one another.', ['accept', 'cooperate', 'comply', 'gossip'], 2]
+  ] },
+  { id: 'p4-28', level: 'P4', ex: 28, theme: 'Being healthy', paperWrong: [3, 6], q: [
+    ['We must eat the right ___ of carbohydrates and proteins at every meal.', ['section', 'collection', 'quantity', 'number'], 3],
+    ['If your calorie intake ___ what you need, you will soon put on weight.', ['expels', 'stores', 'exceeds', 'substitutes'], 3],
+    ['Lifting weights will help you to ___ your muscles.', ['straighten', 'fix', 'tie', 'tone'], 4],
+    ['You should not do such ___ exercises when you are tired at the end of the day.', ['new', 'strenuous', 'strong', 'stern'], 2],
+    ['When you go to the gymnasium, it is better to have the help of a ___ who will advise you on the type of exercises that you need.', ['teacher', 'trainer', 'master', 'friend'], 2],
+    ['Marathons and friendly matches are held at the community clubs so that everyone will be ___ with the importance of exercising.', ['included', 'forced', 'imbued', 'attracted'], 3],
+    ['The government encourages the whole ___ to exercise so that everyone can, in turn, encourage his neighbours and friends to do the same.', ['community', 'section', 'area', 'relations'], 1],
+    ['One of the ___ of leading a healthy lifestyle is the likelihood of being able to live longer and enjoy life.', ['benefits', 'excuses', 'situations', 'deductions'], 1],
+    ['The doctor ___ that I exercise daily to build up my strength again after being ill for a month.', ['recollects', 'compliments', 'recommends', 'reciprocates'], 3],
+    ['It is difficult for me to follow such a/an ___ exercise schedule as I do not have much time and have not exercised for some time now.', ['careful', 'sardonic', 'inconvenient', 'rigorous'], 4]
+  ] },
+
   // ---------------- P4 · Phrasal verbs ----------------
   { id: 'p4-36', level: 'P4', ex: 36, theme: 'Phrasal verbs', paperWrong: [7], q: [
     ['All the chocolate cakes in the confectionery were ___ by lunchtime.', ['sold out', 'sold away', 'sold off', 'sold over'], 1],
