@@ -248,7 +248,7 @@ td.n{text-align:center;font-weight:700;white-space:nowrap}
       '<div class="stat"><b>' + stars.length + '</b><span>Words starred</span></div></div>' +
       '<div class="stats"><div class="stat"><b>' + voAcc + '</b><span>Vocab MCQ accuracy</span></div>' +
       '<div class="stat"><b>' + (voWeekT ? Math.round(voWeekC / voWeekT * 100) + '%' : '—') + '</b><span>Vocab · last 7 days</span></div>' +
-      '<div class="stat"><b>' + voT + '</b><span>Vocab questions done</span></div>' +
+      '<div class="stat"><b>' + Object.keys(vo.known || {}).length + '</b><span>Vocab mastered · ' + voT + ' done</span></div>' +
       '<div class="stat"><b>' + voWrong + '</b><span>错题本 · cleared ' + (vo.cleared || 0) + '</span></div></div>' +
       '<p class="note">Daily News：' + (news && news.length ? '共写了 ' + news.length + ' 期，最近 7 天 ' + newsWeek + ' 期，最近一期 ' + fmt(newsLast) : '还没有写过') + '。</p>';
   }

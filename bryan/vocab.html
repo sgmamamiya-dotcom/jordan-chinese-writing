@@ -79,7 +79,7 @@ td.n{text-align:right;white-space:nowrap}
     <div class="stats">
       <div class="stat"><b id="sAcc">—</b><span>Accuracy</span></div>
       <div class="stat"><b id="sWeek">—</b><span>This week</span></div>
-      <div class="stat"><b id="sDone">0</b><span>Questions done</span></div>
+      <div class="stat"><b id="sKnown">0</b><span>Mastered 已掌握</span></div>
       <div class="stat"><b id="sWrong">0</b><span>错题本</span></div>
     </div>
 
@@ -134,7 +134,7 @@ td.n{text-align:right;white-space:nowrap}
   <section id="wrongs" class="hidden">
     <div class="panel">
       <h2>📕 错题本</h2>
-      <p class="note">A question leaves the 错题本 after you get it right <b>2 times in a row</b>. 📄 = wrong on paper, 💻 = wrong here.</p>
+      <p class="note">A question leaves the 错题本 after you get it right on <b>2 different days</b> in a row. 📄 = wrong on paper, 💻 = wrong here.</p>
       <ul class="list" id="wList"></ul>
       <div class="row" style="margin-top:12px"><button class="btn warn" id="wRetry">Retry mistakes</button><button class="btn primary" id="wHome">Back</button></div>
     </div>
@@ -161,10 +161,12 @@ td.n{text-align:right;white-space:nowrap}
   function setName(s) { return s.level + ' · Ex ' + s.ex; }
 
   // ---------- saved progress ----------
-  // stats: per question {n answered, c correct}; wrong: 错题本 {n times wrong, s right-in-a-row, p last wrong pick, d date, src};
+  // stats: per question {n answered, c correct};
+  // wrong: 错题本 {n times wrong, s days right in a row, ld last day it counted, p last wrong pick, d date, src};
+  // known: questions he has mastered {id: date} — they are not asked again;
   // sets: per exercise {best, last, n, d}; log: one entry per finished practice.
   function blank() {
-    var st = { _t: 0, stats: {}, wrong: {}, sets: {}, log: [], cleared: 0 };
+    var st = { _t: 0, stats: {}, wrong: {}, known: {}, sets: {}, log: [], cleared: 0 };
     // Start the 错题本 with the questions marked wrong in the workbook.
     VOCAB_SETS.forEach(function (s) { (s.paperWrong || []).forEach(function (n) { if (Q[s.id + '#' + n]) st.wrong[s.id + '#' + n] = { n: 1, s: 0, d: '', src: 'paper' }; }); });
     st.paperSeeded = VOCAB_SETS.map(function (s) { return s.id; });
@@ -172,6 +174,7 @@ td.n{text-align:right;white-space:nowrap}
   }
   function loadLocal() { try { var v = localStorage.getItem(LS); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
   var S = loadLocal() || blank();
+  S.known = S.known || {};
   // Sets added later (P5, P6...) bring their paper mistakes in once.
   function seedNew() {
     var seen = S.paperSeeded || [];
@@ -191,7 +194,7 @@ td.n{text-align:right;white-space:nowrap}
   if (window.Progress) {
     Progress.onStatus(function () { $('cloud').textContent = Progress.label(null, 'en'); });
     Progress.sync(KID, APP, function () { return S; }, function (r) {
-      S = r; S.stats = S.stats || {}; S.wrong = S.wrong || {}; S.sets = S.sets || {}; S.log = S.log || [];
+      S = r; S.stats = S.stats || {}; S.wrong = S.wrong || {}; S.sets = S.sets || {}; S.log = S.log || []; S.known = S.known || {};
       seedNew();
       try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) {}
       if (!$('home').classList.contains('hidden')) renderHome();
@@ -202,12 +205,13 @@ td.n{text-align:right;white-space:nowrap}
   var level = null;
   function show(id) { ['home', 'quiz', 'result', 'wrongs'].forEach(function (x) { $(x).classList.toggle('hidden', x !== id); }); window.scrollTo(0, 0); }
   function wrongIds() { return Object.keys(S.wrong).filter(function (id) { return Q[id]; }); }
+  function setIds(s) { return s.q.map(function (_, i) { return s.id + '#' + (i + 1); }); }
   function renderHome() {
     var tot = 0, ok = 0, wt = 0, wok = 0, weekAgo = Date.now() - 7 * 864e5;
     S.log.forEach(function (l) { tot += l.t; ok += l.c; if (Date.parse(l.d) >= weekAgo) { wt += l.t; wok += l.c; } });
     $('sAcc').textContent = tot ? Math.round(ok / tot * 100) + '%' : '—';
     $('sWeek').textContent = wt ? Math.round(wok / wt * 100) + '%' : '—';
-    $('sDone').textContent = tot;
+    $('sKnown').textContent = Object.keys(S.known).filter(function (id) { return Q[id]; }).length + '/' + Object.keys(Q).length;
     var w = wrongIds();
     $('sWrong').textContent = w.length;
     var paper = w.filter(function (id) { return S.wrong[id].src === 'paper'; }).length;
@@ -227,9 +231,11 @@ td.n{text-align:right;white-space:nowrap}
       return '<div class="theme">' + esc(t) + '</div><div class="sets">' + by[t].map(function (s) {
         var r = S.sets[s.id], total = s.q.length, paper = total - (s.paperWrong || []).length;
         var left = s.q.filter(function (_, i) { return S.wrong[s.id + '#' + (i + 1)]; }).length;
-        return '<button class="set' + (r && r.best === total ? ' done' : '') + '" data-s="' + s.id + '"><b>Exercise ' + s.ex + '</b>' +
+        var known = setIds(s).filter(function (id) { return S.known[id]; }).length;
+        return '<button class="set' + (known === total ? ' done' : '') + '" data-s="' + s.id + '"><b>Exercise ' + s.ex + '</b>' +
           '<small>' + total + ' questions · 📄 paper ' + paper + '/' + total + '</small>' +
-          '<small class="best">' + (r ? 'Best ' + r.best + '/' + total + ' · tried ' + r.n + '×' : 'Not tried yet') + '</small>' +
+          '<small class="best">' + (known === total ? '✅ All mastered' : '⭐ Mastered ' + known + '/' + total) + '</small>' +
+          '<small>' + (r && r.last != null ? 'Best ' + r.best + '/' + total + ' · tried ' + r.n + '×' : r ? 'Practised ' + r.n + '×' : 'Not tried yet') + '</small>' +
           (left ? '<small>📕 ' + left + ' in 错题本</small>' : '') + '</button>';
       }).join('') + '</div>';
     }).join('');
@@ -245,12 +251,19 @@ td.n{text-align:right;white-space:nowrap}
   $('levels').addEventListener('click', function (e) { var b = e.target.closest('.tab'); if (b) { level = b.dataset.l; renderHome(); } });
   $('setList').addEventListener('click', function (e) {
     var b = e.target.closest('.set'); if (!b) return;
-    var s = SETS[b.dataset.s];
-    start(s.q.map(function (_, i) { return s.id + '#' + (i + 1); }), 'Exercise ' + s.ex + ' · ' + s.theme, s.id);
+    var s = SETS[b.dataset.s], ids = setIds(s);
+    // Only ask what he has not mastered yet.
+    var todo = ids.filter(function (id) { return !S.known[id]; });
+    if (!todo.length) {
+      if (!confirm('Exercise ' + s.ex + ' is all mastered 已全部掌握. Do the whole exercise again anyway?')) return;
+      todo = ids;
+    }
+    start(todo, 'Exercise ' + s.ex + ' · ' + s.theme + (todo.length < ids.length ? ' (' + todo.length + ' left)' : ''), s.id);
   });
   $('reviewBtn').onclick = $('wRetry').onclick = function () { var w = wrongIds(); if (w.length) start(shuffle(w), '📕 错题本 retry', 'review'); };
   $('randomBtn').onclick = function () {
-    var pool = Object.keys(Q).filter(function (id) { return Q[id].set.level === level; });
+    var pool = Object.keys(Q).filter(function (id) { return Q[id].set.level === level && !S.known[id]; });
+    if (!pool.length) { alert('Every ' + level + ' question is mastered! 🎉'); return; }
     start(shuffle(pool).slice(0, 10), '🎲 Random 10 · ' + level, 'random');
   };
   $('wrongListBtn').onclick = renderWrongs;
@@ -260,7 +273,9 @@ td.n{text-align:right;white-space:nowrap}
   var run = null;
   function start(ids, title, kind) {
     if (!ids.length) return;
-    run = { ids: ids, i: 0, title: title, kind: kind, right: 0, missed: [] };
+    // items: the queue; a wrong answer puts the question once more at the end (rep: true), which does not count in the score.
+    run = { items: ids.map(function (id) { return { id: id }; }), n0: ids.length, i: 0, first: 0, title: title, kind: kind, right: 0, missed: [],
+      full: !!SETS[kind] && ids.length === SETS[kind].q.length };
     show('quiz'); ask();
   }
   function fill(text, opt) {
@@ -270,13 +285,14 @@ td.n{text-align:right;white-space:nowrap}
     });
   }
   function ask() {
-    var q = Q[run.ids[run.i]];
+    var item = run.items[run.i], q = Q[item.id];
     run.order = shuffle([1, 2, 3, 4]);
     run.answered = false;
     $('qTitle').textContent = run.title;
-    $('qCount').textContent = (run.i + 1) + ' / ' + run.ids.length;
-    $('qBar').style.width = (run.i / run.ids.length * 100) + '%';
-    $('qSrc').textContent = run.kind === 'review' || run.kind === 'random' ? setName(q.set) + ' · Q' + q.n + (S.wrong[q.id] ? ' · 📕 ' + (S.wrong[q.id].s || 0) + '/' + CLEAR_AFTER + ' right in a row' : '') : 'Question ' + q.n;
+    $('qCount').textContent = (run.i + 1) + ' / ' + run.items.length;
+    $('qBar').style.width = (run.i / run.items.length * 100) + '%';
+    $('qSrc').textContent = item.rep ? '🔁 Try this one again · 再试一次' :
+      (SETS[run.kind] ? 'Question ' + q.n : setName(q.set) + ' · Q' + q.n) + (S.wrong[q.id] ? ' · 📕 ' + (S.wrong[q.id].s || 0) + '/' + CLEAR_AFTER + ' days right' : '');
     $('qText').innerHTML = fill(q.text);
     $('qOpts').innerHTML = run.order.map(function (o, k) { return '<button class="opt" data-o="' + o + '"><span class="k">' + (k + 1) + '</span>' + esc(q.opts[o - 1]) + '</button>'; }).join('');
     $('qFb').textContent = ''; $('qFb').className = 'feedback';
@@ -285,38 +301,47 @@ td.n{text-align:right;white-space:nowrap}
   function answer(o) {
     if (run.answered) return;
     run.answered = true;
-    var q = Q[run.ids[run.i]], ok = o === q.a;
+    var item = run.items[run.i], q = Q[item.id], ok = o === q.a, fb = $('qFb');
     [].forEach.call($('qOpts').children, function (b) {
       b.disabled = true;
       var v = +b.dataset.o;
       if (v === q.a) b.classList.add('right'); else if (v === o) b.classList.add('wrong');
     });
     $('qText').innerHTML = fill(q.text, q.opts[q.a - 1]);
-    var st = S.stats[q.id] || (S.stats[q.id] = { n: 0, c: 0 });
-    st.n++;
-    var w = S.wrong[q.id];
-    if (ok) {
-      st.c++; run.right++;
-      if (w) {
-        w.s = (w.s || 0) + 1;
-        if (w.s >= CLEAR_AFTER) { delete S.wrong[q.id]; S.cleared = (S.cleared || 0) + 1; $('qFb').textContent = '✅ Correct! Fixed — removed from 错题本 🎉'; }
-        else $('qFb').textContent = '✅ Correct! Get it right ' + (CLEAR_AFTER - w.s) + ' more time to clear it from 错题本.';
-      } else $('qFb').textContent = ['✅ Correct!', '✅ Well done!', '✅ Spot on!', '✅ Yes!'][Math.floor(Math.random() * 4)];
-      $('qFb').className = 'feedback ok';
+    fb.className = 'feedback ' + (ok ? 'ok' : 'no');
+    if (item.rep) {
+      // Second go in the same practice: just for learning, nothing is recorded.
+      fb.textContent = ok ? '✅ Got it this time! It stays in 错题本 until you get it right on 2 different days.' : '❌ The answer is "' + q.opts[q.a - 1] + '". Read the sentence with it once more.';
     } else {
-      run.missed.push({ id: q.id, p: o });
-      S.wrong[q.id] = { n: ((w && w.n) || 0) + 1, s: 0, p: o, d: today(), src: 'web' };
-      $('qFb').textContent = '❌ The answer is "' + q.opts[q.a - 1] + '". Added to 错题本.';
-      $('qFb').className = 'feedback no';
+      run.first++;
+      var st = S.stats[q.id] || (S.stats[q.id] = { n: 0, c: 0 });
+      st.n++;
+      var w = S.wrong[q.id], d = today();
+      if (ok) {
+        st.c++; run.right++;
+        if (!w) { S.known[q.id] = d; fb.textContent = ['✅ Correct!', '✅ Well done!', '✅ Spot on!', '✅ Yes!'][Math.floor(Math.random() * 4)] + ' Mastered ⭐'; }
+        else if (w.ld === d) fb.textContent = '✅ Correct! Come back on another day — get it right on ' + (CLEAR_AFTER - (w.s || 0)) + ' more day' + (CLEAR_AFTER - (w.s || 0) > 1 ? 's' : '') + ' to clear it from 错题本.';
+        else {
+          w.s = (w.s || 0) + 1; w.ld = d;
+          if (w.s >= CLEAR_AFTER) { delete S.wrong[q.id]; S.known[q.id] = d; S.cleared = (S.cleared || 0) + 1; fb.textContent = '✅ Correct! Fixed — removed from 错题本 🎉'; }
+          else fb.textContent = '✅ Correct! Get it right on ' + (CLEAR_AFTER - w.s) + ' more day to clear it from 错题本.';
+        }
+      } else {
+        run.missed.push({ id: q.id, p: o });
+        delete S.known[q.id];
+        S.wrong[q.id] = { n: ((w && w.n) || 0) + 1, s: 0, ld: d, p: o, d: d, src: 'web' }; // the day it was missed does not count
+        run.items.push({ id: q.id, rep: true });
+        fb.textContent = '❌ The answer is "' + q.opts[q.a - 1] + '". Added to 错题本 — you will try it again at the end.';
+      }
+      save();
     }
-    save();
     $('nextBtn').classList.remove('hidden');
-    $('nextBtn').textContent = run.i + 1 < run.ids.length ? 'Next →' : 'See my score';
+    $('nextBtn').textContent = run.i + 1 < run.items.length ? 'Next →' : 'See my score';
     $('nextBtn').focus();
   }
   $('qOpts').addEventListener('click', function (e) { var b = e.target.closest('.opt'); if (b) answer(+b.dataset.o); });
-  $('nextBtn').onclick = function () { run.i++; if (run.i < run.ids.length) ask(); else finish(); };
-  $('quitBtn').onclick = function () { if (run.i > 0 || run.answered) finish(true); else { renderHome(); show('home'); } };
+  $('nextBtn').onclick = function () { run.i++; if (run.i < run.items.length) ask(); else finish(); };
+  $('quitBtn').onclick = function () { if (run.first > 0) finish(true); else { renderHome(); show('home'); } };
   document.addEventListener('keydown', function (e) {
     if ($('quiz').classList.contains('hidden')) return;
     var k = +e.key;
@@ -324,13 +349,14 @@ td.n{text-align:right;white-space:nowrap}
     else if (e.key === 'Enter' && run.answered) $('nextBtn').click();
   });
   function finish(stopped) {
-    var t = stopped ? run.i + (run.answered ? 1 : 0) : run.ids.length;
+    var t = run.first;
     if (t > 0) {
-      S.log.push({ d: new Date().toISOString(), name: run.title + (stopped && t < run.ids.length ? ' (stopped)' : ''), kind: run.kind, c: run.right, t: t });
+      S.log.push({ d: new Date().toISOString(), name: run.title + (t < run.n0 ? ' (stopped)' : ''), kind: run.kind, c: run.right, t: t });
       if (S.log.length > 500) S.log = S.log.slice(-500);
-      if (SETS[run.kind] && !stopped) {
+      if (SETS[run.kind] && t === run.n0) {
         var r = S.sets[run.kind] || { best: 0, n: 0 };
-        r.n++; r.last = run.right; r.best = Math.max(r.best, run.right); r.d = today();
+        r.n++; r.d = today();
+        if (run.full) { r.last = run.right; r.best = Math.max(r.best, run.right); }
         S.sets[run.kind] = r;
       }
       save();
@@ -357,7 +383,7 @@ td.n{text-align:right;white-space:nowrap}
       var q = Q[id], w = S.wrong[id];
       return '<li><div class="s">' + fill(q.text, q.opts[q.a - 1]) + '</div><div class="meta">' + esc(setName(q.set)) + ' Q' + q.n +
         (w.p ? ' · you chose <span class="ans-no">' + esc(q.opts[w.p - 1]) + '</span>' : '') +
-        ' · wrong ' + w.n + '× · ' + (w.s || 0) + '/' + CLEAR_AFTER + ' right in a row' +
+        ' · wrong ' + w.n + '× · right on ' + (w.s || 0) + '/' + CLEAR_AFTER + ' days' +
         '<span class="tag ' + w.src + '">' + (w.src === 'paper' ? '📄 paper' : '💻 ' + esc(w.d || '')) + '</span></div></li>';
     }).join('') : '<li class="note">Nothing here. Great job!</li>';
     $('wRetry').disabled = !ids.length;
