@@ -72,7 +72,7 @@ td.n{text-align:center;font-weight:700;white-space:nowrap}
 
   <section class="panel">
     <h3>English writing · 英文写作</h3>
-    <p class="sub">Banish Boring Words 和 Bryan's Daily News。</p>
+    <p class="sub">Banish Boring Words、Vocabulary MCQ 和 Bryan's Daily News。</p>
     <div id="english"><p class="note">正在读取进度…</p></div>
   </section>
 
@@ -209,7 +209,10 @@ td.n{text-align:center;font-weight:700;white-space:nowrap}
     var by = {};
     (rows || []).forEach(function (r) { by[r.kid + '/' + r.app] = r; });
     function when(k) { var r = by[k]; if (!r) return null; var t = (r.data && r.data._t) || Date.parse(r.updated_at); return t ? new Date(t) : null; }
-    var zi = (by['bryan/zi'] || {}).data || {}, bj = (by['bryan/bujian'] || {}).data || {}, en = (by['bryan/english'] || {}).data || {};
+    var zi = (by['bryan/zi'] || {}).data || {}, bj = (by['bryan/bujian'] || {}).data || {}, en = (by['bryan/english'] || {}).data || {}, vo = (by['bryan/vocab'] || {}).data || {};
+    var voLog = vo.log || [], voT = 0, voC = 0, voWeekT = 0, voWeekC = 0;
+    voLog.forEach(function (l) { voT += l.t; voC += l.c; if (Date.now() - Date.parse(l.d) < 7 * 864e5) { voWeekT += l.t; voWeekC += l.c; } });
+    var voWrong = Object.keys(vo.wrong || {}).length, voAcc = voT ? Math.round(voC / voT * 100) + '%' : '—';
     var done = zi.done || {}, groups = Object.keys(done).filter(function (g) { return done[g] && done[g].size; });
     var chars = groups.reduce(function (n, g) { return n + done[g].size; }, 0);
     var avg = groups.length ? Math.round(groups.reduce(function (n, g) { return n + (done[g].score || 0); }, 0) / groups.length) : null;
@@ -226,6 +229,7 @@ td.n{text-align:center;font-weight:700;white-space:nowrap}
       row('必考字练习', failed ? offline : chars + ' / ' + ZI_TOTAL + ' 字', when('bryan/zi')) +
       row('部件听写', failed ? offline : (bj.streak && bj.streak.n ? '连续 ' + bj.streak.n + ' 天' : '听写练习'), when('bryan/bujian')) +
       row('Banish Boring Words', failed ? offline : (best.pick != null ? 'Best quiz ' + best.pick + '%' : 'Composition vocabulary'), when('bryan/english')) +
+      row('Vocabulary MCQ', failed ? offline : (voT ? '正确率 ' + voAcc + '，错题本 ' + voWrong + ' 题' : '还没开始'), when('bryan/vocab')) +
       row("Bryan's Daily News", failed ? offline : (news ? '共 ' + news.length + ' 期，最近 7 天 ' + newsWeek + ' 期' : ''), newsLast);
 
     if (failed) { $('chinese').innerHTML = $('english').innerHTML = '<p class="note">暂时读不到网上存档，请稍后刷新。</p>'; return; }
@@ -242,6 +246,10 @@ td.n{text-align:center;font-weight:700;white-space:nowrap}
       '<div class="stat"><b>' + (best.trans || 0) + '</b><span>Stories perfect</span></div>' +
       '<div class="stat"><b>' + (best.up || 0) + '</b><span>Sentences upgraded</span></div>' +
       '<div class="stat"><b>' + stars.length + '</b><span>Words starred</span></div></div>' +
+      '<div class="stats"><div class="stat"><b>' + voAcc + '</b><span>Vocab MCQ accuracy</span></div>' +
+      '<div class="stat"><b>' + (voWeekT ? Math.round(voWeekC / voWeekT * 100) + '%' : '—') + '</b><span>Vocab · last 7 days</span></div>' +
+      '<div class="stat"><b>' + Object.keys(vo.known || {}).length + '</b><span>Vocab mastered · ' + voT + ' done</span></div>' +
+      '<div class="stat"><b>' + voWrong + '</b><span>错题本 · cleared ' + (vo.cleared || 0) + '</span></div></div>' +
       '<p class="note">Daily News：' + (news && news.length ? '共写了 ' + news.length + ' 期，最近 7 天 ' + newsWeek + ' 期，最近一期 ' + fmt(newsLast) : '还没有写过') + '。</p>';
   }
 
