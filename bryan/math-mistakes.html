@@ -35,6 +35,8 @@ h1{color:var(--ink)}
 .trap{background:#FCE9E7}
 .check{background:#F1EEFF}
 .habit{background:#FFF7DD;border-left:6px solid var(--yellow);border-radius:0 12px 12px 0}
+.pic{margin:0 0 14px;background:#F7F5FF;border-radius:14px;padding:10px}
+.pic svg{width:100%;max-width:520px;height:auto;display:block;margin:0 auto}
 .empty{color:var(--mute);font-size:17px}
 </style>
 </head>
@@ -53,6 +55,24 @@ h1{color:var(--ink)}
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
   function button(cls, text, fn) { var b = el('button', cls, text); b.type = 'button'; b.onclick = fn; return b; }
   function labelled(cls, label, text) { var d = el('div', 'box ' + cls); var b = el('b', null, label); d.appendChild(b); d.appendChild(document.createTextNode(' ' + text)); return d; }
+  var PICS = {
+    twoSquares:
+      '<svg viewBox="0 0 330 195" role="img" aria-label="Two identical squares ABCD and CEFG joined at C, trapezium DEKJ with DE parallel to JK, triangle DEJ; angle CDE is 54 degrees, angle EJK is 33 degrees, H is where DC meets JE">' +
+      '<g fill="none" stroke="#1D1640" stroke-width="2" stroke-linejoin="round">' +
+      '<polygon points="20.3,87.9 79.1,168.8 160,110 101.2,29.1"/>' +
+      '<polygon points="160,110 218.8,29.1 299.7,87.9 240.9,168.8"/>' +
+      '<polyline points="101.2,29.1 218.8,29.1 265.1,135.5 54.9,135.5 101.2,29.1"/>' +
+      '<line x1="54.9" y1="135.5" x2="218.8" y2="29.1"/>' +
+      '</g>' +
+      '<g fill="none" stroke="#5B2BD9" stroke-width="2"><path d="M155 24 l7 5 l-7 5"/><path d="M155 130.5 l7 5 l-7 5"/></g>' +
+      '<g fill="#5B2BD9" font-size="12" font-weight="700"><text x="118" y="48">54°</text><text x="80" y="134">33°</text></g>' +
+      '<g fill="#1D1640" font-size="14" font-weight="800" font-family="sans-serif">' +
+      '<text x="6" y="92">A</text><text x="70" y="186">B</text><text x="163" y="128">C</text><text x="96" y="22">D</text>' +
+      '<text x="220" y="22">E</text><text x="305" y="92">F</text><text x="236" y="186">G</text><text x="38" y="140">J</text>' +
+      '<text x="270" y="150">K</text><text x="144" y="78">H</text></g>' +
+      '</svg>'
+  };
+
   function parseNum(s) {
     s = String(s).trim().replace(/\s+/g, '');
     var f = s.match(/^(-?\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)$/);
@@ -69,6 +89,7 @@ h1{color:var(--ink)}
     box.appendChild(meta);
     box.appendChild(el('h2', null, m.topic));
     m.q.split(/\n\s*\n/).forEach(function (p) { box.appendChild(el('p', 'stem', p)); });
+    if (m.pic && PICS[m.pic]) { var pic = el('div', 'pic'); pic.innerHTML = PICS[m.pic]; box.insertBefore(pic, box.lastChild); }
 
     var ans = el('div', 'ans');
     var input = el('input'); input.type = 'text'; input.inputMode = 'decimal'; input.placeholder = 'Answer'; input.setAttribute('aria-label', 'Your answer');
