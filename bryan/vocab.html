@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bryan · Vocabulary MCQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito+Sans:wght@400;700&display=swap">
+<link rel="stylesheet" href="../hub.css">
+<style>
+:root{--red:#E5484D;--redbg:#FFECEC;--green:#12A150;--greenbg:#E6F8EE}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.panel{background:var(--card);border-radius:20px;padding:16px 18px;border:3px solid var(--ink);margin:0 0 18px}
+.panel h2{font-family:var(--display);font-size:24px;margin:0 0 8px;line-height:1.15}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 18px}
+.stat{background:var(--card);border-radius:16px;padding:12px;border:3px solid var(--ink);text-align:center}
+.stat b{display:block;font-family:var(--display);font-size:30px;line-height:1.1;color:var(--purple)}
+.stat span{font-size:13px;color:var(--mute);font-weight:700}
+.btn{font:700 17px var(--body);border:3px solid var(--ink);border-radius:14px;padding:10px 16px;background:var(--card);color:var(--ink);cursor:pointer;box-shadow:0 4px 0 var(--ink);text-decoration:none;display:inline-block}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.btn.primary{background:var(--purple);color:#fff}
+.btn.warn{background:var(--yellow)}
+.btn:disabled{opacity:.45;cursor:default;box-shadow:none;transform:none}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.tabs{display:flex;gap:8px;margin:0 0 14px;flex-wrap:wrap}
+.tab{font:700 15px var(--body);border:2px solid var(--ink);border-radius:999px;padding:6px 14px;background:var(--card);cursor:pointer;color:var(--ink)}
+.tab[aria-pressed=true]{background:var(--ink);color:#fff}
+.theme{font-family:var(--display);font-size:20px;margin:16px 0 8px;color:var(--mute)}
+.sets{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.set{text-align:left;font:inherit;color:var(--ink);background:var(--card);border:3px solid var(--ink);border-radius:16px;padding:10px 12px;cursor:pointer;box-shadow:0 4px 0 var(--ink)}
+.set:hover{background:#F7F4FF}
+.set b{font-family:var(--display);font-size:20px;display:block;line-height:1.1}
+.set small{display:block;color:var(--mute);font-size:13px;line-height:1.35}
+.set .best{font-weight:700;color:var(--ink)}
+.set.done{border-color:var(--green);box-shadow:0 4px 0 var(--green)}
+.note{color:var(--mute);font-size:14px}
+/* quiz */
+.qhead{display:flex;justify-content:space-between;font-weight:700;color:var(--mute);margin-bottom:8px;gap:10px}
+.bar{height:10px;background:#E3DCFA;border-radius:9px;overflow:hidden;margin-bottom:14px}
+.bar i{display:block;height:100%;background:var(--purple);transition:width .25s}
+.sentence{font-size:clamp(20px,3.6vw,25px);font-weight:700;line-height:1.5;margin:4px 0 16px}
+.blank{display:inline-block;min-width:90px;border-bottom:3px solid var(--ink);text-align:center;padding:0 4px;color:var(--purple)}
+.blank.ok{color:var(--green);border-color:var(--green)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{font:700 19px var(--body);text-align:left;padding:14px;border:3px solid var(--ink);border-radius:14px;background:var(--card);cursor:pointer;color:var(--ink);box-shadow:0 4px 0 var(--ink)}
+.opt .k{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--bg);margin-right:8px;font-size:15px}
+.opt:disabled{cursor:default}
+.opt.right{background:var(--greenbg);border-color:var(--green);box-shadow:0 4px 0 var(--green)}
+.opt.wrong{background:var(--redbg);border-color:var(--red);box-shadow:0 4px 0 var(--red)}
+.feedback{min-height:30px;font-weight:700;margin:14px 0 6px}
+.feedback.ok{color:var(--green)} .feedback.no{color:var(--red)}
+.src{font-size:13px;color:var(--mute);margin-top:-8px;margin-bottom:10px}
+/* lists */
+.list{list-style:none;margin:0;padding:0}
+.list li{border-top:2px dashed #DDD5F5;padding:10px 0}
+.list li:first-child{border-top:0}
+.list .s{font-weight:700}
+.list .meta{font-size:13px;color:var(--mute)}
+.tag{display:inline-block;font-size:12px;font-weight:700;border-radius:8px;padding:1px 7px;margin-left:6px;vertical-align:1px}
+.tag.paper{background:#FFF3CC} .tag.web{background:#E3DCFA}
+.ans-ok{color:var(--green);font-weight:700} .ans-no{color:var(--red);font-weight:700;text-decoration:line-through}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:6px 4px;border-bottom:1px solid #E7E1F7}
+th{color:var(--mute);font-size:13px}
+td.n{text-align:right;white-space:nowrap}
+.big{font-family:var(--display);font-size:56px;color:var(--purple);line-height:1;margin:6px 0}
+.hidden{display:none}
+@media(max-width:560px){.stats{grid-template-columns:1fr 1fr}.opts{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="back" href="english.html">← English</a><a class="back" href="index.html">Bryan's page</a></div>
+  <h1>Vocabulary MCQ</h1>
+  <p class="hello">Conquer Vocabulary Workbook · choose the most suitable answer</p>
+
+  <!-- HOME -->
+  <section id="home">
+    <div class="stats">
+      <div class="stat"><b id="sAcc">—</b><span>Accuracy</span></div>
+      <div class="stat"><b id="sWeek">—</b><span>This week</span></div>
+      <div class="stat"><b id="sDone">0</b><span>Questions done</span></div>
+      <div class="stat"><b id="sWrong">0</b><span>错题本</span></div>
+    </div>
+
+    <div class="panel">
+      <h2>📕 错题本 · Mistake book</h2>
+      <p class="note" id="wrongNote"></p>
+      <div class="row">
+        <button class="btn warn" id="reviewBtn">Retry mistakes</button>
+        <button class="btn" id="randomBtn">🎲 Random 10</button>
+        <button class="btn" id="wrongListBtn">See the list</button>
+      </div>
+    </div>
+
+    <div class="tabs" id="levels"></div>
+    <div id="setList"></div>
+
+    <div class="panel" style="margin-top:22px">
+      <h2>📈 Practice record</h2>
+      <div id="log"></div>
+    </div>
+    <p class="note" id="cloud"></p>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz" class="hidden">
+    <div class="panel">
+      <div class="qhead"><span id="qTitle"></span><span id="qCount"></span></div>
+      <div class="bar"><i id="qBar"></i></div>
+      <div class="src" id="qSrc"></div>
+      <div class="sentence" id="qText"></div>
+      <div class="opts" id="qOpts"></div>
+      <div class="feedback" id="qFb"></div>
+      <div class="row"><button class="btn primary hidden" id="nextBtn">Next →</button><button class="btn" id="quitBtn">Stop</button></div>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="result" class="hidden">
+    <div class="panel">
+      <h2 id="rTitle"></h2>
+      <div class="big" id="rScore"></div>
+      <p id="rMsg" style="font-weight:700"></p>
+      <ul class="list" id="rList"></ul>
+      <div class="row" style="margin-top:12px">
+        <button class="btn warn" id="rRetry">Retry the wrong ones</button>
+        <button class="btn primary" id="rHome">Back to exercises</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MISTAKE LIST -->
+  <section id="wrongs" class="hidden">
+    <div class="panel">
+      <h2>📕 错题本</h2>
+      <p class="note">A question leaves the 错题本 after you get it right <b>2 times in a row</b>. 📄 = wrong on paper, 💻 = wrong here.</p>
+      <ul class="list" id="wList"></ul>
+      <div class="row" style="margin-top:12px"><button class="btn warn" id="wRetry">Retry mistakes</button><button class="btn primary" id="wHome">Back</button></div>
+    </div>
+  </section>
+</div>
+
+<script src="vocab-data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../progress.js"></script>
+<script>
+(function () {
+  var KID = 'bryan', APP = 'vocab', LS = 'bryan_vocab_v1', CLEAR_AFTER = 2;
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function today() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+
+  // ---------- question bank ----------
+  var SETS = {}, Q = {};
+  VOCAB_SETS.forEach(function (s) {
+    SETS[s.id] = s;
+    s.q.forEach(function (q, i) { Q[s.id + '#' + (i + 1)] = { id: s.id + '#' + (i + 1), set: s, n: i + 1, text: q[0], opts: q[1], a: q[2] }; });
+  });
+  function setName(s) { return s.level + ' · Ex ' + s.ex; }
+
+  // ---------- saved progress ----------
+  // stats: per question {n answered, c correct}; wrong: 错题本 {n times wrong, s right-in-a-row, p last wrong pick, d date, src};
+  // sets: per exercise {best, last, n, d}; log: one entry per finished practice.
+  function blank() {
+    var st = { _t: 0, stats: {}, wrong: {}, sets: {}, log: [], cleared: 0 };
+    // Start the 错题本 with the questions marked wrong in the workbook.
+    VOCAB_SETS.forEach(function (s) { (s.paperWrong || []).forEach(function (n) { if (Q[s.id + '#' + n]) st.wrong[s.id + '#' + n] = { n: 1, s: 0, d: '', src: 'paper' }; }); });
+    st.paperSeeded = VOCAB_SETS.map(function (s) { return s.id; });
+    return st;
+  }
+  function loadLocal() { try { var v = localStorage.getItem(LS); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+  var S = loadLocal() || blank();
+  // Sets added later (P5, P6...) bring their paper mistakes in once.
+  function seedNew() {
+    var seen = S.paperSeeded || [];
+    VOCAB_SETS.forEach(function (s) {
+      if (seen.indexOf(s.id) >= 0) return;
+      (s.paperWrong || []).forEach(function (n) { var id = s.id + '#' + n; if (Q[id] && !S.wrong[id]) S.wrong[id] = { n: 1, s: 0, d: '', src: 'paper' }; });
+      seen.push(s.id);
+    });
+    S.paperSeeded = seen;
+  }
+  seedNew();
+  function save() {
+    S._t = Date.now();
+    try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) {}
+    if (window.Progress) Progress.save(KID, APP, S);
+  }
+  if (window.Progress) {
+    Progress.onStatus(function () { $('cloud').textContent = Progress.label(null, 'en'); });
+    Progress.sync(KID, APP, function () { return S; }, function (r) {
+      S = r; S.stats = S.stats || {}; S.wrong = S.wrong || {}; S.sets = S.sets || {}; S.log = S.log || [];
+      seedNew();
+      try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) {}
+      if (!$('home').classList.contains('hidden')) renderHome();
+    });
+  }
+
+  // ---------- home ----------
+  var level = null;
+  function show(id) { ['home', 'quiz', 'result', 'wrongs'].forEach(function (x) { $(x).classList.toggle('hidden', x !== id); }); window.scrollTo(0, 0); }
+  function wrongIds() { return Object.keys(S.wrong).filter(function (id) { return Q[id]; }); }
+  function renderHome() {
+    var tot = 0, ok = 0, wt = 0, wok = 0, weekAgo = Date.now() - 7 * 864e5;
+    S.log.forEach(function (l) { tot += l.t; ok += l.c; if (Date.parse(l.d) >= weekAgo) { wt += l.t; wok += l.c; } });
+    $('sAcc').textContent = tot ? Math.round(ok / tot * 100) + '%' : '—';
+    $('sWeek').textContent = wt ? Math.round(wok / wt * 100) + '%' : '—';
+    $('sDone').textContent = tot;
+    var w = wrongIds();
+    $('sWrong').textContent = w.length;
+    var paper = w.filter(function (id) { return S.wrong[id].src === 'paper'; }).length;
+    $('wrongNote').textContent = w.length
+      ? w.length + ' question' + (w.length > 1 ? 's' : '') + ' to fix (' + paper + ' from the workbook, ' + (w.length - paper) + ' from practice here). ' + (S.cleared || 0) + ' already fixed.'
+      : 'No mistakes waiting. ' + (S.cleared || 0) + ' fixed so far. 🎉';
+    $('reviewBtn').disabled = !w.length;
+    $('reviewBtn').textContent = 'Retry mistakes (' + w.length + ')';
+
+    var levels = []; VOCAB_SETS.forEach(function (s) { if (levels.indexOf(s.level) < 0) levels.push(s.level); });
+    if (!level || levels.indexOf(level) < 0) level = levels[levels.length - 1];
+    $('levels').innerHTML = levels.map(function (l) { return '<button class="tab" data-l="' + l + '" aria-pressed="' + (l === level) + '">' + l + '</button>'; }).join('');
+
+    var themes = [], by = {};
+    VOCAB_SETS.filter(function (s) { return s.level === level; }).forEach(function (s) { if (!by[s.theme]) { by[s.theme] = []; themes.push(s.theme); } by[s.theme].push(s); });
+    $('setList').innerHTML = themes.map(function (t) {
+      return '<div class="theme">' + esc(t) + '</div><div class="sets">' + by[t].map(function (s) {
+        var r = S.sets[s.id], total = s.q.length, paper = total - (s.paperWrong || []).length;
+        var left = s.q.filter(function (_, i) { return S.wrong[s.id + '#' + (i + 1)]; }).length;
+        return '<button class="set' + (r && r.best === total ? ' done' : '') + '" data-s="' + s.id + '"><b>Exercise ' + s.ex + '</b>' +
+          '<small>' + total + ' questions · 📄 paper ' + paper + '/' + total + '</small>' +
+          '<small class="best">' + (r ? 'Best ' + r.best + '/' + total + ' · tried ' + r.n + '×' : 'Not tried yet') + '</small>' +
+          (left ? '<small>📕 ' + left + ' in 错题本</small>' : '') + '</button>';
+      }).join('') + '</div>';
+    }).join('');
+
+    var log = S.log.slice(-15).reverse();
+    $('log').innerHTML = log.length
+      ? '<table><thead><tr><th>Date</th><th>Practice</th><th class="n">Score</th></tr></thead><tbody>' + log.map(function (l) {
+          var d = new Date(l.d);
+          return '<tr><td>' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) + '</td><td>' + esc(l.name) + '</td><td class="n">' + l.c + '/' + l.t + ' (' + Math.round(l.c / l.t * 100) + '%)</td></tr>';
+        }).join('') + '</tbody></table>' + (S.log.length > 15 ? '<p class="note">Showing the last 15 of ' + S.log.length + ' practices.</p>' : '')
+      : '<p class="note">No practice yet. Pick an exercise to start!</p>';
+  }
+  $('levels').addEventListener('click', function (e) { var b = e.target.closest('.tab'); if (b) { level = b.dataset.l; renderHome(); } });
+  $('setList').addEventListener('click', function (e) {
+    var b = e.target.closest('.set'); if (!b) return;
+    var s = SETS[b.dataset.s];
+    start(s.q.map(function (_, i) { return s.id + '#' + (i + 1); }), 'Exercise ' + s.ex + ' · ' + s.theme, s.id);
+  });
+  $('reviewBtn').onclick = $('wRetry').onclick = function () { var w = wrongIds(); if (w.length) start(shuffle(w), '📕 错题本 retry', 'review'); };
+  $('randomBtn').onclick = function () {
+    var pool = Object.keys(Q).filter(function (id) { return Q[id].set.level === level; });
+    start(shuffle(pool).slice(0, 10), '🎲 Random 10 · ' + level, 'random');
+  };
+  $('wrongListBtn').onclick = renderWrongs;
+  $('wHome').onclick = $('rHome').onclick = function () { renderHome(); show('home'); };
+
+  // ---------- quiz ----------
+  var run = null;
+  function start(ids, title, kind) {
+    if (!ids.length) return;
+    run = { ids: ids, i: 0, title: title, kind: kind, right: 0, missed: [] };
+    show('quiz'); ask();
+  }
+  function fill(text, opt) {
+    var parts = opt ? opt.split(' … ') : [], k = 0;
+    return esc(text).replace(/___/g, function () {
+      var w = parts[k++]; return w ? '<span class="blank ok">' + esc(w) + '</span>' : '<span class="blank">&nbsp;</span>';
+    });
+  }
+  function ask() {
+    var q = Q[run.ids[run.i]];
+    run.order = shuffle([1, 2, 3, 4]);
+    run.answered = false;
+    $('qTitle').textContent = run.title;
+    $('qCount').textContent = (run.i + 1) + ' / ' + run.ids.length;
+    $('qBar').style.width = (run.i / run.ids.length * 100) + '%';
+    $('qSrc').textContent = run.kind === 'review' || run.kind === 'random' ? setName(q.set) + ' · Q' + q.n + (S.wrong[q.id] ? ' · 📕 ' + (S.wrong[q.id].s || 0) + '/' + CLEAR_AFTER + ' right in a row' : '') : 'Question ' + q.n;
+    $('qText').innerHTML = fill(q.text);
+    $('qOpts').innerHTML = run.order.map(function (o, k) { return '<button class="opt" data-o="' + o + '"><span class="k">' + (k + 1) + '</span>' + esc(q.opts[o - 1]) + '</button>'; }).join('');
+    $('qFb').textContent = ''; $('qFb').className = 'feedback';
+    $('nextBtn').classList.add('hidden');
+  }
+  function answer(o) {
+    if (run.answered) return;
+    run.answered = true;
+    var q = Q[run.ids[run.i]], ok = o === q.a;
+    [].forEach.call($('qOpts').children, function (b) {
+      b.disabled = true;
+      var v = +b.dataset.o;
+      if (v === q.a) b.classList.add('right'); else if (v === o) b.classList.add('wrong');
+    });
+    $('qText').innerHTML = fill(q.text, q.opts[q.a - 1]);
+    var st = S.stats[q.id] || (S.stats[q.id] = { n: 0, c: 0 });
+    st.n++;
+    var w = S.wrong[q.id];
+    if (ok) {
+      st.c++; run.right++;
+      if (w) {
+        w.s = (w.s || 0) + 1;
+        if (w.s >= CLEAR_AFTER) { delete S.wrong[q.id]; S.cleared = (S.cleared || 0) + 1; $('qFb').textContent = '✅ Correct! Fixed — removed from 错题本 🎉'; }
+        else $('qFb').textContent = '✅ Correct! Get it right ' + (CLEAR_AFTER - w.s) + ' more time to clear it from 错题本.';
+      } else $('qFb').textContent = ['✅ Correct!', '✅ Well done!', '✅ Spot on!', '✅ Yes!'][Math.floor(Math.random() * 4)];
+      $('qFb').className = 'feedback ok';
+    } else {
+      run.missed.push({ id: q.id, p: o });
+      S.wrong[q.id] = { n: ((w && w.n) || 0) + 1, s: 0, p: o, d: today(), src: 'web' };
+      $('qFb').textContent = '❌ The answer is "' + q.opts[q.a - 1] + '". Added to 错题本.';
+      $('qFb').className = 'feedback no';
+    }
+    save();
+    $('nextBtn').classList.remove('hidden');
+    $('nextBtn').textContent = run.i + 1 < run.ids.length ? 'Next →' : 'See my score';
+    $('nextBtn').focus();
+  }
+  $('qOpts').addEventListener('click', function (e) { var b = e.target.closest('.opt'); if (b) answer(+b.dataset.o); });
+  $('nextBtn').onclick = function () { run.i++; if (run.i < run.ids.length) ask(); else finish(); };
+  $('quitBtn').onclick = function () { if (run.i > 0 || run.answered) finish(true); else { renderHome(); show('home'); } };
+  document.addEventListener('keydown', function (e) {
+    if ($('quiz').classList.contains('hidden')) return;
+    var k = +e.key;
+    if (k >= 1 && k <= 4 && !run.answered) answer(run.order[k - 1]);
+    else if (e.key === 'Enter' && run.answered) $('nextBtn').click();
+  });
+  function finish(stopped) {
+    var t = stopped ? run.i + (run.answered ? 1 : 0) : run.ids.length;
+    if (t > 0) {
+      S.log.push({ d: new Date().toISOString(), name: run.title + (stopped && t < run.ids.length ? ' (stopped)' : ''), kind: run.kind, c: run.right, t: t });
+      if (S.log.length > 500) S.log = S.log.slice(-500);
+      if (SETS[run.kind] && !stopped) {
+        var r = S.sets[run.kind] || { best: 0, n: 0 };
+        r.n++; r.last = run.right; r.best = Math.max(r.best, run.right); r.d = today();
+        S.sets[run.kind] = r;
+      }
+      save();
+    }
+    if (!t) { renderHome(); show('home'); return; }
+    var pct = Math.round(run.right / t * 100);
+    $('rTitle').textContent = run.title;
+    $('rScore').textContent = run.right + ' / ' + t;
+    $('rMsg').textContent = pct === 100 ? '🏆 Perfect! Every answer right.' : pct >= 80 ? '🌟 Great work! ' + pct + '%' : pct >= 60 ? '👍 Good try, ' + pct + '%. Check the ones below.' : '💪 ' + pct + '%. Read the right answers below and try again.';
+    $('rList').innerHTML = run.missed.map(function (m) {
+      var q = Q[m.id];
+      return '<li><div class="s">' + fill(q.text, q.opts[q.a - 1]) + '</div><div class="meta">You chose <span class="ans-no">' + esc(q.opts[m.p - 1]) + '</span> · answer <span class="ans-ok">' + esc(q.opts[q.a - 1]) + '</span> · ' + esc(setName(q.set)) + ' Q' + q.n + '</div></li>';
+    }).join('');
+    var retry = run.missed.map(function (m) { return m.id; });
+    $('rRetry').classList.toggle('hidden', !retry.length);
+    $('rRetry').onclick = function () { start(shuffle(retry), '📕 Retry: ' + run.title, 'review'); };
+    show('result');
+  }
+
+  // ---------- 错题本 list ----------
+  function renderWrongs() {
+    var ids = wrongIds().sort(function (a, b) { return (S.wrong[b].n - S.wrong[a].n) || (a < b ? -1 : 1); });
+    $('wList').innerHTML = ids.length ? ids.map(function (id) {
+      var q = Q[id], w = S.wrong[id];
+      return '<li><div class="s">' + fill(q.text, q.opts[q.a - 1]) + '</div><div class="meta">' + esc(setName(q.set)) + ' Q' + q.n +
+        (w.p ? ' · you chose <span class="ans-no">' + esc(q.opts[w.p - 1]) + '</span>' : '') +
+        ' · wrong ' + w.n + '× · ' + (w.s || 0) + '/' + CLEAR_AFTER + ' right in a row' +
+        '<span class="tag ' + w.src + '">' + (w.src === 'paper' ? '📄 paper' : '💻 ' + esc(w.d || '')) + '</span></div></li>';
+    }).join('') : '<li class="note">Nothing here. Great job!</li>';
+    $('wRetry').disabled = !ids.length;
+    show('wrongs');
+  }
+
+  renderHome();
+})();
+</script>
+</body>
+</html>
